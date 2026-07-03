@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\WebAPI.csproj": {}
+    "D:\\Programming\\Repositories\\Diplom work\\Backend\\WebAPI\\WebAPI.csproj": {}
   },
   "projects": {
-    "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\WebAPI.csproj": {
+    "D:\\Programming\\Repositories\\Diplom work\\Backend\\WebAPI\\WebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\WebAPI.csproj",
+        "projectUniqueName": "D:\\Programming\\Repositories\\Diplom work\\Backend\\WebAPI\\WebAPI.csproj",
         "projectName": "WebAPI",
-        "projectPath": "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\WebAPI.csproj",
+        "projectPath": "D:\\Programming\\Repositories\\Diplom work\\Backend\\WebAPI\\WebAPI.csproj",
         "packagesPath": "C:\\Users\\aarte\\.nuget\\packages\\",
-        "outputPath": "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\obj\\",
+        "outputPath": "D:\\Programming\\Repositories\\Diplom work\\Backend\\WebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -52,6 +52,12 @@
         "net10.0": {
           "framework": "net10.0",
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Microsoft.OpenApi": {
+              "target": "Package",
+              "version": "[2.7.5, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

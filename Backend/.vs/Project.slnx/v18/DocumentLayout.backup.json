@@ -1,7 +1,16 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Programming\\Repositories\\Diplom work\\Project\\",
-  "Documents": [],
+  "WorkspaceRootPath": "D:\\Programming\\Repositories\\Diplom work\\Backend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{0166B818-52DC-D9E7-DD2C-0BC5202C0E65}|Project\\Domain.csproj|d:\\programming\\repositories\\diplom work\\backend\\project\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0166B818-52DC-D9E7-DD2C-0BC5202C0E65}|Project\\Domain.csproj|solutionrelative:project\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0166B818-52DC-D9E7-DD2C-0BC5202C0E65}|Project\\Domain.csproj|d:\\programming\\repositories\\diplom work\\backend\\project\\domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{0166B818-52DC-D9E7-DD2C-0BC5202C0E65}|Project\\Domain.csproj|solutionrelative:project\\domain.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +18,33 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Domain",
+              "DocumentMoniker": "D:\\Programming\\Repositories\\Diplom work\\Backend\\Project\\Domain.csproj",
+              "RelativeDocumentMoniker": "Project\\Domain.csproj",
+              "ToolTip": "D:\\Programming\\Repositories\\Diplom work\\Backend\\Project\\Domain.csproj",
+              "RelativeToolTip": "Project\\Domain.csproj",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAkwBcAAAAKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-07-03T01:03:28.729Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Programming\\Repositories\\Diplom work\\Backend\\Project\\Program.cs",
+              "RelativeDocumentMoniker": "Project\\Program.cs",
+              "ToolTip": "D:\\Programming\\Repositories\\Diplom work\\Backend\\Project\\Program.cs",
+              "RelativeToolTip": "Project\\Program.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAkwBgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-03T01:03:18.866Z",
+              "EditorCaption": ""
             }
           ]
         }

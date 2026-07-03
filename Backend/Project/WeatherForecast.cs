@@ -1,4 +1,4 @@
-namespace Project
+namespace Domain
 {
     public class WeatherForecast
     {
