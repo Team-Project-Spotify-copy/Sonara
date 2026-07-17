@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Domain.Entities.Playlists;
+using Application.Entities.Playlists;
 
-namespace Domain.Entities.Music;
+namespace Application.Entities.Music;
 
 public class Track
 {

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Domain.Entities.Users;
+using Application.Entities.Users;
 
-namespace Domain.Entities.Podcasts;
+namespace Application.Entities.Podcasts;
 
 public class Podcast
 {

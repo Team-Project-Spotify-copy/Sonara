@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Domain.Entities.Users;
+using Application.Entities.Users;
 
-namespace Domain.Entities.Music;
+namespace Application.Entities.Music;
 
 public class Album
 {

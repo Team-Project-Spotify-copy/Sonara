@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Domain.Entities.Music;
+using Application.Entities.Music;
 
-namespace Domain.Entities.Users;
+namespace Application.Entities.Users;
 
 public class Artist
 {

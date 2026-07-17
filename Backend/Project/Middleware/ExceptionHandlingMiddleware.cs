@@ -1,4 +1,4 @@
-﻿namespace Domain;
+﻿namespace WebApp;
 using System.Net;
 using System.Text.Json;
 

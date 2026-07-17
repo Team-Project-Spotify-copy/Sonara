@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities.Users;
+namespace Application.Entities.Users;
 
 public class Subscription
 {

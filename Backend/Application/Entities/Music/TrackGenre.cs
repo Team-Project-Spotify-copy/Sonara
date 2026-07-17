@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Entities.Music;
+namespace Application.Entities.Music;
 
 public class TrackGenre
 {

@@ -1,7 +1,7 @@
 using System;
-using Domain.Entities.Users;
+using Application.Entities.Users;
 
-namespace Domain.Entities.Music;
+namespace Application.Entities.Music;
 
 public class ListeningHistory
 {
