@@ -10,4 +10,11 @@
     <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Interfase\Services\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>

@@ -1,18 +1,10 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\Programming\\Repositories\\Diplom work\\Project\\",
+  "WorkspaceRootPath": "D:\\Programming\\Repositories\\Clone\\Backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{6C37C616-492E-4835-AFB9-AE91AF0E6A0C}|WebAPI\\WebAPI.csproj|d:\\programming\\repositories\\diplom work\\project\\webapi\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{6C37C616-492E-4835-AFB9-AE91AF0E6A0C}|WebAPI\\WebAPI.csproj|solutionrelative:webapi\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3735887C-9798-4309-8475-A446A5357EBF}|Application\\Application.csproj|d:\\programming\\repositories\\diplom work\\project\\application\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{3735887C-9798-4309-8475-A446A5357EBF}|Application\\Application.csproj|solutionrelative:application\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{B4E9E937-1846-4F5D-B91E-DB4A4FD945BC}|Infrastructure\\Infrastructure.csproj|d:\\programming\\repositories\\diplom work\\project\\infrastructure\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B4E9E937-1846-4F5D-B91E-DB4A4FD945BC}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\class1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|d:\\programming\\repositories\\clone\\backend\\infrastructure\\data\\sonaradbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5872AEB3-BAA3-FE31-B0EB-0FB6DBEDCF83}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\data\\sonaradbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,45 +14,27 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\Class1.cs",
-              "RelativeDocumentMoniker": "WebAPI\\Class1.cs",
-              "ToolTip": "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\Class1.cs",
-              "RelativeToolTip": "WebAPI\\Class1.cs",
+              "Title": "SonaraDbContext.cs",
+              "DocumentMoniker": "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\Data\\SonaraDbContext.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\SonaraDbContext.cs",
+              "ToolTip": "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\Data\\SonaraDbContext.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\SonaraDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-26T10:03:06.683Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "D:\\Programming\\Repositories\\Diplom work\\Project\\Application\\Class1.cs",
-              "RelativeDocumentMoniker": "Application\\Class1.cs",
-              "ToolTip": "D:\\Programming\\Repositories\\Diplom work\\Project\\Application\\Class1.cs",
-              "RelativeToolTip": "Application\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-26T10:02:53.399Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Class1.cs",
-              "DocumentMoniker": "D:\\Programming\\Repositories\\Diplom work\\Project\\Infrastructure\\Class1.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Class1.cs",
-              "ToolTip": "D:\\Programming\\Repositories\\Diplom work\\Project\\Infrastructure\\Class1.cs",
-              "RelativeToolTip": "Infrastructure\\Class1.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-26T10:02:42.722Z",
+              "WhenOpened": "2026-07-17T17:59:46.519Z",
               "EditorCaption": ""
             }
           ]
