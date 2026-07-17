@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Entities.Users;
+namespace Application.Entities.Users;
 
 public class RefreshToken
 {

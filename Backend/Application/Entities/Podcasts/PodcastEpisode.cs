@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Entities.Podcasts;
+namespace Application.Entities.Podcasts;
 
 public class PodcastEpisode
 {

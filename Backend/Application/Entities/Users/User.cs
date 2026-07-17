@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Domain.Entities.Music;
-using Domain.Entities.Playlists;
-using Domain.Entities.Podcasts;
-using Domain.Entities.Social;
+using Application.Entities.Music;
+using Application.Entities.Playlists;
+using Application.Entities.Podcasts;
+using Application.Entities.Social;
 
-namespace Domain.Entities.Users;
+namespace Application.Entities.Users;
 
 public class User
 {

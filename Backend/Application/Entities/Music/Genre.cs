@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Domain.Entities.Music;
+namespace Application.Entities.Music;
 
 public class Genre
 {

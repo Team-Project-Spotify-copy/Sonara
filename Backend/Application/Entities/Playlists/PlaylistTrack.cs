@@ -1,7 +1,7 @@
 using System;
-using Domain.Entities.Music;
+using Application.Entities.Music;
 
-namespace Domain.Entities.Playlists;
+namespace Application.Entities.Playlists;
 
 public class PlaylistTrack
 {

@@ -1,8 +1,8 @@
 using System;
-using Domain.Entities.Users;
-using Domain.Entities.Music;
+using Application.Entities.Users;
+using Application.Entities.Music;
 
-namespace Domain.Entities.Playlists;
+namespace Application.Entities.Playlists;
 
 public class LikedTrack
 {

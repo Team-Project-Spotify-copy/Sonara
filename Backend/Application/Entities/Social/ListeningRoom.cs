@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Domain.Entities.Users;
-using Domain.Entities.Music;
+using Application.Entities.Users;
+using Application.Entities.Music;
 
-namespace Domain.Entities.Social;
+namespace Application.Entities.Social;
 
 public class ListeningRoom
 {

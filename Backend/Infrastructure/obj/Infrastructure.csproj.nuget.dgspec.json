@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\Infrastructure.csproj": {}
+    "D:\\Programming\\Repositories\\Clone 2\\Backend\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\Programming\\Repositories\\Clone\\Backend\\Application\\Application.csproj": {
+    "D:\\Programming\\Repositories\\Clone 2\\Backend\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programming\\Repositories\\Clone\\Backend\\Application\\Application.csproj",
+        "projectUniqueName": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\Programming\\Repositories\\Clone\\Backend\\Application\\Application.csproj",
+        "projectPath": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\aarte\\.nuget\\packages\\",
-        "outputPath": "D:\\Programming\\Repositories\\Clone\\Backend\\Application\\obj\\",
+        "outputPath": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -352,14 +352,14 @@
         }
       }
     },
-    "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\Programming\\Repositories\\Clone 2\\Backend\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\Infrastructure.csproj",
+        "projectPath": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\aarte\\.nuget\\packages\\",
-        "outputPath": "D:\\Programming\\Repositories\\Clone\\Backend\\Infrastructure\\obj\\",
+        "outputPath": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -382,8 +382,8 @@
             "framework": "net10.0",
             "targetAlias": "net10.0",
             "projectReferences": {
-              "D:\\Programming\\Repositories\\Clone\\Backend\\Application\\Application.csproj": {
-                "projectPath": "D:\\Programming\\Repositories\\Clone\\Backend\\Application\\Application.csproj"
+              "D:\\Programming\\Repositories\\Clone 2\\Backend\\Application\\Application.csproj": {
+                "projectPath": "D:\\Programming\\Repositories\\Clone 2\\Backend\\Application\\Application.csproj"
               }
             }
           }
@@ -405,6 +405,10 @@
           "framework": "net10.0",
           "targetAlias": "net10.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[10.0.10, )"
+            },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
