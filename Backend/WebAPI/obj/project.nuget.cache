@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "tz0vg8q7960=",
+  "dgSpecHash": "3pk/519rRHo=",
   "success": true,
-  "projectFilePath": "D:\\Programming\\Repositories\\Diplom work\\Project\\WebAPI\\WebAPI.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "D:\\Programming\\Repositories\\Clone\\Backend\\WebAPI\\WebAPI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\aarte\\.nuget\\packages\\microsoft.openapi\\2.7.5\\microsoft.openapi.2.7.5.nupkg.sha512"
+  ],
   "logs": []
 }
