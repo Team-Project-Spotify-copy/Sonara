@@ -1,6 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using Application.Interfaces;
+using Application.Interfaces.Services;
+using Infrastructure.Services;
+using WebApp.Services;
+using WebApp;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +29,11 @@ builder.Services.AddDbContext<SonaraDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 
 var app = builder.Build();
 
