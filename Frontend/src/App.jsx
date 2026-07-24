@@ -5,7 +5,6 @@ import Register from "./components/Register.jsx";
 import CreateNewPassword from "./components/CreateNewPassword.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import "./index.css";
-import './App.css'
 function App() {
 
   return (

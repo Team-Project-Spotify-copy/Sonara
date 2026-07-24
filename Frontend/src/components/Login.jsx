@@ -9,7 +9,7 @@ function Login() {
         <div className="login-intro">
           <div className="login-avatar"></div>
 
-          <h1 className="login-title">Welcome Back!</h1>
+          <h1 className="login-title">Welcome back!</h1>
 
           <div className="login-form-wrapper">
             <form className="login-form">

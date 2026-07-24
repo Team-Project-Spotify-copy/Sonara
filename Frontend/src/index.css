@@ -1,4 +1,10 @@
-/* Базове скидання та фон */
+@font-face {
+  font-family: 'Aprila';
+  src: url('../src/assets/fonts/Aprila-Bold.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   margin: 0;
   padding: 0;
