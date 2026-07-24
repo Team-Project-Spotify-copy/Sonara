@@ -1,0 +1,101 @@
+.regsiter-page {
+    display: flex;
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    background-color: #121212;
+}
+
+.regsiter-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 705px;
+    height: 880px;
+    position: absolute;
+    top: 100px;
+    left: 100px;
+    border-radius: 8px;
+    background-color: #1b1b1b;
+}
+
+.regsiter-intro {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 415px;
+    height: 745px;
+    position: absolute;
+    top: 80px;
+    gap: 12px;
+}
+
+.regsiter-avatar {
+    min-width: 64px;
+    min-height: 64px;
+    border-radius: 50%;
+    background-color: #504f4f;
+}
+
+.regsiter-title {
+    font-family: 'Aprila', sans-serif;
+    font-style: bold;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 100%;
+    text-align: center;
+    color: #ffffff;
+    margin-top: 0px;
+    width: 511px;
+    margin-bottom: 60px;
+}
+
+.regsiter-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 415px;
+}
+
+.regsiter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.regsiter-divider {
+    width: 415px;
+    font-size: 16px;
+    line-height: 100%;
+    text-align: center;
+    color: #ffffff;
+    margin: 0;
+}
+
+.regsiter-social-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 415px;
+}
+
+.regsiter-footer-text {
+    text-align: center;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.4;
+    margin-top: 8px;
+}
+
+.regsiter-bg-image {
+    position: absolute;
+    left: 825px;
+    top: 100px;
+}
+
+.regsiter-bg-image img {
+    width: 995px;
+    height: 880px;
+    border-radius: 8px;
+    object-fit: cover;
+}
