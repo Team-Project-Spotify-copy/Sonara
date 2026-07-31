@@ -1,7 +1,6 @@
-using Application.Entities.Users;
-using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Application.Interfaces.Services;
+using Application.Interfaces;
+
 namespace Backend.Project.Controllers;
 
 [ApiController]

@@ -1,9 +1,9 @@
 using System;
-using Application.Entities.Users;
+using Domain.Entities.Users;
 
-namespace Application.Entities.Social;
+namespace Domain.Entities.Social;
 
-public class RoomMember
+public class RoomMember : BaseEntity
 {
     public Guid RoomId { get; set; }
     public Guid UserId { get; set; }

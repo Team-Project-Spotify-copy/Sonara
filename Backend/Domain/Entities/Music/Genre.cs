@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Application.Entities.Music;
+namespace Domain.Entities.Music;
 
-public class Genre
+public class Genre : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty;

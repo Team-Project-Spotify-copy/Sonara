@@ -1,5 +1,5 @@
-using Application.Entities.Music;
-using Application.Entities.Playlists;
+using Domain.Entities.Music;
+using Domain.Entities.Playlists;
 using Application.Exceptions;
 using Application.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;

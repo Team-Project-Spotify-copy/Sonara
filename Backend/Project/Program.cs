@@ -1,15 +1,16 @@
-using System.Text;
+using Application.Interfaces;
+using Application.Interfaces.Services;
+using BusinessLogic.Configurations;
+using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using Serilog;
-using Application.Interfaces;
-using Application.Interfaces.Services;
-using Infrastructure.Data;
-using Infrastructure.Services;
-using WebApp.Services;
+using System.Text;
 using WebApp;
+using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<SonaraDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

@@ -1,8 +1,8 @@
 using System;
 
-namespace Application.Entities.Music;
+namespace Domain.Entities.Music;
 
-public class TrackGenre
+public class TrackGenre : BaseEntity
 {
     public Guid TrackId { get; set; }
     public Guid GenreId { get; set; }

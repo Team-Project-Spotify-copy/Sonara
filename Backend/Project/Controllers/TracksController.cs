@@ -1,4 +1,3 @@
-using Application.Interfaces;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Contracts;

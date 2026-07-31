@@ -1,4 +1,4 @@
-namespace Application.Interfaces;
+namespace Application.Interfaces.Services;
 
 
 /// TODO: зараз реал≥зац≥€ (в WebApp) читаЇ Guid ≥з заголовка X-User-Id Ч тимчасово, без JWT. 

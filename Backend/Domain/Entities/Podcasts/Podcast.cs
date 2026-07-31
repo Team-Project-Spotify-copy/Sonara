@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Application.Entities.Users;
+using Domain.Entities.Users;
 
-namespace Application.Entities.Podcasts;
+namespace Domain.Entities.Podcasts;
 
-public class Podcast
+public class Podcast : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid AuthorId { get; set; }

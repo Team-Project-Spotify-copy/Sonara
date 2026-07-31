@@ -1,8 +1,8 @@
 using System;
 
-namespace Application.Entities.Users;
+namespace Domain.Entities.Users;
 
-public class Session
+public class Session : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string DeviceName { get; set; } = string.Empty; 

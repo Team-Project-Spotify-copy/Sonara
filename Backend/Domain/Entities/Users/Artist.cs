@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Application.Entities.Music;
+using Domain.Entities.Music;
 
-namespace Application.Entities.Users;
+namespace Domain.Entities.Users;
 
-public class Artist
+public class Artist : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; }

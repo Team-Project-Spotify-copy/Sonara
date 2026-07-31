@@ -2,6 +2,11 @@
 ## Очищений та оптимізований .gitignore для Visual Studio / .NET / VS Code
 ## =======================================================================
 
+# Hardhat / Typechain generated files
+typechain-types/
+artifacts/
+cache/
+
 # Кеш пакетів NuGet
 project.assets.json
 *.nuget.g.props

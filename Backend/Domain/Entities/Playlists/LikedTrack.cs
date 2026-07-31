@@ -1,10 +1,10 @@
 using System;
-using Application.Entities.Users;
-using Application.Entities.Music;
+using Domain.Entities.Users;
+using Domain.Entities.Music;
 
-namespace Application.Entities.Playlists;
+namespace Domain.Entities.Playlists;
 
-public class LikedTrack
+public class LikedTrack : BaseEntity
 {
     public Guid UserId { get; set; }
     public Guid TrackId { get; set; }
