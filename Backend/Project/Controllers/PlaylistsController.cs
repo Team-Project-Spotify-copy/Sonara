@@ -33,7 +33,7 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PlaylistDto>> Create([FromBody] CreatePlaylistRequest request, CancellationToken ct)
+    public async Task<ActionResult<PlaylistDto>> Create([FromForm] CreatePlaylistRequest request, CancellationToken ct)
     {
         var userId = RequireUserId();
         var created = await _playlistService.CreateAsync(userId, request, ct);
@@ -41,7 +41,7 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    public async Task<ActionResult<PlaylistDto>> Update(Guid id, [FromBody] UpdatePlaylistRequest request, CancellationToken ct)
+    public async Task<ActionResult<PlaylistDto>> Update(Guid id, [FromForm] UpdatePlaylistRequest request, CancellationToken ct)
     {
         var userId = RequireUserId();
         return Ok(await _playlistService.UpdateAsync(id, userId, request, ct));

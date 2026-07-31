@@ -20,7 +20,7 @@ public class AdminCatalogController : ControllerBase
     [HttpPost("tracks")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<Guid>> CreateTrack([FromBody] CreateTrackDto dto)
+    public async Task<ActionResult<Guid>> CreateTrack([FromForm] CreateTrackDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -34,7 +34,7 @@ public class AdminCatalogController : ControllerBase
     [HttpPost("albums")]
     [ProducesResponseType(typeof(Guid), 201)]
     [ProducesResponseType(400)]
-    public async Task<ActionResult<Guid>> CreateAlbum([FromBody] CreateAlbumDto dto)
+    public async Task<ActionResult<Guid>> CreateAlbum([FromForm] CreateAlbumDto dto)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
