@@ -8,9 +8,12 @@ public class Artist : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; }
+    public string Name { get; set; } = string.Empty;
     public string? Bio { get; set; }
+    public string? AvatarUrl { get; set; }
     public bool Verified { get; set; } = false;
-//нафігаційні 'властивості 
+//нафігаційні 'властивості
     public virtual User User { get; set; } = null!;
     public virtual ICollection<Album> Albums { get; set; } = new List<Album>();
+    public virtual ICollection<Track> Tracks { get; set; } = new List<Track>();
 }
