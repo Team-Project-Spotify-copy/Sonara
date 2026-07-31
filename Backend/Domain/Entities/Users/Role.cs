@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace Application.Entities.Users;
+namespace Domain.Entities.Users;
 
-public class Role
+public class Role : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Name { get; set; } = string.Empty; // "User", "Artist", "Admin"

@@ -1,9 +1,9 @@
 using System;
-using Application.Entities.Users;
+using Domain.Entities.Users;
 
-namespace Application.Entities.Social;
+namespace Domain.Entities.Social;
 
-public class Follower
+public class Follower : BaseEntity
 {
     public Guid FollowerId { get; set; }
     public Guid FollowedId { get; set; }

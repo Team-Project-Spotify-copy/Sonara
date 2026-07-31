@@ -1,8 +1,8 @@
 using System;
 
-namespace Application.Entities.Podcasts;
+namespace Domain.Entities.Podcasts;
 
-public class PodcastEpisode
+public class PodcastEpisode : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid PodcastId { get; set; }

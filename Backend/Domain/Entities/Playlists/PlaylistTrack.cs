@@ -1,9 +1,9 @@
 using System;
-using Application.Entities.Music;
+using Domain.Entities.Music;
 
-namespace Application.Entities.Playlists;
+namespace Domain.Entities.Playlists;
 
-public class PlaylistTrack
+public class PlaylistTrack : BaseEntity
 {
     public Guid PlaylistId { get; set; }
     public Guid TrackId { get; set; }

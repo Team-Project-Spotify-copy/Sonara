@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Application.Entities.Music;
-using Application.Entities.Playlists;
-using Application.Entities.Podcasts;
-using Application.Entities.Social;
+using Domain.Entities.Music;
+using Domain.Entities.Playlists;
+using Domain.Entities.Podcasts;
+using Domain.Entities.Social;
 
-namespace Application.Entities.Users;
+namespace Domain.Entities.Users;
 
-public class User
+public class User : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public string Email { get; set; } = string.Empty;

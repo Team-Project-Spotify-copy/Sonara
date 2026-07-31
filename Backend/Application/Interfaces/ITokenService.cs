@@ -1,6 +1,6 @@
-using Application.Entities.Users;
+using Domain.Entities.Users;
 
-namespace Application.Interfaces.Services;
+namespace Application.Interfaces;
 
 public interface ITokenService
 {

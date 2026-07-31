@@ -1,9 +1,9 @@
 using System;
-using Application.Entities.Users;
+using Domain.Entities.Users;
 
-namespace Application.Entities.Music;
+namespace Domain.Entities.Music;
 
-public class ListeningHistory
+public class ListeningHistory : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid UserId { get; set; }

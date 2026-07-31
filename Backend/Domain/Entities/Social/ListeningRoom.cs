@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Application.Entities.Users;
-using Application.Entities.Music;
+using Domain.Entities.Users;
+using Domain.Entities.Music;
 
-namespace Application.Entities.Social;
+namespace Domain.Entities.Social;
 
-public class ListeningRoom
+public class ListeningRoom : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid HostId { get; set; }

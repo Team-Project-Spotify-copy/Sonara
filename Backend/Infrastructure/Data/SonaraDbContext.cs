@@ -1,8 +1,8 @@
-﻿using Application.Entities.Music;
-using Application.Entities.Playlists;
-using Application.Entities.Podcasts;
-using Application.Entities.Social;
-using Application.Entities.Users;
+﻿using Domain.Entities.Music;
+using Domain.Entities.Playlists;
+using Domain.Entities.Podcasts;
+using Domain.Entities.Social;
+using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
 public class SonaraDbContext : DbContext
