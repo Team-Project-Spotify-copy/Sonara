@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Domain.Entities.Playlists;
+using Domain.Entities.Users;
 
 namespace Domain.Entities.Music;
 
@@ -8,6 +9,7 @@ public class Track : BaseEntity
 {
     public Guid Id { get; set; } = Guid.NewGuid();
     public Guid? AlbumId { get; set; }
+    public Guid ArtistId { get; set; }
     public string Title { get; set; } = string.Empty;
     public int DurationMs { get; set; }
     public string AudioUrl { get; set; } = string.Empty;
@@ -16,6 +18,7 @@ public class Track : BaseEntity
 
     //Навігаційні властивості
     public virtual Album? Album { get; set; }
+    public virtual Artist Artist { get; set; } = null!;
     public virtual ICollection<TrackGenre> TrackGenres { get; set; } = new List<TrackGenre>();
     public virtual ICollection<PlaylistTrack> PlaylistTracks { get; set; } = new List<PlaylistTrack>();
     public virtual ICollection<LikedTrack> LikedByUsers { get; set; } = new List<LikedTrack>();

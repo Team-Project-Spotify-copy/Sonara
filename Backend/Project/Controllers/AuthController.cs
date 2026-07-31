@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Application.Interfaces;
 
 namespace Backend.Project.Controllers;
@@ -20,7 +21,9 @@ public class AuthController : ControllerBase
 [HttpPost("login")]
 public IActionResult Login(/* LoginDto loginDto */)
 {
-    var user = _context.Users.FirstOrDefault();
+    var user = _context.Users
+        .Include(u => u.Role)
+        .FirstOrDefault();
 
     if (user == null)
     {

@@ -36,6 +36,8 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IMusicCatalogService, MusicCatalogService>();
+builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
 
 builder.Services.AddAuthentication(options =>
 {

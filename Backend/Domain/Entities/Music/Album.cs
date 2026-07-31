@@ -12,6 +12,7 @@ public class Album : BaseEntity
     public DateTime? ReleaseDate { get; set; }
     public string? CoverUrl { get; set; }
     public string? Type { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     //Навігаційні властивості
     public virtual Artist Artist { get; set; } = null!;
