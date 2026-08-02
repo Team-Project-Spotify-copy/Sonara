@@ -33,7 +33,7 @@ public class MusicCatalogService : IMusicCatalogService
         }
 
         var count = await query.CountAsync();
-
+        
         var tracks = await query
             .OrderByDescending(t => t.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
@@ -61,7 +61,7 @@ public class MusicCatalogService : IMusicCatalogService
             .Include(a => a.Artist)
             .Include(a => a.Tracks)
             .AsNoTracking()
-            .FirstOrDefaultAsync(a => a.Id == id)
+            .FirstOrDefaultAsync(a => a.Id == id) 
             ?? throw new NotFoundException(nameof(Album), id);
 
         return new AlbumDto
