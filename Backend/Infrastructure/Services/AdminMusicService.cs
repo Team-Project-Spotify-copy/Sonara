@@ -6,8 +6,6 @@ using Domain.Entities.Music;
 using Infrastructure.Data;
 using Application.Enums;
 using Application.Interfaces;
-using Application.Interfaces.Services;
-using Domain.Entities.Music;
 
 public class AdminMusicService : IAdminMusicService
 {
