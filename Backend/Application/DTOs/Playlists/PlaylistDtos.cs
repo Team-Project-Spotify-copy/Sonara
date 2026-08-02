@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Application.DTOs.Playlists;
 
 public record PlaylistDto(
@@ -21,10 +23,10 @@ public record CreatePlaylistRequest(
     string Name,
     string? Description,
     bool IsPrivate,
-    string? CoverUrl);
+    IFormFile? CoverImage);
 
 public record UpdatePlaylistRequest(
     string Name,
     string? Description,
     bool IsPrivate,
-    string? CoverUrl);
+    IFormFile? CoverImage);

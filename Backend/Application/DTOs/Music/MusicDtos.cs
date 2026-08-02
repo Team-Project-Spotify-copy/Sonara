@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Application.DTOs.Music;
 
 public class TrackDto
@@ -45,7 +47,7 @@ public class CreateTrackDto
 {
     public string Title { get; set; } = string.Empty;
     public double DurationSeconds { get; set; }
-    public string AudioUrl { get; set; } = string.Empty;
+    public IFormFile AudioFile { get; set; } = null!;
     public Guid ArtistId { get; set; }
     public Guid? AlbumId { get; set; }
     public List<Guid> GenreIds { get; set; } = new();
@@ -54,7 +56,7 @@ public class CreateTrackDto
 public class CreateAlbumDto
 {
     public string Title { get; set; } = string.Empty;
-    public string CoverUrl { get; set; } = string.Empty;
+    public IFormFile CoverImage { get; set; } = null!;
     public DateTime ReleaseDate { get; set; }
     public Guid ArtistId { get; set; }
 }
