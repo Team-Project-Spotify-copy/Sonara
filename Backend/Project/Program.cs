@@ -1,7 +1,6 @@
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using BusinessLogic.Configurations;
-using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +10,7 @@ using Serilog;
 using System.Text;
 using WebApp;
 using WebApp.Services;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +25,9 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<SonaraDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddSingleton(x =>
+    new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage")));
+
 builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 
 builder.Services.AddControllers();
@@ -36,8 +39,8 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IMusicCatalogService, MusicCatalogService>();
-builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
+builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+builder.Services.AddScoped<IBlobService, BlobService>();
 
 builder.Services.AddAuthentication(options =>
 {

@@ -1,19 +1,24 @@
 using Application.DTOs.Playlists;
+using Application.Enums;
+using Application.Exceptions;
+using Application.Interfaces;
+using Application.Interfaces.Services;
+using Azure.Core;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;
-using Application.Exceptions;
-using Application.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 
 namespace Infrastructure.Services;
 
 public class PlaylistService : IPlaylistService
 {
     private readonly SonaraDbContext _db;
-
-    public PlaylistService(SonaraDbContext db)
+    private readonly IBlobService _blobService;
+    public PlaylistService(SonaraDbContext db, IBlobService blobService)
     {
         _db = db;
+        _blobService = blobService;
     }
 
     public async Task<IReadOnlyList<PlaylistDto>> GetMyPlaylistsAsync(Guid currentUserId, CancellationToken ct = default)
@@ -35,13 +40,20 @@ public class PlaylistService : IPlaylistService
 
     public async Task<PlaylistDto> CreateAsync(Guid ownerId, CreatePlaylistRequest request, CancellationToken ct = default)
     {
+        if (request.CoverImage == null || request.CoverImage.Length == 0)
+        {
+            throw new ArgumentException("File not found");
+        }
+
+        string coverUrl = await _blobService.UploadFileAsync(request.CoverImage, BlobFolder.PlaylistsCovers);
+
         var playlist = new Playlist
         {
             UserId = ownerId,
             Name = request.Name,
             Description = request.Description,
             IsPrivate = request.IsPrivate,
-            CoverUrl = request.CoverUrl,
+            CoverUrl = coverUrl,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -58,7 +70,15 @@ public class PlaylistService : IPlaylistService
         playlist.Name = request.Name;
         playlist.Description = request.Description;
         playlist.IsPrivate = request.IsPrivate;
-        playlist.CoverUrl = request.CoverUrl;
+
+        if (request.CoverImage != null && request.CoverImage.Length > 0)
+        {
+            playlist.CoverUrl = await _blobService.ReplaceFileAsync(
+                request.CoverImage,
+                playlist.CoverUrl,
+                BlobFolder.PlaylistsCovers
+            );
+        }
 
         await _db.SaveChangesAsync(ct);
         return ToDto(playlist);
@@ -68,6 +88,11 @@ public class PlaylistService : IPlaylistService
     {
         var playlist = await FindOrThrowAsync(playlistId, ct);
         EnsureIsOwner(playlist, ownerId);
+
+        if (!string.IsNullOrWhiteSpace(playlist.CoverUrl))
+        {
+            await _blobService.DeleteFileAsync(playlist.CoverUrl, BlobFolder.PlaylistsCovers);
+        }
 
         _db.Playlists.Remove(playlist);
         await _db.SaveChangesAsync(ct);
