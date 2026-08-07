@@ -49,9 +49,11 @@ function Register() {
     try {
       const api = import.meta.env.VITE_API;
 
+      var username = email.split("@")[0];
+
       const response = await axios.post(`${api}/auth/register`, {
         email,
-        username: email,
+        username,
         password,
         token,
       });
