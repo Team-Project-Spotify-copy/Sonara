@@ -4,7 +4,7 @@ using Application.Interfaces;
 
 namespace Application.Commands.Auth;
 
-public record LoginCommand(string Email, string Password) : IRequest<AuthResultDto>;
+public record LoginCommand(string Email, string Password, string token) : IRequest<AuthResultDto>;
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResultDto>
 {

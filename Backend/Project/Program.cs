@@ -2,7 +2,6 @@ using Application.Commands.Auth;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using BusinessLogic.Configurations;
-using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
@@ -39,6 +38,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IRecaptchaServices, RecaptchaServices>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();

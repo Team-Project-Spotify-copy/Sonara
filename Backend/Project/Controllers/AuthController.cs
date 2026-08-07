@@ -11,12 +11,21 @@ namespace Backend.Project.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IRecaptchaServices _recaptchaServices;
 
-    public AuthController(IMediator mediator) => _mediator = mediator;
+    public AuthController(IMediator mediator, IRecaptchaServices recaptchaServices) {
+        _mediator = mediator; 
+        _recaptchaServices = recaptchaServices;
+    }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterCommand command, CancellationToken cancellationToken)
     {
+        bool isHuman = await _recaptchaServices.VerifyTokenAsync(command.token, "register_submit");
+
+        if (!isHuman)
+            return BadRequest("Invalid reCAPTCHA token.");
+
         var userId = await _mediator.Send(command, cancellationToken);
         return Ok(new { UserId = userId });
     }
@@ -24,6 +33,11 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginCommand command, CancellationToken cancellationToken)
     {
+        bool isHuman = await _recaptchaServices.VerifyTokenAsync(command.token, "login_submit");
+
+        if (!isHuman)
+            return BadRequest("Invalid reCAPTCHA token.");
+
         var result = await _mediator.Send(command, cancellationToken);
         SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
         return Ok(new { AccessToken = result.AccessToken });
