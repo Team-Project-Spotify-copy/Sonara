@@ -4,7 +4,7 @@ using Application.Interfaces;
 
 namespace Application.Commands.Auth;
 
-public record RegisterCommand(string Email, string Username, string Password) : IRequest<Guid>;
+public record RegisterCommand(string Email, string Username, string Password, string token) : IRequest<Guid>;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
 {
