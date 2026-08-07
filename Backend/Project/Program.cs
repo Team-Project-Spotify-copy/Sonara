@@ -46,6 +46,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMusicCatalogService, MusicCatalogService>();
 builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IProfileServices, ProfileServices>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
 
