@@ -12,7 +12,8 @@ public class Artist : BaseEntity
     public string? Bio { get; set; }
     public string? AvatarUrl { get; set; }
     public bool Verified { get; set; } = false;
-//нафігаційні 'властивості
+    //навігаційні властивості
+
     public virtual User User { get; set; } = null!;
     public virtual ICollection<Album> Albums { get; set; } = new List<Album>();
     public virtual ICollection<Track> Tracks { get; set; } = new List<Track>();

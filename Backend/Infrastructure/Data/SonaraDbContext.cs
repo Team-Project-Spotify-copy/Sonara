@@ -3,6 +3,7 @@ using Domain.Entities.Playlists;
 using Domain.Entities.Podcasts;
 using Domain.Entities.Social;
 using Domain.Entities.Users;
+using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 public class SonaraDbContext : DbContext
@@ -26,7 +27,7 @@ public class SonaraDbContext : DbContext
             entity.HasOne(f => f.FollowedUser)
                   .WithMany(u => u.Followers)
                   .HasForeignKey(f => f.FollowedId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                  .OnDelete(DeleteBehavior.Restrict);
         });
 
         // 2. Конфігурація для зв'язку Треків та Жанрів
@@ -92,6 +93,8 @@ public class SonaraDbContext : DbContext
                   .HasForeignKey(rm => rm.UserId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
+
+        SeedDataExtension.Seed(modelBuilder);
     }
 
     // Music entities
