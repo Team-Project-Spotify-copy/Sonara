@@ -1,0 +1,189 @@
+/*
+  Панель «Up next». Окремого вузла в макеті немає, тому геометрія зібрана з
+  наявних примітивів: картка #1b1b1b r=8 (як Frame 70), обкладинка 93x93 r=8
+  (Rectangle 87), підписи 20/16px — рівно ті самі, що в нижній смузі плеєра.
+  Ширина 616 збігається з панеллю тексту, висота — від низу шапки (99) до
+  верху смуги плеєра (134).
+*/
+
+.queue {
+  position: fixed;
+  top: 99px;
+  right: 100px;
+  bottom: 134px;
+  z-index: 43;
+  display: flex;
+  flex-direction: column;
+  width: 616px;
+  box-sizing: border-box;
+  padding: 32px;
+  border-radius: 8px;
+  background-color: rgba(27, 27, 27, 0.96);
+  backdrop-filter: blur(24px);
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+.queue-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.queue-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.queue-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 53px;
+  background-color: #504f4f;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.queue-close svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.queue-empty {
+  margin: 0;
+  font-size: 16px;
+  color: #b0b0b0;
+}
+
+.queue-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px;
+  border-radius: 8px;
+  border-top: 2px solid transparent;
+}
+
+.queue-item:hover {
+  background-color: rgba(80, 79, 79, 0.35);
+}
+
+.queue-item--current {
+  background-color: rgba(80, 79, 79, 0.55);
+}
+
+.queue-item--dragging {
+  opacity: 0.4;
+}
+
+/* Куди саме впаде рядок — показуємо лінією зверху, а не зсувом решти списку. */
+.queue-item--dropzone {
+  border-top-color: #d9d9d9;
+}
+
+.queue-handle {
+  display: flex;
+  align-items: center;
+  color: #b0b0b0;
+  cursor: grab;
+}
+
+.queue-handle svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.queue-play {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.queue-cover {
+  flex-shrink: 0;
+  width: 93px;
+  height: 93px;
+  border-radius: 8px;
+  background-color: #504f4f;
+  background-size: cover;
+  background-position: center;
+}
+
+.queue-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.queue-name {
+  font-size: 20px;
+  font-weight: 500;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queue-artist {
+  font-size: 16px;
+  color: #b0b0b0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.queue-duration {
+  font-size: 16px;
+  color: #b0b0b0;
+  white-space: nowrap;
+}
+
+.queue-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 53px;
+  background-color: transparent;
+  color: #b0b0b0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.queue-remove:hover {
+  background-color: #504f4f;
+  color: #ffffff;
+}
+
+.queue-remove svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}

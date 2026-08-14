@@ -3,4 +3,5 @@
   <Project Path="Domain/Domain.csproj" Id="afada747-f3bd-4b9f-b8e9-5f0c728d3dd1" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="Project/WebApp.csproj" />
+  <Project Path="Tests/Sonara.Tests.csproj" />
 </Solution>

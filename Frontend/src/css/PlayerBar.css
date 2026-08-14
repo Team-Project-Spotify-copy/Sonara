@@ -1,0 +1,410 @@
+/*
+  Глобальна панель плеєра.
+  Геометрія і кольори — з макета Figma (Song, вузли 324:927 / 324:942 / 324:995),
+  полотно 1920x1080, як і на решті сторінок проєкту (див. Login.css).
+
+  Стани:
+    .player--normal     смуга 1920x134 внизу (Group 69, 324:971);
+    .player--fullscreen immersive-фон + обкладинка 512 (324:927);
+    .player--lyrics     те саме + панель тексту 616x614 (324:1036).
+*/
+
+.player {
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* ── Immersive-підкладка (стани fullscreen / lyrics) ────────────── */
+
+.player-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background-color: #121212;
+}
+
+/* Rectangle 49 / 50: картка героя 1720x847 у координатах макета (100, 99). */
+.player-stage-surface {
+  position: absolute;
+  top: 99px;
+  left: 100px;
+  width: 1720px;
+  height: 847px;
+  border-radius: 8px;
+  background-color: #1b1b1b;
+  overflow: hidden;
+}
+
+/* Group 12: набір еліпсів, розміщений точно як у макеті (183,123 у координатах сторінки). */
+.player-stage-ambient {
+  position: absolute;
+  top: 24px;
+  left: 83px;
+  width: 1560.372px;
+  height: 823.656px;
+  display: block;
+  /* У макеті еліпси різкі, а м'яке світіння дає розмиття поверх них. */
+  filter: blur(90px);
+}
+
+.player-stage-blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(40px);
+}
+
+/*
+  Rectangle 50 (324:951) — зерниста плівка поверх ambient-еліпсів.
+  У макеті це майже прозорий прямокутник rgba(27,27,27,0.01) із накладеним шумом,
+  тому текстура йде в screen-режимі з низькою непрозорістю: вона додає зерно,
+  але не змінює колір підкладки.
+
+  Плитка 200x200 — це виріз із експорту 324:951, попередньо зменшеного 4x (3440 -> 860),
+  тобто рівно в тому масштабі, у якому браузер растеризував повний файл при
+  background-size: 860px 424px. Тому тут розмір 1:1 (200px): зерно лишається того
+  самого візуального калібру. Шум білий (автокореляція ~0), структури, яка могла б
+  розірватися на межі, немає — виріз стикується безшовно без обробки країв.
+*/
+.player-stage-grain {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  mix-blend-mode: screen;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ── Immersive-контент ─────────────────────────────────────────── */
+
+.player-immersive {
+  position: fixed;
+  inset: 0;
+  z-index: 41;
+  pointer-events: none;
+}
+
+.player-immersive > * {
+  pointer-events: auto;
+}
+
+/* Rectangle 70 (324:938): 512x512, r=20, центр полотна зі зсувом -16px. */
+.player-artwork {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 512px;
+  height: 512px;
+  margin: -16px 0 0;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  background-color: #504f4f;
+  background-size: cover;
+  background-position: center;
+}
+
+/* У стані lyrics обкладинка зсувається вліво, звільняючи місце під панель тексту. */
+.player--lyrics .player-artwork {
+  left: calc(50% - 340px);
+}
+
+/* Frame 26 (324:939): підпис у нижньому лівому куті, 32px / 24px. */
+.player-immersive-meta {
+  position: absolute;
+  top: 982px;
+  left: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-immersive-title {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.player-immersive-artist {
+  margin: 0;
+  font-size: 24px;
+  color: #b0b0b0;
+}
+
+/* ── Панель тексту (стан lyrics, Group 67 / 324:1036) ───────────── */
+
+.player-lyrics {
+  position: absolute;
+  top: 172px;
+  left: calc(50% + 40px);
+  width: 616px;
+  height: 614px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Rectangle 87: підкладка з opacity 50%. */
+.player-lyrics-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background-color: #1b1b1b;
+  opacity: 0.5;
+}
+
+/* Frame 65: 552x582 із відступом 32. */
+.player-lyrics-body {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  width: 552px;
+  height: 582px;
+  padding: 10px 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.player-lyrics-head {
+  margin: 0 0 24px;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.24;
+  color: #ffffff;
+}
+
+.player-lyrics-text {
+  margin: 0;
+  font-size: 36px;
+  line-height: 1.24;
+  color: #b0b0b0;
+  white-space: pre-wrap;
+}
+
+/* Rectangle 88: градієнт від #1b1b1b знизу, h=349 при відступі 265 зверху. */
+.player-lyrics-fade {
+  position: absolute;
+  top: 265px;
+  left: 0;
+  width: 616px;
+  height: 349px;
+  border-radius: 8px;
+  background: linear-gradient(to top, #1b1b1b 0%, rgba(27, 27, 27, 0) 100%);
+  pointer-events: none;
+}
+
+/* ── Нижня смуга (Group 69, 324:971) ───────────────────────────── */
+
+.player-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 42;
+  width: 1920px;
+  height: 134px;
+  background-color: #121212;
+}
+
+/* Поверх immersive-фону смуга лишається читабельною без власного тла. */
+.player--fullscreen .player-bar,
+.player--lyrics .player-bar {
+  background-color: rgba(18, 18, 18, 0.72);
+  backdrop-filter: blur(24px);
+}
+
+.player-error {
+  position: absolute;
+  top: 8px;
+  left: 116px;
+  margin: 0;
+  font-size: 14px;
+  color: #b0b0b0;
+}
+
+/* Rectangle 87 (324:990) + Frame 25 (324:991). */
+.player-bar-left {
+  position: absolute;
+  top: 22px;
+  left: 116px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.player-cover {
+  position: relative;
+  width: 93px;
+  height: 93px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #504f4f;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+}
+
+.player-cover-hint {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: rgba(18, 18, 18, 0.55);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.player-cover:hover .player-cover-hint,
+.player-cover:focus-visible .player-cover-hint {
+  opacity: 1;
+}
+
+.player-cover-hint svg {
+  width: 28px;
+  height: 28px;
+  fill: #ffffff;
+}
+
+.player-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 240px;
+}
+
+.player-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-artist {
+  margin: 0;
+  font-size: 16px;
+  color: #b0b0b0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Frame 29 (324:973): 652 завширшки, від x=634. */
+.player-center {
+  position: absolute;
+  top: 29px;
+  left: 634px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 652px;
+}
+
+.player-transport {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Frame 27 (324:978): час — доріжка 564x4 — час. */
+.player-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.player-time {
+  margin: 0;
+  width: 32px;
+  font-size: 16px;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.player-progress-track {
+  position: relative;
+  width: 564px;
+  height: 4px;
+  padding: 0;
+  border: none;
+  border-radius: 43px;
+  background-color: #504f4f;
+  cursor: pointer;
+}
+
+.player-progress-track:disabled {
+  cursor: default;
+}
+
+.player-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  border-radius: 43px;
+  background-color: #d9d9d9;
+}
+
+/* Frame 32 (324:984): п'ять кнопок по 60px із кроком 76. */
+.player-actions {
+  position: absolute;
+  top: 39px;
+  left: 1424px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Кнопки ────────────────────────────────────────────────────── */
+
+.player-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 53px;
+  background-color: #1b1b1b;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.player-btn--sm {
+  width: 44px;
+  height: 44px;
+}
+
+.player-btn--lg {
+  width: 60px;
+  height: 60px;
+}
+
+.player-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.player-btn--lg svg {
+  width: 24px;
+  height: 24px;
+}
+
+.player-btn:hover:not(:disabled) {
+  background-color: #504f4f;
+}
+
+.player-btn--active {
+  background-color: #504f4f;
+}
+
+.player-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

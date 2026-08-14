@@ -94,6 +94,38 @@ public class SonaraDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
+        // 6. Індекси під фактичні шляхи запитів каталогу, пошуку, бібліотеки та історії.
+        //    Іменовані явно, щоб їх було видно у планах запитів.
+        modelBuilder.Entity<Track>(entity =>
+        {
+            entity.HasIndex(t => t.Title).HasDatabaseName("IX_Tracks_Title");
+            entity.HasIndex(t => t.PlaysCount).HasDatabaseName("IX_Tracks_PlaysCount");
+            entity.HasIndex(t => t.CreatedAt).HasDatabaseName("IX_Tracks_CreatedAt");
+        });
+
+        modelBuilder.Entity<Album>(entity =>
+            entity.HasIndex(a => a.Title).HasDatabaseName("IX_Albums_Title"));
+
+        modelBuilder.Entity<Artist>(entity =>
+            entity.HasIndex(a => a.Name).HasDatabaseName("IX_Artists_Name"));
+
+        modelBuilder.Entity<Playlist>(entity =>
+        {
+            entity.HasIndex(p => p.Name).HasDatabaseName("IX_Playlists_Name");
+            entity.HasIndex(p => new { p.UserId, p.CreatedAt }).HasDatabaseName("IX_Playlists_UserId_CreatedAt");
+        });
+
+        // Сторінка треків плейліста читається у порядку додавання.
+        modelBuilder.Entity<PlaylistTrack>(entity =>
+            entity.HasIndex(pt => new { pt.PlaylistId, pt.AddedAt }).HasDatabaseName("IX_PlaylistTracks_PlaylistId_AddedAt"));
+
+        // "Вподобані треки" та історія читаються як стрічка користувача, найновіші спочатку.
+        modelBuilder.Entity<LikedTrack>(entity =>
+            entity.HasIndex(l => new { l.UserId, l.LikedAt }).HasDatabaseName("IX_LikedTracks_UserId_LikedAt"));
+
+        modelBuilder.Entity<ListeningHistory>(entity =>
+            entity.HasIndex(h => new { h.UserId, h.ListenedAt }).HasDatabaseName("IX_ListeningHistories_UserId_ListenedAt"));
+
         SeedDataExtension.Seed(modelBuilder);
     }
 

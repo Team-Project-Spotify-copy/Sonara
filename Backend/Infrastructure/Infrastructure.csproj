@@ -34,4 +34,10 @@
     <ProjectReference Include="..\Application\Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Внутрішні хелпери (напр. TrackStreamService.ResolveContentType) перевіряються
+         напряму, щоб не розширювати публічну поверхню збірки заради тестів. -->
+    <InternalsVisibleTo Include="Sonara.Tests" />
+  </ItemGroup>
+
 </Project>

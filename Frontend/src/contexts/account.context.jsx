@@ -1,16 +1,5 @@
-import React, { createContext, useState, useEffect } from "react";
-
-export const AccountContext = createContext({
-  userId: null,
-  setUserId: () => {},
-  email: null,
-  setEmail: () => {},
-  accessToken: null,
-  setAccessToken: () => {},
-  clear: () => {},
-  isAuth: () => null,
-  getEmail: () => null,
-});
+import React, { useState, useEffect } from "react";
+import { AccountContext } from "./account.store";
 
 export const AccountProvider = ({ children }) => {
   const [userId, setUserId] = useState(() => {

@@ -8,10 +8,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 using Serilog;
+using System.Diagnostics;
 using System.Text;
+using System.Text.Json.Serialization;
 using WebApp;
+using WebApp.Contracts;
+using WebApp.OpenApi;
 using WebApp.Services;
 using Azure.Storage.Blobs;
 
@@ -33,9 +38,43 @@ builder.Services.AddSingleton(x =>
 
 builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
 
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Перелічення у контрактах API віддаються рядками ("Recorded", "SignedUrl"),
+        // щоб фронтенд не залежав від числових значень.
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+// Помилки валідації моделі мають той самий формат, що й помилки з ExceptionHandlingMiddleware.
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(entry => entry.Value?.Errors.Count > 0)
+            .ToDictionary(
+                entry => entry.Key,
+                entry => entry.Value!.Errors.Select(e => e.ErrorMessage).ToArray());
+
+        return new BadRequestObjectResult(new ApiErrorResponse
+        {
+            StatusCode = StatusCodes.Status400BadRequest,
+            Code = "validation_failed",
+            Message = "One or more validation errors occurred.",
+            Errors = errors,
+            TraceId = Activity.Current?.Id ?? context.HttpContext.TraceIdentifier
+        });
+    };
+});
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+    options.AddSchemaTransformer<StringEnumSchemaTransformer>();
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IRecaptchaServices, RecaptchaServices>();
@@ -44,6 +83,7 @@ builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IMusicCatalogService, MusicCatalogService>();
+builder.Services.AddScoped<ITrackStreamService, TrackStreamService>();
 builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IProfileServices, ProfileServices>();

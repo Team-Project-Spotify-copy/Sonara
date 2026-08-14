@@ -1,0 +1,34 @@
+/*
+  Оболонка застосунку. Полотно макета — 1920x1080, як і на решті сторінок.
+  Плеєр рендериться сестрою до контенту, тому контент лише резервує під нього
+  місце знизу, а не вкладає його в себе.
+*/
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+  background-color: #121212;
+}
+
+.app-content {
+  display: block;
+}
+
+/* Нижня смуга плеєра — 134px (Rectangle 92, 324:972). */
+.app-shell--with-player .app-content {
+  padding-bottom: 134px;
+}
+
+/*
+  У станах fullscreen / lyrics плеєр перекриває сторінку цілком.
+  Контент лишається в DOM (маршрут не розмонтовано), але ховається від
+  скрінрідерів і не перехоплює прокрутку.
+*/
+.app-shell--immersive .app-content {
+  visibility: hidden;
+}
+
+.app-shell--immersive {
+  overflow: hidden;
+  height: 100vh;
+}
