@@ -62,4 +62,20 @@ public class CatalogController : ControllerBase
         var result = await _catalogService.SearchAsync(q, limit);
         return Ok(result);
     }
+
+    [HttpGet("tracks/popular")]
+    [ProducesResponseType(typeof(List<TrackDto>), 200)]
+    public async Task<ActionResult<List<TrackDto>>> GetPopularTracks([FromQuery] int count = 20)
+    {
+        var result = await _catalogService.GetPopularTracksAsync(Math.Clamp(count, 1, MaxPageSize));
+        return Ok(result);
+    }
+
+    [HttpGet("albums/popular")]
+    [ProducesResponseType(typeof(List<AlbumDto>), 200)]
+    public async Task<ActionResult<List<AlbumDto>>> GetPopularAlbums([FromQuery] int count = 20)
+    {
+        var result = await _catalogService.GetPopularAlbumsAsync(Math.Clamp(count, 1, MaxPageSize));
+        return Ok(result);
+    }
 }
