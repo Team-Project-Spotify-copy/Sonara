@@ -1,11 +1,14 @@
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/tracks")]
+[Authorize]
+
 public class TracksController : ControllerBase
 {
     private readonly ITrackInteractionService _trackInteractionService;
@@ -44,6 +47,6 @@ public class TracksController : ControllerBase
     private Guid RequireUserId()
     {
         return _currentUser.UserId
-            ?? throw new UnauthorizedAccessException("Не вказано X-User-Id (тимчасова заглушка автентифікації).");
+        ?? throw new UnauthorizedAccessException("Не вдалось визначити користувача з токена.");
     }
 }

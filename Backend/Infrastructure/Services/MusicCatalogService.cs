@@ -158,4 +158,48 @@ public class MusicCatalogService : IMusicCatalogService
             Artists = artists
         };
     }
+
+    public async Task<List<TrackDto>> GetPopularTracksAsync(int count = 20)
+    {
+        return await _context.Tracks
+            .Include(t => t.Artist)
+            .Include(t => t.Album)
+            .Include(t => t.TrackGenres).ThenInclude(tg => tg.Genre)
+            .AsNoTracking()
+            .OrderByDescending(t => t.PlaysCount)
+            .Take(count)
+            .Select(t => new TrackDto
+            {
+                Id = t.Id,
+                Title = t.Title,
+                DurationSeconds = t.DurationMs / 1000.0,
+                AudioUrl = t.AudioUrl,
+                ArtistId = t.ArtistId,
+                ArtistName = t.Artist.Name,
+                AlbumId = t.AlbumId,
+                AlbumTitle = t.Album != null ? t.Album.Title : null,
+                Genres = t.TrackGenres.Select(tg => tg.Genre.Name).ToList()
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<AlbumDto>> GetPopularAlbumsAsync(int count = 20)
+    {
+        // "Популярність" альбому = сума прослуховувань його треків
+        return await _context.Albums
+            .Include(a => a.Artist)
+            .AsNoTracking()
+            .OrderByDescending(a => a.Tracks.Sum(t => (long)t.PlaysCount))
+            .Take(count)
+            .Select(a => new AlbumDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                CoverUrl = a.CoverUrl ?? string.Empty,
+                ReleaseDate = a.ReleaseDate,
+                ArtistId = a.ArtistId,
+                ArtistName = a.Artist.Name
+            })
+            .ToListAsync();
+    }
 }

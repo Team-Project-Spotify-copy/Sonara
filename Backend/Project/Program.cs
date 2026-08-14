@@ -43,7 +43,14 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IMusicCatalogService, MusicCatalogService>();
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+});
+
+builder.Services.AddScoped<ICacheService, RedisCacheService>();
+builder.Services.AddScoped<MusicCatalogService>();
+builder.Services.AddScoped<IMusicCatalogService, CachedMusicCatalogService>();
 builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IProfileServices, ProfileServices>();
