@@ -14,7 +14,6 @@ namespace Infrastructure.Migrations
     [Migration("20260807111850_InitFirtData")]
     partial class InitFirtData
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

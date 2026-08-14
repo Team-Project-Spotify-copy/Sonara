@@ -9,7 +9,6 @@ public class RoomMember : BaseEntity
     public Guid UserId { get; set; }
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
 
-    //Навігаційні властивості
     public virtual ListeningRoom Room { get; set; } = null!;
     public virtual User User { get; set; } = null!;
 }

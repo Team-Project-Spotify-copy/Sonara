@@ -53,7 +53,6 @@ public class MusicCatalogService : IMusicCatalogService
             _ => tracks.OrderByDescending(t => t.CreatedAt).ThenBy(t => t.Id)
         };
 
-        // Проєкція виконується в БД: жодних N+1 і жодного матеріалізованого графа сутностей.
         return await PaginatedList<TrackDto>.CreateAsync(
             tracks.Select(CatalogProjections.Track(currentUserId)),
             page,
@@ -119,7 +118,6 @@ public class MusicCatalogService : IMusicCatalogService
             .Select(CatalogProjections.Track(currentUserId))
             .ToListAsync(ct);
 
-        // Порядок відповіді має збігатися з порядком, у якому фронтенд тримає чергу.
         var byId = found.ToDictionary(t => t.Id);
         return ids
             .Where(byId.ContainsKey)
@@ -204,14 +202,11 @@ public class MusicCatalogService : IMusicCatalogService
             Limit = effectiveLimit
         };
 
-        // Порожній або надто короткий запит - не помилка: повертаємо порожній, але валідний результат.
         if (normalized.Length < MinSearchQueryLength)
         {
             return response;
         }
 
-        // Пошук завжди регістронезалежний: lower() + Contains перекладається провайдером у SQL
-        // і не залежить від колації бази. Запити виконуються послідовно - DbContext не потокобезпечний.
         var term = normalized.ToLower();
 
         var trackMatches = _context.Tracks.AsNoTracking()
@@ -256,7 +251,6 @@ public class MusicCatalogService : IMusicCatalogService
             .Select(AlbumSummaryProjection())
             .ToListAsync(ct);
 
-        // Приватні плейлісти ніколи не потрапляють у пошук, навіть для власника.
         var playlistMatches = _context.Playlists.AsNoTracking()
             .Where(p => !p.IsPrivate && p.Name.ToLower().Contains(term));
 
@@ -281,11 +275,6 @@ public class MusicCatalogService : IMusicCatalogService
         return response;
     }
 
-    /// <summary>
-    /// Популярні треки для стрічки головної (гілка main). Проєкція — спільна
-    /// CatalogProjections.Track: вона не віддає AudioUrl і правильно заповнює
-    /// IsLiked/HasStream, на відміну від початкового варіанта з main.
-    /// </summary>
     public async Task<IReadOnlyList<TrackDto>> GetPopularTracksAsync(
         int count,
         Guid? currentUserId,
@@ -300,7 +289,6 @@ public class MusicCatalogService : IMusicCatalogService
             .ToListAsync(ct);
     }
 
-    /// <summary>"Популярність" альбому = сума прослуховувань його треків (гілка main).</summary>
     public async Task<IReadOnlyList<AlbumSummaryDto>> GetPopularAlbumsAsync(
         int count,
         CancellationToken ct = default)

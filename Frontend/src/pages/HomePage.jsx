@@ -23,7 +23,6 @@ export default function HomePage() {
     status: libraryStatus,
     error: libraryError,
   } = useLibrary();
-  // Плеєр глобальний (RootLayout), тому сторінка лише ставить чергу.
   const { setQueueAndPlay } = usePlayer();
 
   const searching = query.trim().length >= MIN_QUERY_LENGTH;

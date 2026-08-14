@@ -8,10 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers;
 
-/// <summary>
-/// Дії користувача над треком: відтворення, вподобання, історія прослуховувань.
-/// Усі операції прив'язані до користувача з JWT.
-/// </summary>
 [ApiController]
 [Route("api/tracks")]
 [Authorize]
@@ -34,10 +30,6 @@ public class TracksController : ControllerBase
         _currentUser = currentUser;
     }
 
-    /// <summary>
-    /// Повертає готове до відтворення посилання. Медіа віддає сховище, тому перемотування
-    /// (HTTP Range) працює нативно; фізичне розташування файлу назовні не розкривається.
-    /// </summary>
     [HttpGet("{id:guid}/stream")]
     [ProducesResponseType(typeof(TrackStreamDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -48,13 +40,11 @@ public class TracksController : ControllerBase
     {
         var stream = await _trackStreamService.ResolveAsync(id, ct);
 
-        // Підписане посилання персональне й короткоживуче - його не можна кешувати спільно.
         Response.Headers.CacheControl = "private, no-store";
 
         return Ok(stream);
     }
 
-    /// <summary>Треки, які поточний користувач додав до вподобаних (найновіші спочатку).</summary>
     [HttpGet("liked")]
     [ProducesResponseType(typeof(PaginatedList<TrackDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -77,7 +67,6 @@ public class TracksController : ControllerBase
         return Ok(await _trackInteractionService.GetLikeStateAsync(id, userId, ct));
     }
 
-    /// <summary>Ідемпотентно додає трек до вподобаних.</summary>
     [HttpPost("{id:guid}/like")]
     [ProducesResponseType(typeof(TrackLikeStateDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -88,7 +77,6 @@ public class TracksController : ControllerBase
         return Ok(await _trackInteractionService.LikeAsync(id, userId, ct));
     }
 
-    /// <summary>Ідемпотентно прибирає трек із вподобаних.</summary>
     [HttpDelete("{id:guid}/like")]
     [ProducesResponseType(typeof(TrackLikeStateDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -99,10 +87,6 @@ public class TracksController : ControllerBase
         return Ok(await _trackInteractionService.UnlikeAsync(id, userId, ct));
     }
 
-    /// <summary>
-    /// Фіксує ЗАВЕРШЕНЕ прослуховування. Викликати один раз на відтворення, а не на кожен
-    /// тік прогресу: короткі та повторні події повертають 200 зі status != Recorded.
-    /// </summary>
     [HttpPost("{id:guid}/listen")]
     [ProducesResponseType(typeof(ListenRegistrationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

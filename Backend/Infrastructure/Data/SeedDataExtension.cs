@@ -12,7 +12,6 @@ public static class SeedDataExtension
 {
     public static void Seed(ModelBuilder modelBuilder)
     {
-        // Roles (2) 
         var roleUserGuid = Guid.Parse("11111111-1111-1111-1111-111111111111");
         var roleAdminGuid = Guid.Parse("11111111-1111-1111-1111-222222222222");
 
@@ -21,7 +20,6 @@ public static class SeedDataExtension
             new Role { Id = roleAdminGuid, Name = "Admin" }
         );
 
-        // Subscriptions (3)
         var subFreeGuid = Guid.Parse("22222222-2222-2222-2222-111111111111");
         var subPremiumGuid = Guid.Parse("22222222-2222-2222-2222-222222222222");
         var subFamilyGuid = Guid.Parse("22222222-2222-2222-2222-333333333333");
@@ -32,7 +30,6 @@ public static class SeedDataExtension
             new Subscription { Id = subFamilyGuid, Name = "Family", Price = 7.99m, Features = "Up to 6 accounts, Explicit filter, Shared mix" }
         );
 
-        //Users (5)
         var userGuids = new[]
         {
             Guid.Parse("33333333-3333-3333-3333-111111111111"),
@@ -53,17 +50,14 @@ public static class SeedDataExtension
             new User { Id = userGuids[4], Username = "podcast_host", AvatarUrl = "https://sonarastorage.blob.core.windows.net/images/avatars/avatar_5.jpg", Email = "podcaster@example.com", PasswordHash = defaultPasswordHash, RoleId = roleUserGuid, SubscriptionId = subPremiumGuid, CreatedAt = seedDate }
         );
 
-        // RefreshTokens (1)
         modelBuilder.Entity<RefreshToken>().HasData(
             new RefreshToken { Id = Guid.Parse("44444444-4444-4444-4444-111111111111"), UserId = userGuids[0], Token = "sample_refresh_token_1", ExpiresAt = seedDate.AddDays(7), CreatedAt = seedDate }
         );
 
-        // Sessions (1)
         modelBuilder.Entity<Session>().HasData(
             new Session { Id = Guid.Parse("55555555-5555-5555-5555-111111111111"), UserId = userGuids[0], DeviceName = "Windows PC - Chrome", IpAddress = "192.168.1.10", CreatedAt = seedDate, LastActiveAt = seedDate }
         );
 
-        // Artists (5)
         var artistGuids = new[]
         {
             Guid.Parse("66666666-6666-6666-6666-111111111111"),
@@ -81,7 +75,6 @@ public static class SeedDataExtension
             new Artist { Id = artistGuids[4], UserId = userGuids[4], Name = "Acoustic Dreams", Bio = "Chill acoustic guitar vibes.", AvatarUrl = "https://sonarastorage.blob.core.windows.net/images/avatars/avatar_5.jpg", Verified = false }
         );
 
-        // Albums (5)
         var albumGuids = new[]
         {
             Guid.Parse("77777777-7777-7777-7777-111111111111"),
@@ -99,7 +92,6 @@ public static class SeedDataExtension
             new Album { Id = albumGuids[4], ArtistId = artistGuids[4], Title = "Sunset Chill", Type = "EP", ReleaseDate = new DateTime(2024, 6, 12, 0, 0, 0, DateTimeKind.Utc), CoverUrl = "https://sonarastorage.blob.core.windows.net/images/albums/album_5.jpg", CreatedAt = seedDate }
         );
 
-        //. Genres (5)
         var genreGuids = new[]
         {
             Guid.Parse("88888888-8888-8888-8888-111111111111"),
@@ -117,7 +109,6 @@ public static class SeedDataExtension
             new Genre { Id = genreGuids[4], Name = "Acoustic" }
         );
 
-        // Tracks (5)
         var trackGuids = new[]
         {
             Guid.Parse("99999999-9999-9999-9999-111111111111"),
@@ -135,7 +126,6 @@ public static class SeedDataExtension
             new Track { Id = trackGuids[4], AlbumId = albumGuids[4], ArtistId = artistGuids[4], Title = "Warm Breeze", DurationMs = 160000, AudioUrl = "https://sonarastorage.blob.core.windows.net/audio/tracks/tracks_5.mp3", PlaysCount = 6100, CreatedAt = seedDate }
         );
 
-        // TrackGenre (5 - join entity)
         modelBuilder.Entity<TrackGenre>().HasData(
             new TrackGenre { TrackId = trackGuids[0], GenreId = genreGuids[0] },
             new TrackGenre { TrackId = trackGuids[1], GenreId = genreGuids[1] },
@@ -144,7 +134,6 @@ public static class SeedDataExtension
             new TrackGenre { TrackId = trackGuids[4], GenreId = genreGuids[4] }
         );
 
-        // Playlists (5)
         var playlistGuids = new[]
         {
             Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-111111111111"),
@@ -162,7 +151,6 @@ public static class SeedDataExtension
             new Playlist { Id = playlistGuids[4], UserId = userGuids[4], Name = "Acoustic Favorites", Description = "Soft guitar tracks.", IsPrivate = false, CoverUrl = "https://sonarastorage.blob.core.windows.net/images/playlists/playlists_5.jpg", CreatedAt = seedDate }
         );
 
-        // PlaylistTrack (5 - join entity)
         modelBuilder.Entity<PlaylistTrack>().HasData(
             new PlaylistTrack { PlaylistId = playlistGuids[0], TrackId = trackGuids[0], AddedAt = seedDate },
             new PlaylistTrack { PlaylistId = playlistGuids[1], TrackId = trackGuids[1], AddedAt = seedDate },
@@ -171,7 +159,6 @@ public static class SeedDataExtension
             new PlaylistTrack { PlaylistId = playlistGuids[4], TrackId = trackGuids[4], AddedAt = seedDate }
         );
 
-        // LikedTrack (5 - join entity)
         modelBuilder.Entity<LikedTrack>().HasData(
             new LikedTrack { UserId = userGuids[0], TrackId = trackGuids[0], LikedAt = seedDate },
             new LikedTrack { UserId = userGuids[1], TrackId = trackGuids[1], LikedAt = seedDate },
@@ -180,7 +167,6 @@ public static class SeedDataExtension
             new LikedTrack { UserId = userGuids[4], TrackId = trackGuids[4], LikedAt = seedDate }
         );
 
-        // ListeningHistory (5)
         modelBuilder.Entity<ListeningHistory>().HasData(
             new ListeningHistory { Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-111111111111"), UserId = userGuids[0], TrackId = trackGuids[0], ListenedAt = seedDate, DurationListenedMs = 210000 },
             new ListeningHistory { Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-222222222222"), UserId = userGuids[1], TrackId = trackGuids[1], ListenedAt = seedDate, DurationListenedMs = 120000 },
@@ -189,7 +175,6 @@ public static class SeedDataExtension
             new ListeningHistory { Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-555555555555"), UserId = userGuids[4], TrackId = trackGuids[4], ListenedAt = seedDate, DurationListenedMs = 160000 }
         );
 
-        // Podcasts (5)
         var podcastGuids = new[]
         {
             Guid.Parse("cccccccc-cccc-cccc-cccc-111111111111"),
@@ -207,7 +192,6 @@ public static class SeedDataExtension
             new Podcast { Id = podcastGuids[4], AuthorId = userGuids[3], Title = "Cyber Culture", Description = "Sci-fi movies, music, and gaming.", CoverUrl = "https://sonarastorage.blob.core.windows.net/images/podcasts/podcasts_5.jpg" }
         );
 
-        // PodcastEpisodes (5)
         modelBuilder.Entity<PodcastEpisode>().HasData(
             new PodcastEpisode { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-111111111111"), PodcastId = podcastGuids[0], Title = "Ep 1: C# and .NET Features", AudioUrl = "https://sonarastorage.blob.core.windows.net/audio/podcasts/podcasts_1.mp3", DurationMs = 1800000, ReleaseDate = seedDate },
             new PodcastEpisode { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-222222222222"), PodcastId = podcastGuids[1], Title = "Ep 1: Choosing Your First DAW", AudioUrl = "https://sonarastorage.blob.core.windows.net/audio/podcasts/podcasts_2.mp3", DurationMs = 2400000, ReleaseDate = seedDate },
@@ -216,7 +200,6 @@ public static class SeedDataExtension
             new PodcastEpisode { Id = Guid.Parse("dddddddd-dddd-dddd-dddd-555555555555"), PodcastId = podcastGuids[4], Title = "Ep 1: Retrofuturism in Games", AudioUrl = "https://sonarastorage.blob.core.windows.net/audio/podcasts/podcasts_5.mp3", DurationMs = 2700000, ReleaseDate = seedDate }
         );
 
-        // Followers (5 - join entity)
         modelBuilder.Entity<Follower>().HasData(
             new Follower { FollowerId = userGuids[1], FollowedId = userGuids[0], CreatedAt = seedDate },
             new Follower { FollowerId = userGuids[2], FollowedId = userGuids[0], CreatedAt = seedDate },
@@ -225,7 +208,6 @@ public static class SeedDataExtension
             new Follower { FollowerId = userGuids[0], FollowedId = userGuids[4], CreatedAt = seedDate }
         );
 
-        // ListeningRooms (5)
         var roomGuids = new[]
         {
             Guid.Parse("eeeeeeee-eeee-eeee-eeee-111111111111"),
@@ -243,7 +225,6 @@ public static class SeedDataExtension
             new ListeningRoom { Id = roomGuids[4], HostId = userGuids[4], Name = "Acoustic Hour", CurrentTrackId = trackGuids[4], IsActive = false, CreatedAt = seedDate }
         );
 
-        // RoomMembers (5 - join entity)
         modelBuilder.Entity<RoomMember>().HasData(
             new RoomMember { RoomId = roomGuids[0], UserId = userGuids[1], JoinedAt = seedDate },
             new RoomMember { RoomId = roomGuids[1], UserId = userGuids[2], JoinedAt = seedDate },

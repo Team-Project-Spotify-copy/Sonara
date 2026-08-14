@@ -4,10 +4,6 @@ using Domain.Entities.Users;
 
 namespace Sonara.Tests.Infrastructure;
 
-/// <summary>
-/// Фікстури для тестів. Ролі та підписки беруться з seed-даних, бо на них є зовнішні ключі,
-/// які SQLite перевіряє по-справжньому.
-/// </summary>
 public static class TestData
 {
     public static readonly Guid SeededUserRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");

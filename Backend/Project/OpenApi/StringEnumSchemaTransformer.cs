@@ -4,11 +4,6 @@ using Microsoft.OpenApi;
 
 namespace WebApp.OpenApi;
 
-/// <summary>
-/// Перелічення серіалізуються рядками (JsonStringEnumConverter у Program.cs), але генератор
-/// OpenAPI описує їх як integer. Без цього трансформера контракт суперечив би реальним
-/// відповідям, і фронтенд очікував би числа замість "Recorded" / "SignedUrl".
-/// </summary>
 public sealed class StringEnumSchemaTransformer : IOpenApiSchemaTransformer
 {
     public Task TransformAsync(

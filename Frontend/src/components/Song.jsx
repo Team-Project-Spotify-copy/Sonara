@@ -7,12 +7,6 @@ import ambientGradient from "../assets/player/song-ambient.svg";
 import grainOverlay from "../assets/player/rectangle-50-tile.png";
 import "../css/Song.css";
 
-/*
-  Сторінка треку. Транспорт, скрабер і дії живуть у глобальній PlayerBar
-  (RootLayout) — тут лишається тільки контент сторінки: герой, «About the
-  artist» і картки-підказки з макета 324:995.
-*/
-
 function formatPlays(count) {
   if (!Number.isFinite(count)) return null;
   return `${count.toLocaleString("en-US")} plays`;
@@ -56,9 +50,6 @@ export default function Song() {
     next,
   } = usePlayer();
 
-  // Плеєр глобальний і переживає навігацію, тому переріз черги на цій сторінці
-  // не має обривати те, що вже грає. Тримаємо в ref, щоб ефект нижче не
-  // перезапускався від зміни треку — інакше він скидав би сам себе.
   const activeTrackRef = useRef(null);
   activeTrackRef.current = hasStarted ? currentTrack : null;
 
@@ -67,14 +58,10 @@ export default function Song() {
   const [similar, setSimilar] = useState(null);
   const [status, setStatus] = useState("loading");
 
-  // Каталог формує чергу; окремого стану черги на сторінці не тримаємо.
-  // Джерела відтворення тут НЕ розв'язуються — SAS-посилання бере loadTrack
-  // безпосередньо перед стартом (див. ensureStream у player.context).
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      // Уже граємо саме той трек, який відкрили — чергу не чіпаємо взагалі.
       const active = activeTrackRef.current;
       if (active && (!id || active.id === id)) {
         setStatus("ready");
@@ -110,11 +97,9 @@ export default function Song() {
     return () => {
       cancelled = true;
     };
-    // Черга будується один раз на маршрут; setQueueAndPlay стабільний.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Повні дані треку + виконавця для панелей під героєм.
   useEffect(() => {
     const trackId = currentTrack?.id;
     if (!trackId) return undefined;
@@ -148,9 +133,6 @@ export default function Song() {
         if (!cancelled) setArtist(null);
       });
 
-    // «Схожий трек»: окремого ендпоінта рекомендацій у контракті немає, тож беремо
-    // найпопулярніший інший трек того ж виконавця, а якщо такого немає —
-    // найпопулярніший трек каталогу.
     (async () => {
       try {
         const byArtist = await getTracks({ artistId, sort: "Popular", pageSize: 5 });
@@ -188,7 +170,6 @@ export default function Song() {
       <div className="song-hero">
         <img className="song-hero-ambient" src={ambientGradient} alt="" />
         <div className="song-hero-blur" />
-        {/* Rectangle 50 (324:951). */}
         <div
           className="song-hero-grain"
           style={{ backgroundImage: `url(${grainOverlay})` }}
@@ -218,7 +199,6 @@ export default function Song() {
     <div className="song-page">
       {hero}
 
-      {/* Доки нічого не грає, обкладинка — це кнопка запуску. */}
       {playerActive ? (
         <div
           className="song-cover song-cover--active"
@@ -262,7 +242,6 @@ export default function Song() {
                         {formatPlays(totalPlays) ?? "Plays not available"}
                       </p>
                     </div>
-                    {/* Ендпоінта підписки на виконавця в контракті немає. */}
                     <button
                       type="button"
                       className="song-follow"

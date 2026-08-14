@@ -1,19 +1,7 @@
-/*
-  Глобальна панель плеєра.
-  Геометрія і кольори — з макета Figma (Song, вузли 324:927 / 324:942 / 324:995),
-  полотно 1920x1080, як і на решті сторінок проєкту (див. Login.css).
-
-  Стани:
-    .player--normal     смуга 1920x134 внизу (Group 69, 324:971);
-    .player--fullscreen immersive-фон + обкладинка 512 (324:927);
-    .player--lyrics     те саме + панель тексту 616x614 (324:1036).
-*/
 
 .player {
   font-family: 'Helvetica Neue', sans-serif;
 }
-
-/* ── Immersive-підкладка (стани fullscreen / lyrics) ────────────── */
 
 .player-stage {
   position: fixed;
@@ -22,7 +10,6 @@
   background-color: #121212;
 }
 
-/* Rectangle 49 / 50: картка героя 1720x847 у координатах макета (100, 99). */
 .player-stage-surface {
   position: absolute;
   top: 99px;
@@ -34,7 +21,6 @@
   overflow: hidden;
 }
 
-/* Group 12: набір еліпсів, розміщений точно як у макеті (183,123 у координатах сторінки). */
 .player-stage-ambient {
   position: absolute;
   top: 24px;
@@ -42,7 +28,6 @@
   width: 1560.372px;
   height: 823.656px;
   display: block;
-  /* У макеті еліпси різкі, а м'яке світіння дає розмиття поверх них. */
   filter: blur(90px);
 }
 
@@ -52,18 +37,6 @@
   backdrop-filter: blur(40px);
 }
 
-/*
-  Rectangle 50 (324:951) — зерниста плівка поверх ambient-еліпсів.
-  У макеті це майже прозорий прямокутник rgba(27,27,27,0.01) із накладеним шумом,
-  тому текстура йде в screen-режимі з низькою непрозорістю: вона додає зерно,
-  але не змінює колір підкладки.
-
-  Плитка 200x200 — це виріз із експорту 324:951, попередньо зменшеного 4x (3440 -> 860),
-  тобто рівно в тому масштабі, у якому браузер растеризував повний файл при
-  background-size: 860px 424px. Тому тут розмір 1:1 (200px): зерно лишається того
-  самого візуального калібру. Шум білий (автокореляція ~0), структури, яка могла б
-  розірватися на межі, немає — виріз стикується безшовно без обробки країв.
-*/
 .player-stage-grain {
   position: absolute;
   inset: 0;
@@ -73,8 +46,6 @@
   opacity: 0.35;
   pointer-events: none;
 }
-
-/* ── Immersive-контент ─────────────────────────────────────────── */
 
 .player-immersive {
   position: fixed;
@@ -87,7 +58,6 @@
   pointer-events: auto;
 }
 
-/* Rectangle 70 (324:938): 512x512, r=20, центр полотна зі зсувом -16px. */
 .player-artwork {
   position: absolute;
   top: 50%;
@@ -102,12 +72,10 @@
   background-position: center;
 }
 
-/* У стані lyrics обкладинка зсувається вліво, звільняючи місце під панель тексту. */
 .player--lyrics .player-artwork {
   left: calc(50% - 340px);
 }
 
-/* Frame 26 (324:939): підпис у нижньому лівому куті, 32px / 24px. */
 .player-immersive-meta {
   position: absolute;
   top: 982px;
@@ -130,8 +98,6 @@
   color: #b0b0b0;
 }
 
-/* ── Панель тексту (стан lyrics, Group 67 / 324:1036) ───────────── */
-
 .player-lyrics {
   position: absolute;
   top: 172px;
@@ -142,7 +108,6 @@
   overflow: hidden;
 }
 
-/* Rectangle 87: підкладка з opacity 50%. */
 .player-lyrics-bg {
   position: absolute;
   inset: 0;
@@ -151,7 +116,6 @@
   opacity: 0.5;
 }
 
-/* Frame 65: 552x582 із відступом 32. */
 .player-lyrics-body {
   position: absolute;
   top: 32px;
@@ -179,7 +143,6 @@
   white-space: pre-wrap;
 }
 
-/* Rectangle 88: градієнт від #1b1b1b знизу, h=349 при відступі 265 зверху. */
 .player-lyrics-fade {
   position: absolute;
   top: 265px;
@@ -191,8 +154,6 @@
   pointer-events: none;
 }
 
-/* ── Нижня смуга (Group 69, 324:971) ───────────────────────────── */
-
 .player-bar {
   position: fixed;
   bottom: 0;
@@ -203,7 +164,6 @@
   background-color: #121212;
 }
 
-/* Поверх immersive-фону смуга лишається читабельною без власного тла. */
 .player--fullscreen .player-bar,
 .player--lyrics .player-bar {
   background-color: rgba(18, 18, 18, 0.72);
@@ -219,7 +179,6 @@
   color: #b0b0b0;
 }
 
-/* Rectangle 87 (324:990) + Frame 25 (324:991). */
 .player-bar-left {
   position: absolute;
   top: 22px;
@@ -291,7 +250,6 @@
   white-space: nowrap;
 }
 
-/* Frame 29 (324:973): 652 завширшки, від x=634. */
 .player-center {
   position: absolute;
   top: 29px;
@@ -309,7 +267,6 @@
   gap: 8px;
 }
 
-/* Frame 27 (324:978): час — доріжка 564x4 — час. */
 .player-progress {
   display: flex;
   align-items: center;
@@ -350,7 +307,6 @@
   background-color: #d9d9d9;
 }
 
-/* Frame 32 (324:984): п'ять кнопок по 60px із кроком 76. */
 .player-actions {
   position: absolute;
   top: 39px;
@@ -359,8 +315,6 @@
   align-items: center;
   gap: 16px;
 }
-
-/* ── Кнопки ────────────────────────────────────────────────────── */
 
 .player-btn {
   display: flex;

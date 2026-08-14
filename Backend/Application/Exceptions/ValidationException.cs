@@ -1,8 +1,5 @@
 namespace Application.Exceptions;
 
-/// <summary>
-/// Помилка валідації бізнес-правил. Мапиться на HTTP 400 разом зі словником помилок.
-/// </summary>
 public class ValidationException : Exception
 {
     public IReadOnlyDictionary<string, string[]> Errors { get; }

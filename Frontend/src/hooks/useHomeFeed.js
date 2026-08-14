@@ -4,9 +4,6 @@ import { feedQuery, SHELF_DEFINITIONS } from "../api/feed.query.js";
 
 const EMPTY_SHELVES = SHELF_DEFINITIONS.map((shelf) => ({ ...shelf, items: [] }));
 
-/**
- * @returns {{shelves: Array, status: "loading"|"success"|"error", error: Error|null}}
- */
 export default function useHomeFeed() {
   const [shelves, setShelves] = useState(EMPTY_SHELVES);
   const [status, setStatus] = useState("loading");

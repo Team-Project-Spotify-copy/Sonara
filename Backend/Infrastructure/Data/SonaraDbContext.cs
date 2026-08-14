@@ -14,7 +14,6 @@ public class SonaraDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // 1. Конфігурація для соціальної мережі (Підписники)
         modelBuilder.Entity<Follower>(entity =>
         {
             entity.HasKey(f => new { f.FollowerId, f.FollowedId });
@@ -30,39 +29,36 @@ public class SonaraDbContext : DbContext
                   .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // 2. Конфігурація для зв'язку Треків та Жанрів
         modelBuilder.Entity<TrackGenre>(entity =>
         {
             entity.HasKey(tg => new { tg.TrackId, tg.GenreId });
 
             entity.HasOne(tg => tg.Track)
-                  .WithMany(t => t.TrackGenres) 
+                  .WithMany(t => t.TrackGenres)
                   .HasForeignKey(tg => tg.TrackId)
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(tg => tg.Genre)
-                  .WithMany(g => g.TrackGenres) 
+                  .WithMany(g => g.TrackGenres)
                   .HasForeignKey(tg => tg.GenreId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // 3. Конфігурація для зв'язку Плейлістів та Треків
         modelBuilder.Entity<PlaylistTrack>(entity =>
         {
             entity.HasKey(pt => new { pt.PlaylistId, pt.TrackId });
 
             entity.HasOne(pt => pt.Playlist)
-                  .WithMany(p => p.PlaylistTracks) 
+                  .WithMany(p => p.PlaylistTracks)
                   .HasForeignKey(pt => pt.PlaylistId)
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(pt => pt.Track)
-                  .WithMany(t => t.PlaylistTracks) 
+                  .WithMany(t => t.PlaylistTracks)
                   .HasForeignKey(pt => pt.TrackId)
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // 4. Конфігурація для Улюблених треків (LikedTrack)
         modelBuilder.Entity<LikedTrack>(entity =>
         {
             entity.HasKey(lt => new { lt.UserId, lt.TrackId });
@@ -78,7 +74,6 @@ public class SonaraDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // 5. Конфігурація для Учасників кімнат (RoomMember)
         modelBuilder.Entity<RoomMember>(entity =>
         {
             entity.HasKey(rm => new { rm.RoomId, rm.UserId });
@@ -94,8 +89,6 @@ public class SonaraDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // 6. Індекси під фактичні шляхи запитів каталогу, пошуку, бібліотеки та історії.
-        //    Іменовані явно, щоб їх було видно у планах запитів.
         modelBuilder.Entity<Track>(entity =>
         {
             entity.HasIndex(t => t.Title).HasDatabaseName("IX_Tracks_Title");
@@ -115,11 +108,9 @@ public class SonaraDbContext : DbContext
             entity.HasIndex(p => new { p.UserId, p.CreatedAt }).HasDatabaseName("IX_Playlists_UserId_CreatedAt");
         });
 
-        // Сторінка треків плейліста читається у порядку додавання.
         modelBuilder.Entity<PlaylistTrack>(entity =>
             entity.HasIndex(pt => new { pt.PlaylistId, pt.AddedAt }).HasDatabaseName("IX_PlaylistTracks_PlaylistId_AddedAt"));
 
-        // "Вподобані треки" та історія читаються як стрічка користувача, найновіші спочатку.
         modelBuilder.Entity<LikedTrack>(entity =>
             entity.HasIndex(l => new { l.UserId, l.LikedAt }).HasDatabaseName("IX_LikedTracks_UserId_LikedAt"));
 
@@ -129,28 +120,23 @@ public class SonaraDbContext : DbContext
         SeedDataExtension.Seed(modelBuilder);
     }
 
-    // Music entities
     public DbSet<Album> Albums { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<ListeningHistory> ListeningHistories { get; set; }
     public DbSet<Track> Tracks { get; set; }
     public DbSet<TrackGenre> TrackGenres { get; set; }
 
-    // Playlist entities
     public DbSet<Playlist> Playlists { get; set; }
     public DbSet<LikedTrack> LikedTracks { get; set; }
     public DbSet<PlaylistTrack> PlaylistTracks { get; set; }
 
-    // Podcast entities
     public DbSet<Podcast> Podcasts { get; set; }
     public DbSet<PodcastEpisode> PodcastEpisodes { get; set; }
 
-    // Social entities
     public DbSet<Follower> Followers { get; set; }
     public DbSet<ListeningRoom> ListeningRooms { get; set; }
     public DbSet<RoomMember> RoomMembers { get; set; }
 
-    // User entities
     public DbSet<Artist> Artists { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Role> Roles { get; set; }

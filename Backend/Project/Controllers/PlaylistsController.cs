@@ -6,10 +6,6 @@ using WebApp.Contracts;
 
 namespace WebApp.Controllers;
 
-/// <summary>
-/// Плейлісти користувача. Змінювати плейліст може лише його власник;
-/// публічні плейлісти можна читати анонімно, приватні - лише власнику.
-/// </summary>
 [ApiController]
 [Route("api/playlists")]
 [Authorize]
@@ -25,7 +21,6 @@ public class PlaylistsController : ControllerBase
         _currentUser = currentUser;
     }
 
-    /// <summary>Плейлісти поточного користувача.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyList<PlaylistDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -82,7 +77,6 @@ public class PlaylistsController : ControllerBase
         return NoContent();
     }
 
-    /// <summary>Треки плейліста в порядку додавання, з повними даними для плеєра.</summary>
     [HttpGet("{id:guid}/tracks")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(IReadOnlyList<PlaylistTrackDto>), StatusCodes.Status200OK)]
@@ -93,7 +87,6 @@ public class PlaylistsController : ControllerBase
         return Ok(await _playlistService.GetTracksAsync(id, _currentUser.UserId, ct));
     }
 
-    /// <summary>Ідемпотентно додає трек. Повторне додавання нічого не змінює.</summary>
     [HttpPost("{id:guid}/tracks")]
     [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -106,7 +99,6 @@ public class PlaylistsController : ControllerBase
         return Ok(await _playlistService.AddTrackAsync(id, userId, request.TrackId, ct));
     }
 
-    /// <summary>Ідемпотентно прибирає трек. Видалення відсутнього треку нічого не змінює.</summary>
     [HttpDelete("{id:guid}/tracks/{trackId:guid}")]
     [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

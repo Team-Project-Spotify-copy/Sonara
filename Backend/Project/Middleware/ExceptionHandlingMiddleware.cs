@@ -34,7 +34,6 @@ public class ExceptionHandlingMiddleware
 
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        // Клієнт розірвав зʼєднання - писати відповідь нікуди, це не помилка сервера.
         if (exception is OperationCanceledException && context.RequestAborted.IsCancellationRequested)
         {
             _logger.LogDebug("Request {Path} was aborted by the client.", context.Request.Path);
@@ -52,7 +51,6 @@ public class ExceptionHandlingMiddleware
             _logger.LogWarning(exception, "Handled exception: {ExceptionType}", exception.GetType().Name);
         }
 
-        // Якщо відповідь уже почала надсилатися, змінити статус неможливо - лише логуємо.
         if (context.Response.HasStarted)
         {
             _logger.LogError("The response has already started; the error could not be written to the body.");
@@ -67,8 +65,6 @@ public class ExceptionHandlingMiddleware
         {
             StatusCode = (int)statusCode,
             Code = code,
-            // Повідомлення внутрішніх винятків назовні не віддаються: 500 і 502 завжди
-            // отримують нейтральний текст, деталі залишаються в логах.
             Message = statusCode switch
             {
                 HttpStatusCode.InternalServerError =>

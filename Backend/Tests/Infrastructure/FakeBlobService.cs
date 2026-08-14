@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Sonara.Tests.Infrastructure;
 
-/// <summary>Підміна сховища: тести не мають ходити в Azure.</summary>
 public sealed class FakeBlobService : IBlobService
 {
     public Func<string, TimeSpan, string?> ReadUrlFactory { get; set; } =

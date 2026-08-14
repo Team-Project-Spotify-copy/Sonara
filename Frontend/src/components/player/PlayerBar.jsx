@@ -6,16 +6,6 @@ import ambientGradient from "../../assets/player/song-ambient.svg";
 import grainOverlay from "../../assets/player/rectangle-50-tile.png";
 import "../../css/PlayerBar.css";
 
-/**
- * Глобальна панель плеєра. Один компонент, три стани макета:
- *
- *   normal      324:942 — смуга 1920x134 внизу екрана;
- *   fullscreen  324:927 — на весь екран: ambient-фон, обкладинка 512, великий підпис;
- *   lyrics      324:995 — те саме, плюс панель тексту 616x614 з градієнтним затуханням.
- *
- * Транспорт (обкладинка, метадані, скрабер, дії) спільний для всіх станів —
- * у fullscreen/lyrics він просто лежить поверх immersive-фону.
- */
 export default function PlayerBar() {
   const {
     currentTrack,
@@ -67,7 +57,6 @@ export default function PlayerBar() {
     return Math.min(100, Math.max(0, (currentTime / effectiveDuration) * 100));
   }, [currentTime, effectiveDuration]);
 
-  // Панель існує лише тоді, коли є що грати.
   if (!hasStarted || !currentTrack) return null;
 
   const artwork = currentTrack.artworkUrl ?? null;
@@ -77,13 +66,11 @@ export default function PlayerBar() {
 
   return (
     <div className={`player player--${viewMode}`} data-node-id="324:971">
-      {/* Immersive-підкладка станів 1 і 3. */}
       {immersive && (
         <div className="player-stage" aria-hidden="true">
           <div className="player-stage-surface" data-node-id="324:929">
             <img className="player-stage-ambient" src={ambientGradient} alt="" />
             <div className="player-stage-blur" />
-            {/* Rectangle 50 (324:951) — зерниста плівка поверх ambient-еліпсів. */}
             <div
               className="player-stage-grain"
               style={{ backgroundImage: `url(${grainOverlay})` }}
@@ -117,7 +104,6 @@ export default function PlayerBar() {
             </section>
           )}
 
-          {/* Стан 1: великий підпис у нижньому лівому куті (324:939). */}
           {viewMode === "fullscreen" && (
             <div className="player-immersive-meta" data-node-id="324:939">
               <p className="player-immersive-title">{title || "Name"}</p>
@@ -233,7 +219,6 @@ export default function PlayerBar() {
           >
             <Glyph name={muted ? "muted" : "volume"} />
           </button>
-          {/* Перехід fullscreen <-> lyrics (стан 2 <-> стан 3). */}
           <button
             type="button"
             className={`player-btn player-btn--lg${viewMode === "lyrics" ? " player-btn--active" : ""}`}

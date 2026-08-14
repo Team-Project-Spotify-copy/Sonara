@@ -6,10 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
-/// <summary>
-/// Історія прослуховувань поточного користувача. Записи створюються через
-/// POST /api/tracks/{id}/listen і представляють відтворення, а не тіки прогресу.
-/// </summary>
 [ApiController]
 [Route("api/history")]
 [Authorize]
@@ -27,7 +23,6 @@ public class HistoryController : ControllerBase
         _currentUser = currentUser;
     }
 
-    /// <summary>Історія поточного користувача, найновіші прослуховування спочатку.</summary>
     [HttpGet]
     [ProducesResponseType(typeof(PaginatedList<ListeningHistoryEntryDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

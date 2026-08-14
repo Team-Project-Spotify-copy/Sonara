@@ -270,7 +270,6 @@ public class MusicCatalogServiceTests : IDisposable
     {
         var result = await NewService().SearchAsync("orbit", limit: 10, _userId);
 
-        // "Orbital Rush" починається із запиту, "Quiet Orbit" - лише містить його.
         Assert.Equal(_popularTrackId, result.Tracks.Items.First().Id);
     }
 

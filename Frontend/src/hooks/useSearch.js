@@ -3,11 +3,6 @@ import axios from "axios";
 import { searchQuery, EMPTY_RESULTS } from "../api/search.query.js";
 import useDebouncedValue from "./useDebouncedValue.js";
 
-/**
- * @param {string} query
- * @param {{types?: string[], pageSize?: number, minLength?: number, delay?: number}} options
- * @returns {{results: object, status: "idle"|"loading"|"success"|"error", error: Error|null}}
- */
 export default function useSearch(query, options = {}) {
   const { types, pageSize = 20, minLength = 2, delay = 300 } = options;
 
@@ -41,7 +36,7 @@ export default function useSearch(query, options = {}) {
       signal: controller.signal,
     })
       .then((data) => {
-        if (id !== requestId.current) return; // stale response
+        if (id !== requestId.current) return;
         setResults(data);
         setStatus("success");
       })

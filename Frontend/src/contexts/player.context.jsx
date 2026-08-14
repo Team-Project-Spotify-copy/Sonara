@@ -9,22 +9,6 @@ import {
 import { errorCode, getAccessToken } from "../api/client";
 import { PlayerContext, REPEAT_MODES } from "./player.store";
 
-/**
- * Єдиний стан плеєра на весь застосунок. Тут живе один <audio>-елемент;
- * компоненти ніколи не створюють власний і не тримають паралельного стану.
- *
- * Провайдер монтується в App ВИЩЕ за <Routes>, тому зміна маршруту
- * не розмонтовує його і відтворення не переривається.
- *
- * Сам контекст, константи і хук usePlayer — у ./player.store, щоб цей модуль
- * експортував РІВНО один компонент (вимога Fast Refresh).
- */
-
-/**
- * Наскільки раніше за офіційний ExpiresAt вважаємо SAS-посилання протухлим.
- * Бекенд уже віддає ExpiresAt із запасом у хвилину (TrackStreamService), цей
- * запас — другий рубіж на випадок розбіжності годинників клієнта.
- */
 const SAS_REFRESH_MARGIN_MS = 30_000;
 
 export function PlayerProvider({ children }) {
@@ -36,7 +20,6 @@ export function PlayerProvider({ children }) {
   const [queue, setQueue] = useState([]);
   const [index, setIndex] = useState(0);
 
-  // hasStarted розрізняє «ще нічого не грали» і «плеєр активний».
   const [hasStarted, setHasStarted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoadingStream, setIsLoadingStream] = useState(false);
@@ -55,22 +38,12 @@ export function PlayerProvider({ children }) {
   const currentTrack = queue[index] ?? null;
   const currentTrackId = currentTrack?.id ?? null;
 
-  // Скільки реально прослухано — накопичуємо самі, бо перемотування
-  // зробило б currentTime неправдивою метрикою для /listen.
   const listenedMsRef = useRef(0);
   const lastTickRef = useRef(null);
   const reportedForRef = useRef(null);
 
-  // seekbackward/seekforward рахуються від поточної позиції, але перевішувати
-  // обробники MediaSession на кожен tick timeupdate не можна — тримаємо позицію в ref.
   const currentTimeRef = useRef(0);
 
-  /**
-   * Розв'язане джерело відтворення для ОДНОГО треку — того, що звучить зараз.
-   * Черга ніколи не тримає підписаних посилань: SAS живе обмежений час, і
-   * пакетне розв'язання під час наповнення черги гарантовано протухло б
-   * задовго до того, як користувач дійде до останнього треку.
-   */
   const streamRef = useRef({ trackId: null, expiresAt: 0 });
 
   const isAuthenticated = Boolean(getAccessToken());
@@ -82,7 +55,6 @@ export function PlayerProvider({ children }) {
     }
   }, []);
 
-  /** Надсилає /listen один раз на відтворення. Короткі/повторні події бекенд відхилить сам. */
   const reportListen = useCallback((trackId) => {
     if (!trackId || reportedForRef.current === trackId) return;
 
@@ -91,14 +63,9 @@ export function PlayerProvider({ children }) {
 
     reportedForRef.current = trackId;
     registerListen(trackId, listened).catch(() => {
-      // Історія прослуховувань не критична для відтворення — мовчки ігноруємо.
     });
   }, []);
 
-  /**
-   * Те саме, але для моменту, коли сторінка вже закривається: звичайний XHR
-   * браузер скасує разом із документом, тому йдемо через keepalive-транспорт.
-   */
   const flushListen = useCallback(
     (trackId) => {
       stopTicking();
@@ -133,11 +100,6 @@ export function PlayerProvider({ children }) {
     }
   }, []);
 
-  /**
-   * Ліниве розв'язання джерела: викликається РІВНО перед відтворенням, а не під
-   * час наповнення черги. Повторний виклик для того самого треку мережу не чіпає,
-   * доки не наблизився строк дії підписаного посилання.
-   */
   const ensureStream = useCallback(async (track) => {
     const audio = audioRef.current;
     if (!audio || !track) return false;
@@ -171,11 +133,6 @@ export function PlayerProvider({ children }) {
     }
   }, []);
 
-  /**
-   * Готує трек до відтворення БЕЗ мережі: метадані з каталогу вже є, а джерело
-   * буде розв'язане в ensureStream. Знімаємо старий src, щоб протухле посилання
-   * попереднього треку не могло стартувати випадково.
-   */
   const selectTrack = useCallback(
     (track) => {
       const audio = audioRef.current;
@@ -194,11 +151,6 @@ export function PlayerProvider({ children }) {
     [resetListenCounters],
   );
 
-  /**
-   * Трек передається явно: goTo/setQueueAndPlay викликають відтворення в тому ж
-   * такті, у якому щойно зробили setIndex, тож покладатися на currentTrack зі
-   * стану не можна — він оновиться лише на наступному рендері.
-   */
   const playTrack = useCallback(
     async (track) => {
       const audio = audioRef.current;
@@ -206,7 +158,6 @@ export function PlayerProvider({ children }) {
 
       setError(null);
 
-      // hasStream === false означає, що медіа немає — /stream поверне 409.
       if (track.hasStream === false) {
         setError("This track has no audio yet.");
         setIsPlaying(false);
@@ -276,8 +227,6 @@ export function PlayerProvider({ children }) {
       setIndex(nextIndex);
       selectTrack(track);
 
-      // Без autoplay мережевого запиту не буде взагалі: джерело розв'яжеться
-      // лише тоді, коли користувач справді натисне «play».
       if (autoplay) void playTrack(track);
     },
     [currentTrackId, playTrack, queue, reportListen, selectTrack, stopTicking],
@@ -288,8 +237,6 @@ export function PlayerProvider({ children }) {
   const previous = useCallback(() => {
     const audio = audioRef.current;
 
-    // Як у звичних плеєрах: у межах перших 3 секунд «назад» — це попередній трек,
-    // далі — перезапуск поточного.
     if (audio && audio.currentTime > 3) {
       audio.currentTime = 0;
       setCurrentTime(0);
@@ -330,7 +277,6 @@ export function PlayerProvider({ children }) {
 
   const toggleShuffle = useCallback(() => setShuffle((on) => !on), []);
 
-  /** Ставить чергу і (за потреби) одразу вмикає потрібний трек. */
   const setQueueAndPlay = useCallback(
     (tracks, startIndex = 0, { autoplay = false } = {}) => {
       setQueue(tracks);
@@ -342,10 +288,6 @@ export function PlayerProvider({ children }) {
     [playTrack, selectTrack],
   );
 
-  /**
-   * Прибирає трек із черги. Індекс поточного треку зсувається так, щоб грати
-   * продовжував ТОЙ САМИЙ трек; якщо ж видаляють саме його — переходимо далі.
-   */
   const removeFromQueue = useCallback(
     (targetIndex) => {
       if (targetIndex < 0 || targetIndex >= queue.length) return;
@@ -353,16 +295,13 @@ export function PlayerProvider({ children }) {
       const nextQueue = queue.filter((_, i) => i !== targetIndex);
       setQueue(nextQueue);
 
-      // Прибрали трек ПЕРЕД активним — активний просто зсунувся на позицію лівіше.
       if (targetIndex < index) {
         setIndex(index - 1);
         return;
       }
 
-      // Прибрали трек ПІСЛЯ активного — позиція активного не змінилась.
       if (targetIndex > index) return;
 
-      // Прибрали сам активний трек: його місце посідає наступний.
       const clamped = Math.min(index, Math.max(0, nextQueue.length - 1));
       setIndex(clamped);
       selectTrack(nextQueue[clamped] ?? null);
@@ -375,7 +314,6 @@ export function PlayerProvider({ children }) {
     [index, queue, selectTrack],
   );
 
-  /** Перетягування в черзі. Активний трек лишається активним, хай куди він переїхав. */
   const moveInQueue = useCallback(
     (from, to) => {
       if (from === to || from < 0 || to < 0 || from >= queue.length || to >= queue.length) {
@@ -387,8 +325,6 @@ export function PlayerProvider({ children }) {
       nextQueue.splice(to, 0, moved);
       setQueue(nextQueue);
 
-      // Індекси рахуються від уже наявних queue/index, а не всередині setQueue:
-      // вкладені оновлювачі у StrictMode виконуються двічі й зсув застосувався б двічі.
       if (index === from) setIndex(to);
       else if (from < index && to >= index) setIndex(index - 1);
       else if (from > index && to <= index) setIndex(index + 1);
@@ -416,7 +352,6 @@ export function PlayerProvider({ children }) {
 
     const nextLiked = !(likeState?.isLiked ?? currentTrack?.isLiked ?? false);
 
-    // Оптимістичне оновлення: кнопка реагує миттєво, сервер лишається джерелом істини.
     setLikeState((prev) => ({
       trackId: currentTrackId,
       isLiked: nextLiked,
@@ -430,12 +365,10 @@ export function PlayerProvider({ children }) {
       try {
         setLikeState(await getLikeState(currentTrackId));
       } catch {
-        /* лишаємо оптимістичне значення */
       }
     }
   }, [currentTrack?.isLiked, currentTrackId, likeState?.isLiked]);
 
-  // Підписки на події <audio>: єдине місце, де стан плеєра синхронізується з елементом.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return undefined;
@@ -454,8 +387,6 @@ export function PlayerProvider({ children }) {
       setIsPlaying(false);
     };
     const onError = () => {
-      // Порожній src — це не збій відтворення: браузер кидає error, коли джерело
-      // знімають (напр. під час подвійного монтування у StrictMode).
       if (!audio.getAttribute("src")) return;
 
       stopTicking();
@@ -478,7 +409,6 @@ export function PlayerProvider({ children }) {
     };
   }, [stopTicking]);
 
-  // «ended» тримаємо окремо: обробник залежить від режиму повтору й черги.
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return undefined;
@@ -516,7 +446,6 @@ export function PlayerProvider({ children }) {
     stopTicking,
   ]);
 
-  // Стан «вподобано» для поточного треку.
   useEffect(() => {
     if (!currentTrackId) {
       setLikeState(null);
@@ -546,8 +475,6 @@ export function PlayerProvider({ children }) {
       cancelled = true;
     };
   }, [currentTrackId]);
-
-  // ── MediaSession: системні медіаклавіші, замок екрана, панель ОС ──────────
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
@@ -597,7 +524,6 @@ export function PlayerProvider({ children }) {
       try {
         navigator.mediaSession.setActionHandler(action, handler);
       } catch {
-        // Браузер не підтримує цю дію — решта обробників лишається робочою.
       }
     }
 
@@ -606,7 +532,6 @@ export function PlayerProvider({ children }) {
         try {
           navigator.mediaSession.setActionHandler(action, null);
         } catch {
-          /* нічого знімати */
         }
       }
     };
@@ -625,7 +550,6 @@ export function PlayerProvider({ children }) {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
     if (typeof navigator.mediaSession.setPositionState !== "function") return;
 
-    // Позиція не може перевищувати тривалість — інакше специфікація вимагає кинути.
     if (!Number.isFinite(duration) || duration <= 0) return;
 
     try {
@@ -635,16 +559,10 @@ export function PlayerProvider({ children }) {
         position: Math.min(currentTime, duration),
       });
     } catch {
-      /* нестабільні значення під час перемикання треку */
     }
   }, [currentTime, duration]);
 
-  // ── Телеметрія на закритті вкладки ───────────────────────────────────────
-
   useEffect(() => {
-    // pagehide спрацьовує і при закритті, і при переході у bfcache;
-    // visibilitychange -> hidden ловить згортання застосунку на мобільних,
-    // де pagehide може не прийти взагалі.
     const onPageHide = () => flushListen(currentTrackId);
     const onVisibilityChange = () => {
       if (document.visibilityState === "hidden") flushListen(currentTrackId);
@@ -665,8 +583,6 @@ export function PlayerProvider({ children }) {
     return () => {
       if (audio) {
         audio.pause();
-        // removeAttribute, а не src = "": порожній рядок резолвиться в адресу
-        // сторінки, браузер намагається її завантажити і кидає помилку медіа.
         audio.removeAttribute("src");
       }
     };

@@ -67,10 +67,6 @@ public class CurrentUserServiceTests
         Assert.Null(service.UserId);
     }
 
-    /// <summary>
-    /// Регресія: раніше ідентичність бралася із заголовка X-User-Id, тож будь-хто міг
-    /// видати себе за іншого користувача. Тепер заголовки клієнта ігноруються повністю.
-    /// </summary>
     [Fact]
     public void A_client_supplied_header_is_never_treated_as_identity()
     {

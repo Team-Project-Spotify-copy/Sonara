@@ -17,14 +17,10 @@ public record PlaylistDto(
     int TotalDurationMs,
     bool IsOwner);
 
-/// <summary>Позиція треку в плейлісті разом із повними даними треку для плеєра.</summary>
 public record PlaylistTrackDto(
     int Position,
     DateTime AddedAt,
     TrackDto Track);
-
-// Для record-типів MVC вимагає, щоб атрибути валідації стояли на ПАРАМЕТРІ первинного
-// конструктора, а не на властивості: інакше запит падає з 500 замість 400.
 
 public record CreatePlaylistRequest(
     [Required]

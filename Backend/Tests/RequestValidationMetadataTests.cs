@@ -6,12 +6,6 @@ using Xunit;
 
 namespace Sonara.Tests;
 
-/// <summary>
-/// Регресія: MVC вимагає, щоб для record-типів атрибути валідації стояли на параметрі
-/// первинного конструктора. Якщо їх повісити на властивість ([property: Required]),
-/// ModelMetadata кидає InvalidOperationException, і невалідний запит повертає 500
-/// замість 400. Тести фіксують правильне розміщення атрибутів.
-/// </summary>
 public class RequestValidationMetadataTests
 {
     public static TheoryData<Type> RequestTypes => new()

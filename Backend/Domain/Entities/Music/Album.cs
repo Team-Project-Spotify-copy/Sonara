@@ -14,7 +14,6 @@ public class Album : BaseEntity
     public string? Type { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    //Навігаційні властивості
     public virtual Artist Artist { get; set; } = null!;
     public virtual ICollection<Track> Tracks { get; set; } = new List<Track>();
 }

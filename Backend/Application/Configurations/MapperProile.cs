@@ -10,12 +10,10 @@ namespace BusinessLogic.Configurations
     {
         public MapperProfile()
         {
-            // Subscription
             CreateMap<CreateSubscriptionDto, Subscription>();
             CreateMap<UpdateSubscriptionDto, Subscription>();
             CreateMap<SubscriptionDto, Subscription>().ReverseMap();
 
-            // User
             CreateMap<ProfileDto, User>().ReverseMap();
             CreateMap<UpdateProfileDto, User>().ReverseMap();
         }

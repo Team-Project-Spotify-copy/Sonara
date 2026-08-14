@@ -5,15 +5,6 @@ using Application.Interfaces.Services;
 
 namespace Infrastructure.Services;
 
-/// <summary>
-/// Redis-декоратор каталогу (гілка main), приведений до інтерфейсу гілки
-/// backend-song-player.
-///
-/// ВАЖЛИВО: TrackDto містить IsLiked — стан конкретного користувача. Тому в кеш
-/// потрапляють ЛИШЕ анонімні відповіді (currentUserId == null); для автентизованих
-/// запитів декоратор просто проксіює виклик. Інакше вподобання одного користувача
-/// віддавалися б усім іншим із кешу.
-/// </summary>
 public class CachedMusicCatalogService : IMusicCatalogService
 {
     private static readonly TimeSpan PopularListsTtl = TimeSpan.FromMinutes(10);
@@ -28,8 +19,6 @@ public class CachedMusicCatalogService : IMusicCatalogService
         _cache = cache;
     }
 
-    // Персоналізовані та точкові читання не кешуються: вигода мала, а ризик
-    // віддати чужий IsLiked — реальний.
     public Task<PaginatedList<TrackDto>> GetTracksAsync(TrackQuery query, Guid? currentUserId, CancellationToken ct = default)
         => _inner.GetTracksAsync(query, currentUserId, ct);
 
@@ -79,7 +68,6 @@ public class CachedMusicCatalogService : IMusicCatalogService
         return result;
     }
 
-    // Альбомна summary-проєкція не залежить від користувача — кешується завжди.
     public async Task<IReadOnlyList<AlbumSummaryDto>> GetPopularAlbumsAsync(int count, CancellationToken ct = default)
     {
         var key = $"albums:popular:{count}";

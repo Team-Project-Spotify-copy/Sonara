@@ -12,10 +12,8 @@ public class TrackInteractionService : ITrackInteractionService
 {
     public const int MaxPageSize = 100;
 
-    /// <summary>Скільки треба прослухати, щоб подія вважалась відтворенням (як у стрімінгових сервісах).</summary>
     public const int MeaningfulListenMs = 30_000;
 
-    /// <summary>Вікно, у якому повторний виклик для того самого треку вважається дублем.</summary>
     public const int DuplicateWindowSeconds = 30;
 
     private readonly SonaraDbContext _db;
@@ -38,8 +36,6 @@ public class TrackInteractionService : ITrackInteractionService
         var alreadyLiked = await _db.LikedTracks
             .AnyAsync(l => l.TrackId == trackId && l.UserId == userId, ct);
 
-        // Складений первинний ключ (UserId, TrackId) не дозволяє дублікати на рівні схеми,
-        // тому повторний виклик просто повертає поточний стан.
         if (!alreadyLiked)
         {
             _db.LikedTracks.Add(new LikedTrack
@@ -97,7 +93,6 @@ public class TrackInteractionService : ITrackInteractionService
         var track = await _db.Tracks.FirstOrDefaultAsync(t => t.Id == trackId, ct)
             ?? throw new NotFoundException(nameof(Track), trackId);
 
-        // Для дуже коротких треків поріг у 30 секунд недосяжний - тоді достатньо половини треку.
         var required = track.DurationMs > 0
             ? Math.Min(MeaningfulListenMs, Math.Max(1, track.DurationMs / 2))
             : MeaningfulListenMs;
@@ -117,8 +112,6 @@ public class TrackInteractionService : ITrackInteractionService
             return result;
         }
 
-        // Історія прослуховувань має відображати відтворення, а не тіки прогресу:
-        // повторний виклик у межах короткого вікна ігнорується.
         var windowStart = DateTime.UtcNow.AddSeconds(-DuplicateWindowSeconds);
         var recentlyRecorded = await _db.ListeningHistories
             .AnyAsync(h => h.UserId == userId && h.TrackId == trackId && h.ListenedAt >= windowStart, ct);

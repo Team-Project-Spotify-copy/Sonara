@@ -1,5 +1,6 @@
 import React from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { resolveCaptchaToken } from "../utils/recaptcha";
 import image from "../assets/images/login-bg.png";
 import { useNavigate, Link } from "react-router-dom";
 import { AccountContext } from "../contexts/account.store";
@@ -18,12 +19,7 @@ function Login() {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    if (!executeRecaptcha) {
-      console.error("ReCAPTCHA ще не завантажилася");
-      return;
-    }
-
-    const captchaToken = await executeRecaptcha("login_submit");
+    const captchaToken = await resolveCaptchaToken(executeRecaptcha, "login_submit");
 
     if (!captchaToken) {
       alert("Не вдалося отримати токен reCAPTCHA");

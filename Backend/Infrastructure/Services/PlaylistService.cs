@@ -46,7 +46,6 @@ public class PlaylistService : IPlaylistService
         var name = NormalizeName(request.Name);
         var description = NormalizeDescription(request.Description);
 
-        // Обкладинка необовʼязкова: плейліст можна створити з одного поля "назва".
         string? coverUrl = null;
         if (request.CoverImage is { Length: > 0 })
         {
@@ -118,7 +117,6 @@ public class PlaylistService : IPlaylistService
             .Select(CatalogProjections.PlaylistRow(requestingUserId))
             .ToListAsync(ct);
 
-        // Схема не зберігає порядок вручну, тож позиція - це індекс у порядку додавання.
         return rows
             .Select((row, index) => new PlaylistTrackDto(index, row.AddedAt, row.Track))
             .ToList();
@@ -135,8 +133,6 @@ public class PlaylistService : IPlaylistService
             throw new NotFoundException(nameof(Track), trackId);
         }
 
-        // (PlaylistId, TrackId) - складений первинний ключ, дублікати неможливі за схемою,
-        // тому повторне додавання просто не робить нічого.
         var alreadyAdded = await _db.PlaylistTracks
             .AnyAsync(pt => pt.PlaylistId == playlistId && pt.TrackId == trackId, ct);
 

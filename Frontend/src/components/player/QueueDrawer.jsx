@@ -4,11 +4,6 @@ import Glyph from "./Glyph.jsx";
 import { formatTime } from "../../utils/time";
 import "../../css/QueueDrawer.css";
 
-/**
- * Згортна панель «Up next». Читає чергу з контексту, вміє прибирати треки
- * і міняти їхній порядок перетягуванням — усі три операції йдуть у контекст,
- * власного стану черги панель не тримає.
- */
 export default function QueueDrawer() {
   const {
     queue,
@@ -20,14 +15,12 @@ export default function QueueDrawer() {
     moveInQueue,
   } = usePlayer();
 
-  // Індекс рядка, який тягнуть, і рядка, над яким зараз курсор.
   const [draggingIndex, setDraggingIndex] = useState(null);
   const [dropIndex, setDropIndex] = useState(null);
 
   const onDragStart = useCallback((event, position) => {
     setDraggingIndex(position);
     event.dataTransfer.effectAllowed = "move";
-    // Firefox ігнорує drag без даних у dataTransfer.
     event.dataTransfer.setData("text/plain", String(position));
   }, []);
 

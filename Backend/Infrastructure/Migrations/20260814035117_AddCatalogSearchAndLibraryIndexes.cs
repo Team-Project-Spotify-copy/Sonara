@@ -4,10 +4,8 @@
 
 namespace Infrastructure.Migrations
 {
-    /// <inheritdoc />
     public partial class AddCatalogSearchAndLibraryIndexes : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(
@@ -69,7 +67,6 @@ namespace Infrastructure.Migrations
                 column: "Title");
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropIndex(

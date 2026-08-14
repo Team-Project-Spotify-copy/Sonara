@@ -1,13 +1,10 @@
 import axios from "axios";
 
-// Той самий конвеншн, що і в Login/Register: базовий URL береться з VITE_API
-// і вже містить /api (напр. http://localhost:5094/api).
 export const API_BASE =
   import.meta.env.VITE_API || "http://localhost:5094/api";
 
 export const api = axios.create({
   baseURL: API_BASE,
-  // refresh-токен лежить у HttpOnly cookie, тому кукі треба надсилати.
   withCredentials: true,
 });
 
@@ -33,8 +30,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Один спільний refresh на всі паралельні запити, щоб плеєр не влаштував
-// шквал /auth/refresh, коли токен протух під час відтворення.
 let refreshPromise = null;
 
 function refreshAccessToken() {
@@ -61,7 +56,6 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config;
 
-    // Оновлюємо токен рівно один раз на запит: інакше цикл 401 -> refresh -> 401.
     if (error.response?.status !== 401 || !original || original._retried) {
       return Promise.reject(error);
     }
@@ -78,11 +72,8 @@ api.interceptors.response.use(
   },
 );
 
-/** Дістає стабільний код помилки з конверта бекенда (див. API_CONTRACT.md §2). */
 export function errorCode(error) {
   return error?.response?.data?.code ?? "network_error";
 }
 
-// Модулі з гілки main (feed/library/search.query) імпортують клієнт як default.
-// Іменовані експорти вище лишаються основним API — це лише сумісність.
 export default api;

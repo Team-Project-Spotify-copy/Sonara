@@ -42,12 +42,9 @@ builder.Services
     .AddControllers()
     .AddJsonOptions(options =>
     {
-        // Перелічення у контрактах API віддаються рядками ("Recorded", "SignedUrl"),
-        // щоб фронтенд не залежав від числових значень.
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// Помилки валідації моделі мають той самий формат, що й помилки з ExceptionHandlingMiddleware.
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = context =>
@@ -82,8 +79,6 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-// Redis (гілка main): кеш-декоратор загортає конкретний MusicCatalogService,
-// тому в контейнері зареєстровані обидва — реалізація і декоратор над нею.
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");

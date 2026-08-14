@@ -13,13 +13,10 @@ function App() {
 
   return (
     <>
-      {/* PlayerProvider стоїть усередині роутера (щоб плеєр міг навігувати),
-          але ВИЩЕ за <Routes> — жодна зміна маршруту його не розмонтовує. */}
       <BrowserRouter>
         <PlayerProvider>
           <Routes>
             <Route element={<RootLayout />}>
-              {/* Головна — сторінка з гілки main (AppShell + стрічка + пошук). */}
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

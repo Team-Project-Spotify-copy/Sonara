@@ -16,7 +16,6 @@ public class Track : BaseEntity
     public long PlaysCount { get; set; } = 0;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    //Навігаційні властивості
     public virtual Album? Album { get; set; }
     public virtual Artist Artist { get; set; } = null!;
     public virtual ICollection<TrackGenre> TrackGenres { get; set; } = new List<TrackGenre>();

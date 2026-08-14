@@ -1,4 +1,3 @@
-/** Формат часу як у макеті: 2:42 / 4:30. */
 export function formatTime(seconds) {
   if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
 

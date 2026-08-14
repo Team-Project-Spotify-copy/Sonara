@@ -14,7 +14,6 @@ namespace Infrastructure.Migrations
     [Migration("20260814035117_AddCatalogSearchAndLibraryIndexes")]
     partial class AddCatalogSearchAndLibraryIndexes
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

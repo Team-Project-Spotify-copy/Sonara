@@ -9,10 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-/// <summary>
-/// Розвʼязує джерело відтворення треку. Це єдиний компонент, який знає про фізичне
-/// розташування медіа; назовні віддається лише готове посилання з обмеженим часом життя.
-/// </summary>
 public class TrackStreamService : ITrackStreamService
 {
     private const int DefaultLifetimeMinutes = 60;
@@ -75,8 +71,6 @@ public class TrackStreamService : ITrackStreamService
             ContentType = ResolveContentType(track.AudioUrl),
             DurationMs = track.DurationMs,
             Mode = isSigned ? TrackStreamMode.SignedUrl : TrackStreamMode.DirectUrl,
-            // Час життя навмисно трохи занижений відносно реального SAS, щоб плеєр
-            // встиг перезапитати посилання до того, як воно протухне під час відтворення.
             ExpiresAt = isSigned ? DateTime.UtcNow.Add(_lifetime).AddMinutes(-1) : null,
             SupportsRangeRequests = true
         };

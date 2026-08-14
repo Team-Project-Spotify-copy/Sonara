@@ -3,10 +3,6 @@ using Application.Interfaces.Services;
 
 namespace WebApp.Services;
 
-/// <summary>
-/// Ідентичність поточного запиту береться ВИКЛЮЧНО з перевіреного JWT.
-/// Ідентифікатори, надіслані клієнтом (заголовки, query, тіло), як ідентичність не використовуються.
-/// </summary>
 public class CurrentUserService : ICurrentUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
@@ -35,8 +31,6 @@ public class CurrentUserService : ICurrentUserService
                 return null;
             }
 
-            // JwtBearer за замовчуванням мапить "sub" на NameIdentifier; перевіряємо обидва,
-            // щоб сервіс продовжив працювати, якщо мапінг вхідних claims вимкнуть.
             var raw = principal.FindFirstValue(ClaimTypes.NameIdentifier)
                       ?? principal.FindFirstValue("sub");
 

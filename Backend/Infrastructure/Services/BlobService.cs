@@ -50,8 +50,8 @@ public class BlobService : IBlobService
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
         var blobUriBuilder = new BlobUriBuilder(new Uri(fileUrl));
-        var blobName = blobUriBuilder.BlobName; 
-        
+        var blobName = blobUriBuilder.BlobName;
+
         var blobClient = containerClient.GetBlobClient(blobName);
         await blobClient.DeleteIfExistsAsync();
     }
@@ -78,8 +78,6 @@ public class BlobService : IBlobService
             .GetBlobContainerClient(location.BlobContainerName)
             .GetBlobClient(location.BlobName);
 
-        // Підписати посилання можна лише коли клієнт має ключ облікового запису.
-        // Для інших способів автентифікації повертаємо null - викликач використає збережений URL.
         if (!blobClient.CanGenerateSasUri)
         {
             return null;
@@ -90,7 +88,6 @@ public class BlobService : IBlobService
             BlobContainerName = location.BlobContainerName,
             BlobName = location.BlobName,
             Resource = "b",
-            // Невеликий запас назад компенсує розбіжність годинників клієнта і сховища.
             StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5)
         };
 

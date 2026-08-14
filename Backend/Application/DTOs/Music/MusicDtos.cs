@@ -3,10 +3,6 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.DTOs.Music;
 
-/// <summary>
-/// Компактне подання треку для списків, карток та черги програвача.
-/// Не містить фізичного посилання на медіа: відтворення йде через /api/tracks/{id}/stream.
-/// </summary>
 public class TrackDto
 {
     public Guid Id { get; set; }
@@ -18,30 +14,23 @@ public class TrackDto
     public Guid? AlbumId { get; set; }
     public string? AlbumTitle { get; set; }
 
-    /// <summary>Обкладинка треку: обкладинка альбому, інакше аватар виконавця.</summary>
     public string? ArtworkUrl { get; set; }
 
     public int DurationMs { get; set; }
 
-    /// <summary>Похідне значення для зручності плеєра (не зберігається в БД).</summary>
     public double DurationSeconds => Math.Round(DurationMs / 1000.0, 3);
 
     public List<string> Genres { get; set; } = new();
 
     public long PlaysCount { get; set; }
 
-    /// <summary>true, якщо для треку існує медіа і /stream поверне посилання.</summary>
     public bool HasStream { get; set; }
 
-    /// <summary>Стан "вподобано" для поточного користувача. false для анонімних запитів.</summary>
     public bool IsLiked { get; set; }
 
     public DateTime CreatedAt { get; set; }
 }
 
-/// <summary>
-/// Повне подання треку для сторінки треку. Розширює <see cref="TrackDto"/>.
-/// </summary>
 public class TrackDetailsDto : TrackDto
 {
     public string? ArtistAvatarUrl { get; set; }

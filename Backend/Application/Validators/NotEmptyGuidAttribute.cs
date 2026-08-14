@@ -2,10 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Application.Validators;
 
-/// <summary>
-/// Rejects Guid.Empty, which model binding otherwise accepts as a valid value
-/// for a non-nullable Guid (and which can never identify a real entity).
-/// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
 public sealed class NotEmptyGuidAttribute : ValidationAttribute
 {
@@ -16,7 +12,7 @@ public sealed class NotEmptyGuidAttribute : ValidationAttribute
 
     public override bool IsValid(object? value) => value switch
     {
-        null => true, // nullability is [Required]'s concern
+        null => true,
         Guid guid => guid != Guid.Empty,
         _ => false
     };

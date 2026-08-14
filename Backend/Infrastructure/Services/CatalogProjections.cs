@@ -5,16 +5,8 @@ using Application.DTOs.Music;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;
 
-/// <summary>
-/// Канонічні проєкції каталогу в DTO. Виконуються повністю на боці БД, тому списки треків
-/// ніколи не тягнуть графи сутностей і не спричиняють N+1.
-/// </summary>
 internal static class CatalogProjections
 {
-    /// <summary>
-    /// Проєкція треку для будь-якого списку. Ознака автентифікації - окремий параметр,
-    /// щоб EXISTS для "вподобано" не рахувався для анонімних запитів.
-    /// </summary>
     public static Expression<Func<Track, TrackDto>> Track(Guid? currentUserId)
     {
         var isAuthenticated = currentUserId.HasValue;
@@ -38,11 +30,6 @@ internal static class CatalogProjections
         };
     }
 
-    /// <summary>
-    /// Те саме, що <see cref="Track"/>, але для вкладеного використання: LINQ-дерева не можна
-    /// підставляти одне в одне без власного відвідувача, тому тіло тут повторюється свідомо.
-    /// Тримайте обидві проєкції синхронними.
-    /// </summary>
     public static Expression<Func<ListeningHistory, ListeningHistoryEntryDto>> HistoryEntry(Guid userId) =>
         h => new ListeningHistoryEntryDto
         {
@@ -69,10 +56,6 @@ internal static class CatalogProjections
             }
         };
 
-    /// <summary>
-    /// Рядок плейліста. Position не має відповідника в схемі, тому проставляється
-    /// після матеріалізації за порядком додавання.
-    /// </summary>
     public static Expression<Func<PlaylistTrack, PlaylistTrackRow>> PlaylistRow(Guid? currentUserId)
     {
         var isAuthenticated = currentUserId.HasValue;

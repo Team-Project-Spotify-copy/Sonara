@@ -3,11 +3,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Sonara.Tests.Infrastructure;
 
-/// <summary>
-/// Одноразова база на SQLite in-memory. Використовується реляційний провайдер (а не InMemory),
-/// щоб перевірялися справжні складені ключі, зовнішні ключі та трансляція LINQ у SQL.
-/// EnsureCreated застосовує ту саму модель і ті самі seed-дані, що й продакшн-контекст.
-/// </summary>
 public sealed class SonaraTestDb : IDisposable
 {
     private readonly SqliteConnection _connection;
@@ -27,7 +22,6 @@ public sealed class SonaraTestDb : IDisposable
         context.Database.EnsureCreated();
     }
 
-    /// <summary>Новий контекст на ту саму базу - імітує окремий запит без спільного кешу відстеження.</summary>
     public SonaraDbContext CreateContext() => new(_options);
 
     public void Dispose() => _connection.Dispose();

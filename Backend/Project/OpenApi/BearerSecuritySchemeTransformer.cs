@@ -5,10 +5,6 @@ using Microsoft.OpenApi;
 
 namespace WebApp.OpenApi;
 
-/// <summary>
-/// Описує в OpenAPI схему автентифікації Bearer і застосовує її як вимогу за замовчуванням,
-/// щоб Scalar/Swagger показував, які ендпоінти потребують токена, і дозволяв його ввести.
-/// </summary>
 public sealed class BearerSecuritySchemeTransformer : IOpenApiDocumentTransformer
 {
     private const string SchemeName = JwtBearerDefaults.AuthenticationScheme;
