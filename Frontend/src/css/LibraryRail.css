@@ -1,0 +1,195 @@
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  height: 100%;
+  min-height: 0;
+  padding: var(--space-4);
+  box-sizing: border-box;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+}
+
+.rail__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: 0 0 auto;
+}
+
+.rail__title {
+  margin: 0;
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.rail__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rail__action {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: var(--control-size);
+  height: var(--control-size);
+  border: none;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-raised);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base),
+    transform var(--transition-fast);
+}
+
+.rail__action:hover {
+  color: var(--color-text);
+  transform: scale(var(--hover-scale));
+}
+
+.rail__action:active { transform: scale(var(--press-scale)); }
+
+.rail__action:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.rail__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-raised) transparent;
+}
+
+.rail__row { display: flex; }
+
+.rail__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition:
+    background-color var(--transition-base),
+    transform var(--transition-fast);
+}
+
+.rail__item:hover {
+  background-color: var(--color-surface-raised);
+  transform: translateX(2px);
+}
+
+.rail__item:active { transform: scale(var(--press-scale)); }
+
+.rail__item:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.rail__item:hover .rail__art { transform: scale(var(--hover-scale)); }
+
+.rail__art {
+  flex: 0 0 auto;
+  width: var(--rail-item-size);
+  height: var(--rail-item-size);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
+  background-size: cover;
+  background-position: center;
+  transition: transform var(--transition-fast);
+}
+
+.rail__art--round { border-radius: var(--radius-round); }
+
+.rail__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.rail__name {
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-medium);
+}
+
+.rail__sub {
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+
+.rail__name,
+.rail__sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rail__empty {
+  margin: 0;
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
+}
+
+.rail__item--skeleton { pointer-events: none; }
+.rail__item--skeleton .rail__art { animation: rail-pulse 1.4s ease-in-out infinite; }
+
+.rail__item--skeleton .rail__name,
+.rail__item--skeleton .rail__sub {
+  height: 1em;
+  width: 120px;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
+  animation: rail-pulse 1.4s ease-in-out infinite;
+}
+
+.rail__item--skeleton .rail__sub { width: 72px; }
+
+@keyframes rail-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rail__item--skeleton .rail__art,
+  .rail__item--skeleton .rail__name,
+  .rail__item--skeleton .rail__sub { animation: none; }
+}
+
+.rail__title,
+.rail__meta,
+.rail__empty { display: none; }
+
+.rail__header { justify-content: center; }
+.rail__actions { flex-direction: column; gap: var(--space-4); }
+.rail__item { justify-content: center; }
+
+@media (min-width: 1600px) {
+  .rail { gap: var(--space-16); }
+  .rail__title { display: block; }
+  .rail__meta { display: flex; }
+  .rail__empty { display: block; }
+  .rail__header { justify-content: space-between; }
+  .rail__actions { flex-direction: row; gap: var(--space-2); }
+  .rail__item { justify-content: flex-start; }
+}
