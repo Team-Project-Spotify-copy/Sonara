@@ -1,0 +1,49 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  height: var(--topbar-height);
+}
+
+.topbar__search {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.topbar__avatar {
+  flex: 0 0 auto;
+  width: var(--control-size);
+  height: var(--control-size);
+  border: none;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface);
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    opacity var(--transition-base),
+    transform var(--transition-fast);
+}
+
+.topbar__avatar:hover {
+  opacity: 0.9;
+  background-color: var(--color-surface-raised);
+  transform: scale(var(--hover-scale));
+}
+
+.topbar__avatar:active {
+  transform: scale(var(--press-scale));
+  opacity: 0.75;
+}
+
+.topbar__avatar:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+@media (max-width: 640px) {
+  .topbar__avatar:last-child { display: none; }
+}

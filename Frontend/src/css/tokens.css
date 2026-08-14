@@ -1,0 +1,86 @@
+:root {
+  --color-bg: #121212;
+  --color-surface: #1b1b1b;
+  --color-surface-raised: #504f4f;
+  --color-text: #ffffff;
+  --color-text-muted: #b0b0b0;
+  --color-accent: #d9d9d9;
+
+  --color-scrim-from: rgba(27, 27, 27, 0.84);
+  --color-scrim-to: rgba(27, 27, 27, 0);
+  --backdrop-opacity: 1;
+
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring-color: var(--color-accent);
+  --press-scale: 0.96;
+  --hover-lift: -2px;
+  --hover-scale: 1.03;
+
+  --font-sans: "Helvetica Neue", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Aprila", var(--font-sans);
+
+  --text-shelf-title: 28px;
+  --text-card-title: 20px;
+  --text-body: 16px;
+  --text-sm: 14px;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-13: 52px;
+  --space-16: 64px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-pill: 53px;
+  --radius-track: 43px;
+  --radius-round: 50%;
+
+  --shadow-card: -4px 4px 24px 0 rgba(0, 0, 0, 0.25);
+
+  --shell-gutter: clamp(16px, 5.2vw, 100px);
+  --shell-gap: 20px;
+  --panel-padding: clamp(16px, 2vw, 32px);
+
+  --rail-width-collapsed: clamp(76px, 6.5vw, 125px);
+  --rail-width-expanded: clamp(260px, 21.6vw, 415px);
+
+  --topbar-height: 60px;
+  --player-height: 134px;
+  --player-height-compact: 112px;
+
+  --control-size: 60px;
+  --control-size-sm: 44px;
+
+  --card-size: clamp(132px, 12vw, 188px);
+  --rail-item-size: clamp(56px, 4.9vw, 93px);
+  --search-max-width: 424px;
+
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0s;
+    --transition-base: 0s;
+    --press-scale: 1;
+    --hover-lift: 0px;
+    --hover-scale: 1;
+  }
+}
+
+.is-interactive:focus-visible,
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
