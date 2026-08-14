@@ -38,4 +38,17 @@ public interface IMusicCatalogService
     Task<ArtistDto> GetArtistByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default);
 
     Task<SearchResponseDto> SearchAsync(string? query, int limit, Guid? currentUserId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Найпопулярніші треки каталогу для стрічки головної сторінки.
+    /// Прийшло з гілки main разом із Redis-кешем; сигнатура приведена до решти
+    /// інтерфейсу (currentUserId + ct), бо TrackDto містить IsLiked поточного користувача.
+    /// </summary>
+    Task<IReadOnlyList<TrackDto>> GetPopularTracksAsync(int count, Guid? currentUserId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Найпопулярніші альбоми: "популярність" = сума прослуховувань треків альбому.
+    /// Повертає summary-подання без списку треків — стрічці вони не потрібні.
+    /// </summary>
+    Task<IReadOnlyList<AlbumSummaryDto>> GetPopularAlbumsAsync(int count, CancellationToken ct = default);
 }

@@ -4,6 +4,7 @@ using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Contracts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApp.Controllers;
 

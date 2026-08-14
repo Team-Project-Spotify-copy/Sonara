@@ -98,4 +98,24 @@ public class CatalogController : ControllerBase
     {
         return Ok(await _catalogService.SearchAsync(q, limit, _currentUser.UserId, ct));
     }
+
+    /// <summary>Популярні треки для стрічки головної сторінки (гілка main, кешується Redis).</summary>
+    [HttpGet("tracks/popular")]
+    [ProducesResponseType(typeof(IReadOnlyList<TrackDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<TrackDto>>> GetPopularTracks(
+        [FromQuery] int count = 20,
+        CancellationToken ct = default)
+    {
+        return Ok(await _catalogService.GetPopularTracksAsync(count, _currentUser.UserId, ct));
+    }
+
+    /// <summary>Популярні альбоми для стрічки головної сторінки (гілка main, кешується Redis).</summary>
+    [HttpGet("albums/popular")]
+    [ProducesResponseType(typeof(IReadOnlyList<AlbumSummaryDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<AlbumSummaryDto>>> GetPopularAlbums(
+        [FromQuery] int count = 20,
+        CancellationToken ct = default)
+    {
+        return Ok(await _catalogService.GetPopularAlbumsAsync(count, ct));
+    }
 }

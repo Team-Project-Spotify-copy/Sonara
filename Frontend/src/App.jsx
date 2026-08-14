@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from './components/Home.jsx'
+import HomePage from "./pages/HomePage.jsx";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import CreateNewPassword from "./components/CreateNewPassword.jsx";
@@ -19,7 +19,8 @@ function App() {
         <PlayerProvider>
           <Routes>
             <Route element={<RootLayout />}>
-              <Route path="/" element={<Home />} />
+              {/* Головна — сторінка з гілки main (AppShell + стрічка + пошук). */}
+              <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/create-new-password" element={<CreateNewPassword />} />

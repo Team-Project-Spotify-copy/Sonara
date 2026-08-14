@@ -281,6 +281,39 @@ public class MusicCatalogService : IMusicCatalogService
         return response;
     }
 
+    /// <summary>
+    /// Популярні треки для стрічки головної (гілка main). Проєкція — спільна
+    /// CatalogProjections.Track: вона не віддає AudioUrl і правильно заповнює
+    /// IsLiked/HasStream, на відміну від початкового варіанта з main.
+    /// </summary>
+    public async Task<IReadOnlyList<TrackDto>> GetPopularTracksAsync(
+        int count,
+        Guid? currentUserId,
+        CancellationToken ct = default)
+    {
+        return await _context.Tracks
+            .AsNoTracking()
+            .OrderByDescending(t => t.PlaysCount)
+            .ThenBy(t => t.Id)
+            .Take(Math.Clamp(count, 1, MaxPageSize))
+            .Select(CatalogProjections.Track(currentUserId))
+            .ToListAsync(ct);
+    }
+
+    /// <summary>"Популярність" альбому = сума прослуховувань його треків (гілка main).</summary>
+    public async Task<IReadOnlyList<AlbumSummaryDto>> GetPopularAlbumsAsync(
+        int count,
+        CancellationToken ct = default)
+    {
+        return await _context.Albums
+            .AsNoTracking()
+            .OrderByDescending(a => a.Tracks.Sum(t => (long)t.PlaysCount))
+            .ThenBy(a => a.Id)
+            .Take(Math.Clamp(count, 1, MaxPageSize))
+            .Select(AlbumSummaryProjection())
+            .ToListAsync(ct);
+    }
+
     private static Expression<Func<Album, AlbumSummaryDto>> AlbumSummaryProjection() =>
         a => new AlbumSummaryDto
         {

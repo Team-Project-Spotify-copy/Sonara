@@ -82,3 +82,7 @@ api.interceptors.response.use(
 export function errorCode(error) {
   return error?.response?.data?.code ?? "network_error";
 }
+
+// Модулі з гілки main (feed/library/search.query) імпортують клієнт як default.
+// Іменовані експорти вище лишаються основним API — це лише сумісність.
+export default api;
