@@ -4,11 +4,10 @@ import TopBar from "../components/layout/TopBar.jsx";
 import LibraryRail from "../components/layout/LibraryRail.jsx";
 import Shelf from "../components/media/Shelf.jsx";
 import SearchResults from "../components/search/SearchResults.jsx";
-import PlayerBar from "../components/player/PlayerBar.jsx";
 import useSearch from "../hooks/useSearch.js";
 import useHomeFeed from "../hooks/useHomeFeed.js";
 import useLibrary from "../hooks/useLibrary.js";
-import { usePlayer } from "../contexts/player.context.jsx";
+import { usePlayer } from "../contexts/player.store";
 
 const MIN_QUERY_LENGTH = 2;
 
@@ -24,13 +23,13 @@ export default function HomePage() {
     status: libraryStatus,
     error: libraryError,
   } = useLibrary();
-  const { play, hasActiveTrack } = usePlayer();
+  const { setQueueAndPlay } = usePlayer();
 
   const searching = query.trim().length >= MIN_QUERY_LENGTH;
 
   const handleSelect = (item) => {
     if (item.kind === "track") {
-      play([item], 0);
+      setQueueAndPlay([item], 0, { autoplay: true });
     }
   };
 
@@ -45,7 +44,6 @@ export default function HomePage() {
           onSelect={handleSelect}
         />
       }
-      player={hasActiveTrack ? <PlayerBar /> : null}
     >
       {searching ? (
         <SearchResults

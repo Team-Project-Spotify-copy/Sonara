@@ -13,7 +13,6 @@ public class RefreshToken : BaseEntity
     public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
     public bool IsActive => RevokedAt == null && !IsExpired;
 
-    // Зв'язок із Користувачем
     public Guid UserId { get; set; }
     public virtual User User { get; set; } = null!;
 }

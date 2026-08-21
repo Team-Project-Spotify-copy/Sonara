@@ -13,10 +13,6 @@ const MOCK_LIBRARY = [
   { id: "lib-8", type: "album", title: "In Colour", artistName: "Jamie xx" },
 ];
 
-/**
- * @param {{signal?: AbortSignal}} [args]
- * @returns {Promise<object[]>}
- */
 export async function libraryQuery({ signal } = {}) {
   if (USE_MOCKS) {
     return MOCK_LIBRARY.map((item) => normalizeMediaItem(item, item.type));

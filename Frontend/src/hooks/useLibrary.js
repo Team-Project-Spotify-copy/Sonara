@@ -2,9 +2,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { libraryQuery } from "../api/library.query.js";
 
-/**
- * @returns {{items: object[], status: "loading"|"success"|"error", error: Error|null}}
- */
 export default function useLibrary() {
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState("loading");

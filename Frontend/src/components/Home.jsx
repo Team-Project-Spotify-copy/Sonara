@@ -1,9 +1,8 @@
 import React from "react";
 
-// Стилі для швидкої стилізації без зовнішніх CSS-файлів
 const styles = {
   container: {
-    backgroundColor: "#121212", // Темна тема у стилі Spotify
+    backgroundColor: "#121212",
     color: "#ffffff",
     fontFamily: "'Montserrat', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     minHeight: "100vh",
@@ -34,7 +33,7 @@ const styles = {
     fontSize: "24px",
     fontWeight: "bold",
     letterSpacing: "1px",
-    color: "#1DB954", // Фірмовий зелений
+    color: "#1DB954",
   },
   nav: {
     display: "flex",
@@ -47,7 +46,6 @@ const styles = {
     fontWeight: "600",
     transition: "color 0.2s",
   },
-  // Головний контейнер
   main: {
     maxWidth: "1200px",
     margin: "0 auto",
@@ -55,7 +53,6 @@ const styles = {
     width: "100%",
     boxSizing: "border-box",
   },
-  // Секція Intro
   introSection: {
     display: "flex",
     justifyContent: "space-between",
@@ -92,7 +89,6 @@ const styles = {
     color: "#b3b3b3",
     fontWeight: "bold",
   },
-  // Крапки пагінації
   paginationDots: {
     display: "flex",
     justifyContent: "center",
@@ -113,7 +109,6 @@ const styles = {
     backgroundColor: "#1DB954",
     cursor: "pointer",
   },
-  // Секції з картками (Services / Recent Work)
   sectionTitle: {
     fontSize: "22px",
     fontWeight: "700",
@@ -146,7 +141,6 @@ const styles = {
     fontWeight: "600",
     color: "#ffffff",
   },
-  // Соціальна стрічка (Twitter / Social Feed)
   socialFeed: {
     backgroundColor: "#181818",
     border: "1px solid #282828",
@@ -155,7 +149,6 @@ const styles = {
     marginBottom: "50px",
     textAlign: "center",
   },
-  // Футер
   footer: {
     backgroundColor: "#000000",
     padding: "40px 20px",
@@ -179,7 +172,6 @@ const styles = {
 export default function Home() {
   return (
     <div style={styles.container}>
-      {/* HEADER */}
       <header style={styles.header}>
         <div style={styles.logoContainer}>
           <img
@@ -187,7 +179,6 @@ export default function Home() {
             alt="Sonara Logo"
             style={styles.logoImg}
             onError={(e) => {
-              // Фоллбек, якщо картинка не завантажиться
               e.target.style.display = "none";
             }}
           />
@@ -212,9 +203,7 @@ export default function Home() {
         </nav>
       </header>
 
-      {/* MAIN CONTENT */}
       <main style={styles.main}>
-        {/* INTRO SECTION */}
         <section style={styles.introSection}>
           <div style={styles.introText}>
             <h2 style={styles.introTitle}>Artist Spotlight: Sonara Picks</h2>
@@ -230,7 +219,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* PAGINATION DOTS */}
         <div style={styles.paginationDots}>
           <span style={styles.activeDot}></span>
           <span style={styles.dot}></span>
@@ -239,7 +227,6 @@ export default function Home() {
           <span style={styles.dot}></span>
         </div>
 
-        {/* SERVICES / CURATED LISTS SECTION */}
         <section>
           <div style={styles.grid}>
             <div style={styles.card}>
@@ -254,7 +241,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* RECENT RELEASES SECTION */}
         <section>
           <div style={styles.grid}>
             <div style={styles.card}>
@@ -269,7 +255,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* SOCIAL FEED SECTION */}
         <section style={styles.socialFeed}>
           <h3 style={{ ...styles.cardTitle, marginBottom: "10px" }}>
             Sonara Social Feed
@@ -280,7 +265,6 @@ export default function Home() {
         </section>
       </main>
 
-      {/* FOOTER */}
       <footer style={styles.footer}>
         <div style={styles.footerContent}>
           <nav style={styles.nav}>

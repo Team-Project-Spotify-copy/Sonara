@@ -1,3 +1,4 @@
+using Application.DTOs.Music;
 using Application.DTOs.Playlists;
 
 namespace Application.Interfaces.Services;
@@ -16,7 +17,7 @@ public interface IPlaylistService
 
     Task<IReadOnlyList<PlaylistTrackDto>> GetTracksAsync(Guid playlistId, Guid? requestingUserId, CancellationToken ct = default);
 
-    Task AddTrackAsync(Guid playlistId, Guid ownerId, Guid trackId, CancellationToken ct = default);
+    Task<PlaylistDto> AddTrackAsync(Guid playlistId, Guid ownerId, Guid trackId, CancellationToken ct = default);
 
-    Task RemoveTrackAsync(Guid playlistId, Guid ownerId, Guid trackId, CancellationToken ct = default);
+    Task<PlaylistDto> RemoveTrackAsync(Guid playlistId, Guid ownerId, Guid trackId, CancellationToken ct = default);
 }

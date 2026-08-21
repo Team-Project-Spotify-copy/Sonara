@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Http;
 
 public class BlobService : IBlobService
@@ -49,8 +50,8 @@ public class BlobService : IBlobService
         var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
 
         var blobUriBuilder = new BlobUriBuilder(new Uri(fileUrl));
-        var blobName = blobUriBuilder.BlobName; 
-        
+        var blobName = blobUriBuilder.BlobName;
+
         var blobClient = containerClient.GetBlobClient(blobName);
         await blobClient.DeleteIfExistsAsync();
     }
@@ -63,6 +64,34 @@ public class BlobService : IBlobService
         }
 
         return await UploadFileAsync(newFile, folder);
+    }
+
+    public string? TryCreateReadUrl(string fileUrl, TimeSpan lifetime)
+    {
+        if (string.IsNullOrWhiteSpace(fileUrl) || !Uri.TryCreate(fileUrl, UriKind.Absolute, out var uri))
+        {
+            return null;
+        }
+
+        var location = new BlobUriBuilder(uri);
+        var blobClient = _blobServiceClient
+            .GetBlobContainerClient(location.BlobContainerName)
+            .GetBlobClient(location.BlobName);
+
+        if (!blobClient.CanGenerateSasUri)
+        {
+            return null;
+        }
+
+        var sas = new BlobSasBuilder(BlobSasPermissions.Read, DateTimeOffset.UtcNow.Add(lifetime))
+        {
+            BlobContainerName = location.BlobContainerName,
+            BlobName = location.BlobName,
+            Resource = "b",
+            StartsOn = DateTimeOffset.UtcNow.AddMinutes(-5)
+        };
+
+        return blobClient.GenerateSasUri(sas).ToString();
     }
 
     private static (string ContainerName, string FolderPath) GetStorageLocation(BlobFolder folder) => folder switch

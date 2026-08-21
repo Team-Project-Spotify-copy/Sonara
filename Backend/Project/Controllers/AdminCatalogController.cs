@@ -7,7 +7,7 @@ namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/admin")]
-[Authorize(Roles = "Admin,Moderator")] 
+[Authorize(Roles = "Admin,Moderator")]
 public class AdminCatalogController : ControllerBase
 {
     private readonly IAdminMusicService _adminMusicService;
@@ -27,7 +27,6 @@ public class AdminCatalogController : ControllerBase
 
         var trackId = await _adminMusicService.CreateTrackAsync(dto);
 
-        // Немає GET-маршруту для одного треку, тому 201/Location тут не віддаємо.
         return Ok(trackId);
     }
 

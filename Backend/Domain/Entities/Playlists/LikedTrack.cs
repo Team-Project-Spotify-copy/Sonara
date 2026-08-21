@@ -10,7 +10,6 @@ public class LikedTrack : BaseEntity
     public Guid TrackId { get; set; }
     public DateTime LikedAt { get; set; } = DateTime.UtcNow;
 
-    //Навігаційні властивості
     public virtual User User { get; set; } = null!;
     public virtual Track Track { get; set; } = null!;
 }

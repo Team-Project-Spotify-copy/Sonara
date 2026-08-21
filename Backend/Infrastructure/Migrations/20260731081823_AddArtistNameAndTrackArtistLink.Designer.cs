@@ -14,7 +14,6 @@ namespace Infrastructure.Migrations
     [Migration("20260731081823_AddArtistNameAndTrackArtistLink")]
     partial class AddArtistNameAndTrackArtistLink
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

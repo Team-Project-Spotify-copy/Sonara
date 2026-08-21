@@ -12,7 +12,6 @@ public class Podcast : BaseEntity
     public string? Description { get; set; }
     public string? CoverUrl { get; set; }
 
-    //Навігаційні властивості
     public virtual User Author { get; set; } = null!;
     public virtual ICollection<PodcastEpisode> Episodes { get; set; } = new List<PodcastEpisode>();
 }

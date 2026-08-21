@@ -14,7 +14,6 @@ public class Playlist : BaseEntity
     public string? CoverUrl { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    //Навігаційні властивості
     public virtual User User { get; set; } = null!;
     public virtual ICollection<PlaylistTrack> PlaylistTracks { get; set; } = new List<PlaylistTrack>();
 }
