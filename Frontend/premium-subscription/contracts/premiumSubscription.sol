@@ -2,25 +2,39 @@
 pragma solidity ^0.8.20;
 
 contract premiumSubscription {
-    address payable public owner;
-    mapping(int256 => bool) public isPremium;
+    address payable public immutable owner;
 
-    event PremiumBought(int256 indexed id, address buyer);
+    enum PlanType { INDIVIDUAL, DUO, FAMILY }
+
+    event SubscriptionPurchased(
+        uint256 indexed userId,
+        PlanType planType,
+        address indexed buyer,
+        uint256 amountPaid
+    );
+
+    error InsufficientETH();
+    error InvalidPlan();
+    error TransferFailed();
 
     constructor() {
-        owner = payable(msg.sender); 
+        owner = payable(msg.sender);
     }
 
-    function buyPremium(int256 _id) payable public returns(bool) {
-        require(!isPremium[_id], "This user already has a premium subscribe");
-        require(msg.value >= 1 ether, "Need to send at least 1 ETH");
+    function buySubscription(uint256 _userId, PlanType _planType) external payable {
+        if (_planType == PlanType.INDIVIDUAL) {
+            if (msg.value < 0.00213708 ether) revert InsufficientETH();
+        } else if (_planType == PlanType.DUO) {
+            if (msg.value < 0.00374391 ether) revert InsufficientETH();
+        } else if (_planType == PlanType.FAMILY) {
+            if (msg.value < 0.00444092 ether) revert InsufficientETH();
+        } else {
+            revert InvalidPlan();
+        }
 
         (bool success, ) = owner.call{value: msg.value}("");
-        require(success, "Transfer failed");
+        if (!success) revert TransferFailed();
 
-        isPremium[_id] = true;
-
-        emit PremiumBought(_id, msg.sender);
-        return true;
+        emit SubscriptionPurchased(_userId, _planType, msg.sender, msg.value);
     }
 }

@@ -19,8 +19,23 @@ public class AuthRepository : IAuthRepository
     public async Task<Guid> GetDefaultRoleIdAsync() =>
         (await _context.Roles.FirstAsync(r => r.Name == "User")).Id;
 
-    public async Task<Guid> GetDefaultSubscriptionIdAsync() =>
-        (await _context.Subscriptions.FirstAsync(s => s.Name == "Free")).Id;
+    public async Task<UserSubscription> CreateDefaultSubscriptionForUserAsync(Guid userId)
+    {
+        var freePlan = await _context.SubscriptionPlans
+            .FirstOrDefaultAsync(p => p.Name == "Free")
+            ?? throw new InvalidOperationException("Free plan not found in DB");
+
+        var userSub = new UserSubscription
+        {
+            Id = Guid.NewGuid(),
+            OwnerId = userId,
+            PlanId = freePlan.Id,
+            ExpiresAt = DateTime.MaxValue
+        };
+
+        await _context.UserSubscriptions.AddAsync(userSub);
+        return userSub;
+    }
 
     public async Task AddUserAsync(User user) => await _context.Users.AddAsync(user);
 

@@ -27,6 +27,7 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid reCAPTCHA token.");
 
         var userId = await _mediator.Send(command, cancellationToken);
+
         return Ok(new { UserId = userId });
     }
 
