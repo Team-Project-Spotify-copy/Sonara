@@ -1,7 +1,7 @@
 import React from "react";
 import image from "../assets/images/register-bg.png";
 import { buySubscription } from "../utilites/blockchainUtils";
-import { AccountContext } from "../contexts/account.context";
+import { AccountContext } from "../contexts/account.store";
 
 export const PLAN_TYPE = Object.freeze({
   INDIVIDUAL: 0,
