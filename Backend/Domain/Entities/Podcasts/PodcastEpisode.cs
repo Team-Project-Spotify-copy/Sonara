@@ -12,6 +12,5 @@ public class PodcastEpisode : BaseEntity
     public int DurationMs { get; set; }
     public DateTime? ReleaseDate { get; set; }
 
-    //Навігаційні властивості
     public virtual Podcast Podcast { get; set; } = null!;
 }

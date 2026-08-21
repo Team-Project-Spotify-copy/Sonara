@@ -29,7 +29,6 @@ public class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
         };
 
-        // Роль потрібна для [Authorize(Roles = "...")]; навігація Role має бути завантажена через Include.
         if (!string.IsNullOrWhiteSpace(user.Role?.Name))
         {
             claims.Add(new Claim(ClaimTypes.Role, user.Role.Name));

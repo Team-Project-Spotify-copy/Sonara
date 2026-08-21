@@ -1,11 +1,14 @@
 ﻿using Application.DTOs.Users;
 using Application.Interfaces;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace WebApp.Controllers;
 
+[ApiController]
+[Authorize]
 public class ProfileController : ControllerBase
 {
     private readonly IProfileServices _profileServices;

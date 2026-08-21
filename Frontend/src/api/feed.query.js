@@ -34,10 +34,6 @@ function mockFeed() {
   }));
 }
 
-/**
- * @param {{signal?: AbortSignal}} [args]
- * @returns {Promise<Array<{key: string, title: string, shape: string, items: object[]}>>}
- */
 export async function feedQuery({ signal } = {}) {
   if (USE_MOCKS) {
     return mockFeed();

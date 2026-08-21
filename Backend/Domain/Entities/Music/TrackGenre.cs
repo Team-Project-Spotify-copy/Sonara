@@ -7,7 +7,6 @@ public class TrackGenre : BaseEntity
     public Guid TrackId { get; set; }
     public Guid GenreId { get; set; }
 
-    //Навігаційні властивості
     public virtual Track Track { get; set; } = null!;
     public virtual Genre Genre { get; set; } = null!;
 }

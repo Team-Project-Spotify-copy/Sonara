@@ -9,6 +9,7 @@ namespace WebApp.Controllers;
 [ApiController]
 [Route("api/playlists")]
 [Authorize]
+[Produces("application/json")]
 public class PlaylistsController : ControllerBase
 {
     private readonly IPlaylistService _playlistService;
@@ -21,6 +22,8 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IReadOnlyList<PlaylistDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<IReadOnlyList<PlaylistDto>>> GetMy(CancellationToken ct)
     {
         var userId = RequireUserId();
@@ -28,13 +31,20 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PlaylistDto>> GetById(Guid id, CancellationToken ct)
     {
-        var playlist = await _playlistService.GetByIdAsync(id, _currentUser.UserId, ct);
-        return Ok(playlist);
+        return Ok(await _playlistService.GetByIdAsync(id, _currentUser.UserId, ct));
     }
 
     [HttpPost]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<PlaylistDto>> Create([FromForm] CreatePlaylistRequest request, CancellationToken ct)
     {
         var userId = RequireUserId();
@@ -43,6 +53,12 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Consumes("multipart/form-data")]
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<PlaylistDto>> Update(Guid id, [FromForm] UpdatePlaylistRequest request, CancellationToken ct)
     {
         var userId = RequireUserId();
@@ -50,6 +66,10 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
     {
         var userId = RequireUserId();
@@ -58,30 +78,41 @@ public class PlaylistsController : ControllerBase
     }
 
     [HttpGet("{id:guid}/tracks")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(IReadOnlyList<PlaylistTrackDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IReadOnlyList<PlaylistTrackDto>>> GetTracks(Guid id, CancellationToken ct)
     {
         return Ok(await _playlistService.GetTracksAsync(id, _currentUser.UserId, ct));
     }
 
     [HttpPost("{id:guid}/tracks")]
-    public async Task<IActionResult> AddTrack(Guid id, [FromBody] AddTrackToPlaylistRequest request, CancellationToken ct)
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PlaylistDto>> AddTrack(Guid id, [FromBody] AddTrackToPlaylistRequest request, CancellationToken ct)
     {
         var userId = RequireUserId();
-        await _playlistService.AddTrackAsync(id, userId, request.TrackId, ct);
-        return NoContent();
+        return Ok(await _playlistService.AddTrackAsync(id, userId, request.TrackId, ct));
     }
 
     [HttpDelete("{id:guid}/tracks/{trackId:guid}")]
-    public async Task<IActionResult> RemoveTrack(Guid id, Guid trackId, CancellationToken ct)
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PlaylistDto>> RemoveTrack(Guid id, Guid trackId, CancellationToken ct)
     {
         var userId = RequireUserId();
-        await _playlistService.RemoveTrackAsync(id, userId, trackId, ct);
-        return NoContent();
+        return Ok(await _playlistService.RemoveTrackAsync(id, userId, trackId, ct));
     }
 
     private Guid RequireUserId()
     {
         return _currentUser.UserId
-        ?? throw new UnauthorizedAccessException("Ќе вдалось визначити користувача з токена.");
+            ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
     }
 }

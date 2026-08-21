@@ -9,7 +9,6 @@ public class PlaylistTrack : BaseEntity
     public Guid TrackId { get; set; }
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
 
-    //Навігаційні властивості
     public virtual Playlist Playlist { get; set; } = null!;
     public virtual Track Track { get; set; } = null!;
 }

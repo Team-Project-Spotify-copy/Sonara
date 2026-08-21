@@ -17,7 +17,6 @@ namespace BusinessLogic.Configurations
 
             CreateMap<UserSubscriptionDto, UserSubscription>().ReverseMap();
 
-            // User
             CreateMap<ProfileDto, User>().ReverseMap();
             CreateMap<UpdateProfileDto, User>().ReverseMap();
         }

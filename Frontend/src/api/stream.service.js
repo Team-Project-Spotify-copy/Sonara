@@ -1,9 +1,5 @@
 import { ENDPOINTS } from "./endpoints.js";
 
-/**
- * @param {{id: string, audioUrl?: string|null}} track
- * @returns {string|null}
- */
 export function resolveStreamUrl(track) {
   if (!track) return null;
   if (track.audioUrl) return track.audioUrl;

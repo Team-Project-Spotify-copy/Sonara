@@ -1,0 +1,23 @@
+
+.app-root {
+  position: relative;
+  min-height: 100vh;
+  background-color: #121212;
+}
+
+.app-root__content {
+  display: block;
+}
+
+.app-root--with-player .app-root__content {
+  padding-bottom: 134px;
+}
+
+.app-root--immersive .app-root__content {
+  visibility: hidden;
+}
+
+.app-root--immersive {
+  overflow: hidden;
+  height: 100vh;
+}

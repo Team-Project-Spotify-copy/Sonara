@@ -50,6 +50,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ArtistId");
 
+                    b.HasIndex("Title")
+                        .HasDatabaseName("IX_Albums_Title");
+
                     b.ToTable("Albums");
 
                     b.HasData(
@@ -169,7 +172,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TrackId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "ListenedAt")
+                        .HasDatabaseName("IX_ListeningHistories_UserId_ListenedAt");
 
                     b.ToTable("ListeningHistories");
 
@@ -250,6 +254,15 @@ namespace Infrastructure.Migrations
                     b.HasIndex("AlbumId");
 
                     b.HasIndex("ArtistId");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Tracks_CreatedAt");
+
+                    b.HasIndex("PlaysCount")
+                        .HasDatabaseName("IX_Tracks_PlaysCount");
+
+                    b.HasIndex("Title")
+                        .HasDatabaseName("IX_Tracks_Title");
 
                     b.ToTable("Tracks");
 
@@ -368,6 +381,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TrackId");
 
+                    b.HasIndex("UserId", "LikedAt")
+                        .HasDatabaseName("IX_LikedTracks_UserId_LikedAt");
+
                     b.ToTable("LikedTracks");
 
                     b.HasData(
@@ -430,7 +446,11 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Playlists_Name");
+
+                    b.HasIndex("UserId", "CreatedAt")
+                        .HasDatabaseName("IX_Playlists_UserId_CreatedAt");
 
                     b.ToTable("Playlists");
 
@@ -501,6 +521,9 @@ namespace Infrastructure.Migrations
                     b.HasKey("PlaylistId", "TrackId");
 
                     b.HasIndex("TrackId");
+
+                    b.HasIndex("PlaylistId", "AddedAt")
+                        .HasDatabaseName("IX_PlaylistTracks_PlaylistId_AddedAt");
 
                     b.ToTable("PlaylistTracks");
 
@@ -885,6 +908,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .HasDatabaseName("IX_Artists_Name");
 
                     b.HasIndex("UserId")
                         .IsUnique();
