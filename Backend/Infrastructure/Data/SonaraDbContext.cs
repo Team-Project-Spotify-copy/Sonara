@@ -94,6 +94,30 @@ public class SonaraDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
+        // 6. Конфігурація для Підписок (UserSubscription)
+        modelBuilder.Entity<UserSubscription>(entity =>
+        {
+            entity.HasKey(us => us.Id);
+
+            // Зв'язок із власником підписки
+            entity.HasOne(us => us.Owner)
+                  .WithMany()
+                  .HasForeignKey(us => us.OwnerId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            // Зв'язок із тарифним планом
+            entity.HasOne(us => us.Plan)
+                  .WithMany()
+                  .HasForeignKey(us => us.PlanId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            // Зв'язок "один до багатьох" для учасників підписки (Duo / Family)
+            entity.HasMany(us => us.Members)
+                  .WithOne(u => u.ActiveSubscription)
+                  .HasForeignKey(u => u.ActiveSubscriptionId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
         SeedDataExtension.Seed(modelBuilder);
     }
 
@@ -122,7 +146,8 @@ public class SonaraDbContext : DbContext
     public DbSet<Artist> Artists { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public DbSet<Role> Roles { get; set; }
-    public DbSet<Session> Sessions { get; set; }
-    public DbSet<Subscription> Subscriptions { get; set; }
+    public DbSet<Session> Sessions { get; set; }    
+    public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+    public DbSet<UserSubscription> UserSubscriptions { get; set; }
     public DbSet<User> Users { get; set; }
 }

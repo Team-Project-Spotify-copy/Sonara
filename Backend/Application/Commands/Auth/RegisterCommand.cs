@@ -23,8 +23,12 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
             Username = request.Username,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             RoleId = await _authRepository.GetDefaultRoleIdAsync(),
-            SubscriptionId = await _authRepository.GetDefaultSubscriptionIdAsync()
+            ActiveSubscriptionId = null
         };
+
+        var freeSub = await _authRepository.CreateDefaultSubscriptionForUserAsync(user.Id);
+
+        user.ActiveSubscriptionId = freeSub.Id;
 
         await _authRepository.AddUserAsync(user);
         await _authRepository.SaveChangesAsync();

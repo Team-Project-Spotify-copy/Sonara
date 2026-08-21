@@ -1,25 +1,29 @@
 ﻿namespace Application.DTOs.Subscription;
 
-public record SubscriptionDto(
+public record SubscriptionPlanDto(
     Guid Id,
     string Name,
     decimal Price,
+    int MaxSlots,
     string Features
 );
 
-public record CreateSubscriptionDto(
+public record CreateSubscriptionPlanDto(
     string Name,
     decimal Price,
+    int MaxSlots,
     string Features
 );
 
-public record UpdateSubscriptionDto(
+public record UpdateSubscriptionPlanDto(
     string Name,
     decimal Price,
+    int MaxSlots,
     string Features
 );
 
-public record GetSubscriptionDto(
+public record GetSubscriptionPlanDto(
     Guid Id,
     string Name
 );
+

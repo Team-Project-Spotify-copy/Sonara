@@ -22,8 +22,8 @@ public class User : BaseEntity
     public virtual Role Role { get; set; } = null!;
 
     // Зв'язок із Підпискою
-    public Guid SubscriptionId { get; set; }
-    public virtual Subscription Subscription { get; set; } = null!;
+    public Guid? ActiveSubscriptionId { get; set; }
+    public virtual UserSubscription? ActiveSubscription { get; set; }
 
     // Навігаційні властивості безпеки та сесій
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();

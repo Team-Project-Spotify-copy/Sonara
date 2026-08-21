@@ -4,106 +4,228 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Immutable;
 
-namespace Infrastructure.Services
+namespace Infrastructure.Services;
+
+public class SubscriptionService : ISubscriptionService
 {
-    public class SubscriptionService : ISubscriptionService
+    private readonly SonaraDbContext _db;
+    private readonly IMapper _mapper;
+
+    public SubscriptionService(SonaraDbContext db, IMapper mapper)
     {
-
-        private readonly SonaraDbContext _db; 
-        private readonly IMapper _mapper;
-
-        public SubscriptionService(SonaraDbContext db, IMapper mapper)
-        {
-            _db = db;
-            _mapper = mapper;
-        }
-
-        public async Task<IReadOnlyList<SubscriptionDto>> GetAllSubscriptionsAsync(CancellationToken ct = default)
-        {
-            return await _db.Subscriptions
-                .OrderByDescending(s => s.Price)
-                .ProjectTo<SubscriptionDto>(_mapper.ConfigurationProvider)
-                .ToListAsync(ct);
-        }
-
-        public async Task<SubscriptionDto?> GetSubscriptionsByIdAsync(Guid subscriptionId, CancellationToken ct = default)
-        {
-            return await _db.Subscriptions
-                .Where(s => s.Id == subscriptionId)
-                .ProjectTo<SubscriptionDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(ct);
-        }
-
-        public async Task<SubscriptionDto?> GetUserSubscriptionAsync(Guid userId, CancellationToken ct = default)
-        {
-            return await _db.Users
-                   .AsNoTracking()
-                   .Where(u => u.Id == userId)
-                   .Select(u => u.Subscription) 
-                   .ProjectTo<SubscriptionDto>(_mapper.ConfigurationProvider)
-                   .FirstOrDefaultAsync(ct);
-        }
-
-        public async Task<bool> RemoveSubscriptionAsync(Guid subscriptionId, CancellationToken ct = default)
-        {
-            var subscription = await _db.Subscriptions
-                .FirstOrDefaultAsync(s => s.Id == subscriptionId, ct);
-
-            if (subscription == null)
-                return false;
-
-            var freeSubscriptionId = await _db.Subscriptions
-                .Where(s => s.Name == "Free") 
-                .Select(s => s.Id)
-                .FirstOrDefaultAsync(ct);
-
-            if (freeSubscriptionId == Guid.Empty || freeSubscriptionId == subscriptionId)
-            {
-                throw new InvalidOperationException("Неможливо видалити таку підписку або не знайдено дефолтну підписку Free.");
-            }
-
-            var usersWithSubscription = await _db.Users
-                .Where(u => u.SubscriptionId == subscriptionId)
-                .ToListAsync(ct);
-
-            foreach (var user in usersWithSubscription)
-            {
-                user.SubscriptionId = freeSubscriptionId;
-            }
-
-            _db.Subscriptions.Remove(subscription);
-
-            await _db.SaveChangesAsync(ct);
-
-            return true;
-        }
-
-        public async Task<SubscriptionDto?> UpdateSubscriptionAsync(Guid subscriptionId, UpdateSubscriptionDto dto, CancellationToken ct = default)
-        {
-            var subscription = await _db.Subscriptions
-                .FirstOrDefaultAsync(s => s.Id == subscriptionId, ct);
-
-            if (subscription == null)
-                return null;
-
-            _mapper.Map(dto, subscription);
-
-            await _db.SaveChangesAsync(ct);
-
-            return _mapper.Map<SubscriptionDto>(subscription);
-        }
-
-        public async Task<SubscriptionDto> CreateSubscriptionAsync(CreateSubscriptionDto dto, CancellationToken ct = default)
-        {
-            var subscription = _mapper.Map<Subscription>(dto);
-
-            await _db.Subscriptions.AddAsync(subscription, ct);
-
-            await _db.SaveChangesAsync(ct);
-
-            return _mapper.Map<SubscriptionDto>(subscription);
-        }
+        _db = db;
+        _mapper = mapper;
     }
+
+    public async Task<IReadOnlyList<SubscriptionPlanDto>> GetAllPlansAsync(CancellationToken ct = default)
+    {
+        return await _db.SubscriptionPlans
+            .AsNoTracking()
+            .OrderBy(p => p.Price)
+            .ProjectTo<SubscriptionPlanDto>(_mapper.ConfigurationProvider)
+            .ToListAsync(ct);
+    }
+
+    public async Task<SubscriptionPlanDto?> GetPlanByIdAsync(Guid planId, CancellationToken ct = default)
+    {
+        return await _db.SubscriptionPlans
+            .AsNoTracking()
+            .Where(p => p.Id == planId)
+            .ProjectTo<SubscriptionPlanDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<SubscriptionPlanDto> CreatePlanAsync(CreateSubscriptionPlanDto dto, CancellationToken ct = default)
+    {
+        var plan = _mapper.Map<SubscriptionPlan>(dto);
+
+        await _db.SubscriptionPlans.AddAsync(plan, ct);
+        await _db.SaveChangesAsync(ct);
+
+        return _mapper.Map<SubscriptionPlanDto>(plan);
+    }
+
+    public async Task<SubscriptionPlanDto?> UpdatePlanAsync(Guid planId, UpdateSubscriptionPlanDto dto, CancellationToken ct = default)
+    {
+        var plan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Id == planId, ct);
+
+        if (plan == null)
+            return null;
+
+        _mapper.Map(dto, plan);
+        await _db.SaveChangesAsync(ct);
+
+        return _mapper.Map<SubscriptionPlanDto>(plan);
+    }
+
+    public async Task<bool> RemovePlanAsync(Guid planId, CancellationToken ct = default)
+    {
+        var plan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Id == planId, ct);
+
+        if (plan == null)
+            return false;
+
+        _db.SubscriptionPlans.Remove(plan);
+        await _db.SaveChangesAsync(ct);
+
+        return true;
+    }
+
+
+    public async Task<UserSubscriptionDto?> GetUserSubscriptionAsync(Guid userId, CancellationToken ct = default)
+    {
+        var user = await _db.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId, ct);
+
+        if (user == null || user.ActiveSubscriptionId == null)
+            return null;
+
+        return await _db.UserSubscriptions
+            .AsNoTracking()
+            .Where(us => us.Id == user.ActiveSubscriptionId)
+            .ProjectTo<UserSubscriptionDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<UserSubscriptionDto> ProcessBlockchainPurchaseAsync(Guid userId, byte planTypeByte, CancellationToken ct = default)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId, ct)
+            ?? throw new InvalidOperationException("User not found");
+
+        string planName = planTypeByte switch
+        {
+            1 => "Individual",
+            2 => "Duo",
+            3 => "Family",
+            _ => "Free"
+        };
+
+        var plan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Name == planName, ct)
+            ?? throw new InvalidOperationException($"Plan {planName} not found");
+
+        var newSubscription = new UserSubscription
+        {
+            Id = Guid.NewGuid(),
+            PlanId = plan.Id,
+            OwnerId = user.Id,
+            ExpiresAt = DateTime.UtcNow.AddMonths(1)
+        };
+
+        newSubscription.Members.Add(user);
+
+        await _db.UserSubscriptions.AddAsync(newSubscription, ct);
+
+        user.ActiveSubscriptionId = newSubscription.Id;
+
+        await _db.SaveChangesAsync(ct);
+
+        return _mapper.Map<UserSubscriptionDto>(newSubscription);
+    }
+
+    public async Task<bool> InviteToSubscriptionAsync(Guid ownerId, string targetUsername, CancellationToken ct = default)
+    {
+        var activeSub = await _db.UserSubscriptions
+            .Include(s => s.Plan)
+            .Include(s => s.Members)
+            .FirstOrDefaultAsync(s => s.OwnerId == ownerId, ct);
+
+        if (activeSub == null)
+            return false;
+
+        if (activeSub.Members.Count >= activeSub.Plan.MaxSlots)
+            return false;
+
+        var targetUser = await _db.Users.FirstOrDefaultAsync(u => u.Username == targetUsername, ct);
+        if (targetUser == null)
+            return false;
+
+        activeSub.Members.Add(targetUser);
+        targetUser.ActiveSubscriptionId = activeSub.Id;
+
+        await _db.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<bool> LeaveOrRemoveFromSubscriptionAsync(Guid currentUserId, Guid activeSubId, Guid userIdToRemove, CancellationToken ct = default)
+    {
+        var activeSub = await _db.UserSubscriptions
+            .Include(s => s.Members)
+            .FirstOrDefaultAsync(s => s.Id == activeSubId, ct);
+
+        if (activeSub == null)
+            return false;
+
+        bool isSelfRemoval = currentUserId == userIdToRemove;
+        bool isOwner = activeSub.OwnerId == currentUserId; 
+
+        if (!isSelfRemoval && !isOwner)
+            return false; 
+
+        var user = activeSub.Members.FirstOrDefault(u => u.Id == userIdToRemove);
+        if (user == null)
+            return false;
+
+        if (isOwner && isSelfRemoval) return false;
+
+        activeSub.Members.Remove(user);
+
+        var planTypeFree = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Name == "Free", ct);
+
+        if (planTypeFree == null) return false;
+
+        var personalFreeSub = new UserSubscription
+        {
+            Id = Guid.NewGuid(),
+            OwnerId = user.Id,
+            PlanId = planTypeFree.Id,
+            ExpiresAt = DateTime.MaxValue,
+        };
+
+        _db.UserSubscriptions.Add(personalFreeSub);
+
+        user.ActiveSubscriptionId = personalFreeSub.Id;
+
+        await _db.SaveChangesAsync(ct);
+        return true;
+    }
+
+    public async Task<bool> CancelSubscriptionAsync(Guid currentUserId, Guid activeSubId, CancellationToken ct = default)
+    {
+        var activeSub = await _db.UserSubscriptions
+            .Include(s => s.Members)
+            .FirstOrDefaultAsync(s => s.Id == activeSubId, ct);
+
+        if (activeSub == null)
+            return false;
+
+        if (activeSub.OwnerId != currentUserId)
+            return false;
+
+        var freePlan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Name == "Free", ct);
+        if (freePlan == null)
+            return false;
+
+        foreach (var member in activeSub.Members.ToList())
+        {
+            var personalFreeSub = new UserSubscription
+            {
+                Id = Guid.NewGuid(),
+                OwnerId = member.Id,
+                PlanId = freePlan.Id,
+                ExpiresAt = DateTime.MaxValue
+            };
+
+            _db.UserSubscriptions.Add(personalFreeSub);
+
+            member.ActiveSubscriptionId = personalFreeSub.Id;
+        }
+
+        _db.UserSubscriptions.Remove(activeSub);
+
+        await _db.SaveChangesAsync(ct);
+        return true;
+    }
+
 }

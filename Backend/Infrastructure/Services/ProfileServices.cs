@@ -12,10 +12,10 @@ public class ProfileServices : IProfileServices
 {
 
     private readonly SonaraDbContext _context;
-    private readonly BlobService _blobService;
+    private readonly IBlobService _blobService;
     private readonly IMapper _mapper;
 
-    public ProfileServices(SonaraDbContext context, BlobService blobService, IMapper mapper)
+    public ProfileServices(SonaraDbContext context, IBlobService blobService, IMapper mapper)
     {
         _context = context;
         _blobService = blobService;
