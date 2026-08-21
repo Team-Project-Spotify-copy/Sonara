@@ -1,8 +1,8 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Application.Interfaces.Services;
 
 namespace WebApp.Services;
-
-/// TODO: ТИМЧАСОВА реалізація, поки немає JWT. Бере UserId із заголовка "X-User-Id"
 
 public class CurrentUserService : ICurrentUserService
 {
@@ -17,8 +17,12 @@ public class CurrentUserService : ICurrentUserService
     {
         get
         {
-            var header = _httpContextAccessor.HttpContext?.Request.Headers["X-User-Id"].FirstOrDefault();
-            return Guid.TryParse(header, out var id) ? id : null;
+            var user = _httpContextAccessor.HttpContext?.User;
+
+            var idClaim = user?.FindFirstValue(ClaimTypes.NameIdentifier)
+                ?? user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            return Guid.TryParse(idClaim, out var id) ? id : null;
         }
     }
 }

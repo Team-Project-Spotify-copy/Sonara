@@ -1,5 +1,6 @@
 using Application.DTOs.Playlists;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Contracts;
 
@@ -7,6 +8,7 @@ namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/playlists")]
+[Authorize]
 public class PlaylistsController : ControllerBase
 {
     private readonly IPlaylistService _playlistService;
@@ -77,10 +79,9 @@ public class PlaylistsController : ControllerBase
         return NoContent();
     }
 
-    // TODO: замінити на [Authorize], коли буде JWT
     private Guid RequireUserId()
     {
         return _currentUser.UserId
-            ?? throw new UnauthorizedAccessException("Не вказано X-User-Id (тимчасова заглушка автентифікації).");
+        ?? throw new UnauthorizedAccessException("Не вдалось визначити користувача з токена.");
     }
 }
