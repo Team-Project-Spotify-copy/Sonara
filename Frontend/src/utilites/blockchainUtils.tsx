@@ -1,83 +1,8 @@
 import { BrowserProvider, Contract, ethers, Signer } from "ethers";
+import contractArtifact from "../../premium-subscription/artifacts/contracts/premiumSubscription.sol/premiumSubscription.json";
 
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const abi = [
-    {
-      "inputs": [],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "int256",
-          "name": "id",
-          "type": "int256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "buyer",
-          "type": "address"
-        }
-      ],
-      "name": "PremiumBought",
-      "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "int256",
-          "name": "_id",
-          "type": "int256"
-        }
-      ],
-      "name": "buyPremium",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "int256",
-          "name": "",
-          "type": "int256"
-        }
-      ],
-      "name": "isPremium",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address payable",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ];
+const abi = contractArtifact.abi;
 
 declare global { interface Window { ethereum?: any; } }
 
@@ -109,16 +34,29 @@ const withContract = async (action: (contract: Contract) => any): Promise<any | 
   try { return await action(contract); } catch (error) { console.error("Contract interaction error:", error); }
 };
 
-export const buyPremium = async (id: number): Promise<boolean> => {
-  return await withContract(async (contract) => {
-    const tx = await contract.buyPremium(id, { value: ethers.parseEther("1") });
-    await tx.wait();
-    return true;
-  }) ?? false;
+export enum PlanType {
+  INDIVIDUAL = 0,
+  DUO = 1,
+  FAMILY = 2,
+}
+
+const PLAN_PRICES: Record<PlanType, string> = {
+  [PlanType.INDIVIDUAL]: "0.00213708",
+  [PlanType.DUO]: "0.00374391",
+  [PlanType.FAMILY]: "0.00444092",
 };
 
-export const getIsPremiumStatus = async (id: number): Promise<boolean> => {
-  return await withContract(async (contract) => {
-    return await contract.isPremium(id);
-  }) ?? false;
+export const buySubscription = async (userId: number, planType: PlanType): Promise<boolean> => {
+  return (
+    (await withContract(async (contract) => {
+      const price = PLAN_PRICES[planType];
+      
+      const tx = await contract.buySubscription(userId, planType, {
+        value: ethers.parseEther(price),
+      });
+
+      await tx.wait();
+      return true;
+    })) ?? false
+  );
 };

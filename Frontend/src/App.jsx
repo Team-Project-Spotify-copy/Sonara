@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Home from './components/Home.jsx'
+import Home from "./components/Home.jsx";
 import Login from "./components/Login.jsx";
 import Register from "./components/Register.jsx";
 import CreateNewPassword from "./components/CreateNewPassword.jsx";
+import SubscriptionPage from "./components/SubscriptionPage.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import "./index.css";
 function App() {
-
   return (
     <>
       <BrowserRouter>
@@ -16,10 +16,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/create-new-password" element={<CreateNewPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/subscriptions" element={<SubscriptionPage />} />
         </Routes>
       </BrowserRouter>
     </>
   );
 }
 
-export default App
+export default App;
