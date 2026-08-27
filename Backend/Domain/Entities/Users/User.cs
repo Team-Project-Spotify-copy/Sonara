@@ -20,8 +20,9 @@ public class User : BaseEntity
     public Guid RoleId { get; set; }
     public virtual Role Role { get; set; } = null!;
 
-    public Guid SubscriptionId { get; set; }
-    public virtual Subscription Subscription { get; set; } = null!;
+    // Зв'язок із Підпискою
+    public Guid? ActiveSubscriptionId { get; set; }
+    public virtual UserSubscription? ActiveSubscription { get; set; }
 
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     public virtual ICollection<Session> Sessions { get; set; } = new List<Session>();

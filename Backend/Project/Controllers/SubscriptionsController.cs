@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Subscription;
 using Application.Interfaces.Services;
+using Domain.Entities.Users;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
@@ -17,57 +18,109 @@ public class SubscriptionController : ControllerBase
         _currentUser = currentUser;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<SubscriptionDto>>> GetAll(CancellationToken ct)
+
+    [HttpGet("plans")]
+    public async Task<ActionResult<IReadOnlyList<SubscriptionPlanDto>>> GetAllPlans(CancellationToken ct)
     {
-        return Ok(await _subscriptionService.GetAllSubscriptionsAsync(ct));
+        return Ok(await _subscriptionService.GetAllPlansAsync(ct));
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<SubscriptionDto>> GetById(Guid id, CancellationToken ct)
+    [HttpGet("plans/{id:guid}")]
+    public async Task<ActionResult<SubscriptionPlanDto>> GetPlanById(Guid id, CancellationToken ct)
     {
-        var subscription = await _subscriptionService.GetSubscriptionsByIdAsync(id, ct);
-
-        if (subscription == null)
+        var plan = await _subscriptionService.GetPlanByIdAsync(id, ct);
+        if (plan == null)
             return NotFound();
 
-        return Ok(subscription);
+        return Ok(plan);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<SubscriptionDto>> Create(CreateSubscriptionDto dto, CancellationToken ct)
+    [HttpPost("plans")]
+    public async Task<ActionResult<SubscriptionPlanDto>> CreatePlan(CreateSubscriptionPlanDto dto, CancellationToken ct)
     {
-        var created = await _subscriptionService.CreateSubscriptionAsync(dto, ct);
-        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        var created = await _subscriptionService.CreatePlanAsync(dto, ct);
+        return CreatedAtAction(nameof(GetPlanById), new { id = created.Id }, created);
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<ActionResult<SubscriptionDto>> Update(Guid id, UpdateSubscriptionDto dto, CancellationToken ct)
+    [HttpPut("plans/{id:guid}")]
+    public async Task<ActionResult<SubscriptionPlanDto>> UpdatePlan(Guid id, UpdateSubscriptionPlanDto dto, CancellationToken ct)
     {
-        var updated = await _subscriptionService.UpdateSubscriptionAsync(id, dto, ct);
-
+        var updated = await _subscriptionService.UpdatePlanAsync(id, dto, ct);
         if (updated == null)
             return NotFound();
 
         return Ok(updated);
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
+    [HttpDelete("plans/{id:guid}")]
+    public async Task<IActionResult> DeletePlan(Guid id, CancellationToken ct)
     {
-        await _subscriptionService.RemoveSubscriptionAsync(id, ct);
+        var result = await _subscriptionService.RemovePlanAsync(id, ct);
+        if (!result)
+            return NotFound();
+
         return NoContent();
     }
 
-    [HttpGet("user/{userId:guid}")]
-    public async Task<ActionResult<SubscriptionDto>> GetUserSubscription(Guid userId, CancellationToken ct)
-    {
-        var subscription = await _subscriptionService.GetUserSubscriptionAsync(userId, ct);
 
+    [HttpGet("me")]
+    public async Task<ActionResult<UserSubscriptionDto>> GetMySubscription(CancellationToken ct)
+    {
+        var userId = _currentUser.UserId;
+        if (userId == null)
+            return Unauthorized();
+
+        var subscription = await _subscriptionService.GetUserSubscriptionAsync(userId.Value, ct);
         if (subscription == null)
-            return NotFound();
+            return NotFound("У вас немає активної підписки.");
 
         return Ok(subscription);
     }
 
+    [HttpPost("invite")]
+    public async Task<IActionResult> InviteUser([FromBody] InviteUserRequestDto dto, CancellationToken ct)
+    {
+        var ownerId = _currentUser.UserId;
+
+        if (ownerId == null)
+            return Unauthorized();
+
+        var result = await _subscriptionService.InviteToSubscriptionAsync(ownerId.Value, dto.TargetUsername, ct);
+
+        if (!result)
+            return BadRequest("Неможливо додати користувача: ліміт вичерпано або користувача не знайдено.");
+
+        return Ok();
+    }
+
+    [HttpPost("remove-member/{userIdToRemove:guid}")]
+    public async Task<IActionResult> RemoveMember(Guid userIdToRemove, [FromQuery] Guid activeSubId, CancellationToken ct)
+    {
+        var userId = _currentUser.UserId;
+
+        if (userId == null)
+            return Unauthorized();
+
+        var result = await _subscriptionService.LeaveOrRemoveFromSubscriptionAsync(userId.Value, activeSubId, userIdToRemove, ct);
+        if (!result)
+            return BadRequest("Помилка при видаленні користувача з підписки.");
+
+        return Ok();
+    }
+
+    [HttpDelete("cancel/{activeSubId:guid}")]
+    public async Task<IActionResult> CancelSubscription(Guid activeSubId, CancellationToken ct)
+    {
+        if (_currentUser.UserId == null)
+            return Unauthorized();
+
+        Guid currentUserId = _currentUser.UserId.Value;
+
+        var result = await _subscriptionService.CancelSubscriptionAsync(currentUserId, activeSubId, ct);
+
+        if (!result)
+            return BadRequest("Не вдалося скасувати підписку. Перевірте, чи ви є власником цієї підписки.");
+
+        return Ok();
+    }
 }

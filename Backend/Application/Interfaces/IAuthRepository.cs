@@ -7,7 +7,7 @@ public interface IAuthRepository
     Task<bool> EmailExistsAsync(string email);
     Task<User?> GetUserByEmailAsync(string email);
     Task<Guid> GetDefaultRoleIdAsync();
-    Task<Guid> GetDefaultSubscriptionIdAsync();
+    Task<UserSubscription> CreateDefaultSubscriptionForUserAsync(Guid userId);
     Task AddUserAsync(User user);
     Task<RefreshToken?> GetActiveRefreshTokenAsync(string token);
     Task AddRefreshTokenAsync(RefreshToken refreshToken);
