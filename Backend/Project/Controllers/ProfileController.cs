@@ -18,22 +18,40 @@ public class ProfileController : ControllerBase
         _profileServices = profileServices;
     }
 
+    [HttpPost("api/profile/{username}/follow")]
+    public async Task<ActionResult<bool>> FollowUser(string username)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _profileServices.FollowOnUser(userId, username);
+        return Ok(result);
+    }
+
+    [HttpDelete("api/profile/{username}/unfollow")]
+    public async Task<ActionResult<bool>> UnfollowUser(string username)
+    {
+        var userId = GetCurrentUserId();
+        var result = await _profileServices.UnFollowOnUser(userId, username);
+        return Ok(result);
+    }
+
     [HttpGet("api/profile")]
-    public async Task<ActionResult<ProfileDto>> GetProfile(string username)
+    public async Task<ActionResult<ProfileDto>> GetProfile()
     {
         var userId = GetCurrentUserId();
         var profile = await _profileServices.GetProfileAsync(userId);
         return Ok(profile);
     }
+    [AllowAnonymous]
     [HttpGet("api/profile/{username}")]
     public async Task<ActionResult<ProfileDto>> GetProfileByUsername(string username)
     {
-        var profile = await _profileServices.GetUserByUsernameAsync(username);
+        var userId = GetCurrentUserId();
+        var profile = await _profileServices.GetUserByUsernameAsync(userId, username);
         return Ok(profile);
     }
 
     [HttpPut("api/profile/update")]
-    public async Task<ActionResult<ProfileDto>> UpdateProfile([FromBody] UpdateProfileDto profileDto)
+    public async Task<ActionResult<ProfileDto>> UpdateProfile([FromForm] UpdateProfileDto profileDto)
     {
         var userId = GetCurrentUserId();
         var profile = await _profileServices.UpdateProfileAsync(userId, profileDto);
