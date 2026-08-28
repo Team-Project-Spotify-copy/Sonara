@@ -1,0 +1,139 @@
+.editProfileOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.editProfileModal {
+    background-color: #181818;
+    border: 1px solid #282828;
+    border-radius: 12px;
+    padding: 32px;
+    width: 400px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    font-family: "Inter", sans-serif;
+}
+
+.editProfileModal h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    margin-left: 100px;
+}
+
+.avatarUploadSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.avatarPreview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid #282828;
+}
+
+.uploadBtn {
+    background-color: #282828;
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.uploadBtn:hover {
+    background-color: #3e3e3e;
+}
+
+.formGroup {
+    margin-bottom: 16px;
+}
+
+.formGroup label {
+    display: block;
+    font-size: 14px;
+    color: #b0b0b0;
+    margin-bottom: 6px;
+}
+
+.formGroup input {
+    width: 330px;
+    background-color: #121212;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    padding: 12px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.formGroup input:focus {
+    border-color: #1db954;
+}
+
+.errorMessage {
+    color: #e53935;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.cancelBtn {
+    background-color: #504F4F;
+    color: #c7bebe;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 20px;
+}
+
+.cancelBtn:hover {
+    color: #ffffff;
+}
+
+.saveBtn {
+    background-color: #1db954;
+    color: #ffffff;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.saveBtn:hover {
+    background-color: #1ed760;
+}
+
+.saveBtn:disabled {
+    background-color: #535353;
+    cursor: not-allowed;
+}

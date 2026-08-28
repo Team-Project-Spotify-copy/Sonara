@@ -37,23 +37,23 @@ export default function SearchResults({ query, results, status, error, onSelect 
     return <p className="search-results__status">No results for “{query}”.</p>;
   }
 
-  return (
-    <div className="search-results">
-      {groups.map((group) => (
-        <section key={group.key} className="shelf">
-          <h2 className="shelf__title">{group.title}</h2>
-          <div className="media-grid">
-            {results[group.key].map((item) => (
-              <MediaCard
-                key={item.id}
-                item={item}
-                shape={group.shape}
-                onSelect={onSelect}
-              />
-            ))}
-          </div>
-        </section>
-      ))}
-    </div>
-  );
+return (
+  <div className="search-results" style={{ padding: "24px" }}>
+    {groups.map((group) => (
+      <section key={group.key} className="shelf">
+        <h2 className="shelf__title">{group.title}</h2>
+        <div className="media-grid">
+          {results[group.key].map((item) => (
+            <MediaCard
+              key={item.id}
+              item={item}
+              shape={group.shape}
+              onSelect={onSelect}
+            />
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+);
 }
