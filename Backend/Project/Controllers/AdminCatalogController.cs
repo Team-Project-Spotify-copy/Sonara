@@ -1,4 +1,5 @@
 using Application.DTOs.Music;
+using Application.Interfaces;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,5 +41,14 @@ public class AdminCatalogController : ControllerBase
 
         var albumId = await _adminMusicService.CreateAlbumAsync(dto);
         return CreatedAtAction(nameof(CatalogController.GetAlbum), "Catalog", new { id = albumId }, albumId);
+    }
+
+    [HttpPost("subscription-reminders/trigger")]
+    public async Task<IActionResult> TriggerSubscriptionReminders(
+    [FromServices] ISubscriptionReminderService reminderService,
+    CancellationToken ct)
+    {
+        var count = await reminderService.SendWeeklyRemindersAsync(force: true, ct);
+        return Ok(new { SentCount = count });
     }
 }
