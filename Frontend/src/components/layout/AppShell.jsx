@@ -9,12 +9,14 @@ export default function AppShell({
   children,
   showBackdrop = true,
   showMain = true,
+  showRail = true,
   style,
 }) {
+  const hasRail = showRail && rail;
   return (
-    <div className={`app-shell${player ? " app-shell--with-player" : ""}`}>
+    <div className={`app-shell ${!hasRail ? "app-shell--no-rail" : ""}${player ? " app-shell--with-player" : ""}`}>
       <header className="app-shell__topbar">{topBar}</header>
-      <aside className="app-shell__rail">{rail}</aside>
+      {hasRail && <aside className="app-shell__rail">{rail}</aside>}
 
       {showMain ? (
         <main className="app-shell__main">
@@ -45,7 +47,6 @@ export default function AppShell({
           </div>
         </>
       )}
-
       {player && <footer className="app-shell__player">{player}</footer>}
     </div>
   );

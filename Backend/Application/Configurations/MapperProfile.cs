@@ -1,10 +1,13 @@
-﻿using Application.DTOs.Music;
+﻿using Application.DTOs.Library;
+using Application.DTOs.Music;
 using Application.DTOs.Playlists;
 using Application.DTOs.Subscription;
 using Application.DTOs.Users;
+using Application.Enums;
 using AutoMapper;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;
+using Domain.Entities.Podcasts;
 using Domain.Entities.Users;
 
 namespace BusinessLogic.Configurations
@@ -50,6 +53,37 @@ namespace BusinessLogic.Configurations
                     src.PlaylistTracks.Sum(pt => pt.Track.DurationMs),
                     false
                 ));
+
+            CreateMap<PlaylistDto, LibraryItemDto>()
+                .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => $"{src.TracksCount} songs"))
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "playlist"));
+
+            // Podcast
+            CreateMap<Podcast, LibraryItemDto>()
+                .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => $"{src.Episodes.Count} episodes"))
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "podcast"));
+
+            // Album
+            CreateMap<Album, LibraryItemDto>()
+                .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => src.Artist.Name))
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "album"));
+
+
+            // Artist
+            CreateMap<Artist, LibraryItemDto>()
+            .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => $"{src.User.Followers.Count} followers"))
+            .ForMember(dest => dest.CoverUrl, opt => opt.MapFrom(src => src.AvatarUrl))
+            .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
+            .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "artist"));
 
             // User & Profile
             CreateMap<User, ProfileDto>()

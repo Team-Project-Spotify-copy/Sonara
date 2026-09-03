@@ -1,13 +1,12 @@
-﻿namespace Application.Enums
-{
-    public enum BlobFolder
-    {
-        Avatars,
-        AlbumsCovers,
-        PlaylistsCovers,
-        PodcastsCovers,
+﻿namespace Application.Enums;
 
-        MusicTracks,
-        PodcastAudio
-    }
+public enum BlobFolder
+{
+    Avatars,
+    AlbumsCovers,
+    PlaylistsCovers,
+    PodcastsCovers,
+
+    MusicTracks,
+    PodcastAudio
 }

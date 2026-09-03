@@ -3,6 +3,7 @@ using Application.DTOs.Playlists;
 using Application.DTOs.Users;
 using Application.Enums;
 using Application.Interfaces;
+using Application.Interfaces.Services;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities.Social;

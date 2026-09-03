@@ -2,7 +2,7 @@
 using Domain.Entities.Users;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Interfaces;
+namespace Application.Interfaces.Services;
 
 public interface IProfileServices
 {
