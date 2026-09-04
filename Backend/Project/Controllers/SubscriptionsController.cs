@@ -1,12 +1,14 @@
 ﻿using Application.DTOs.Subscription;
 using Application.Interfaces.Services;
 using Domain.Entities.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApp.Controllers;
 
 [ApiController]
 [Route("api/subscriptions")]
+[Authorize]
 public class SubscriptionController : ControllerBase
 {
     private readonly ISubscriptionService _subscriptionService;
@@ -62,6 +64,18 @@ public class SubscriptionController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("subscription-status")]
+    public async Task<IActionResult> GetSubscriptionStatus(CancellationToken ct)
+    {
+        var userId = _currentUser.UserId;
+        if (userId == null)
+            return Unauthorized();
+
+        var sub = await _subscriptionService.GetUserSubscriptionAsync(userId.Value, ct);
+        var isActive = sub != null && sub.ExpiresAt > DateTime.UtcNow;
+
+        return Ok(new { hasActiveSubscription = isActive });
+    }
 
     [HttpGet("me")]
     public async Task<ActionResult<UserSubscriptionDto>> GetMySubscription(CancellationToken ct)

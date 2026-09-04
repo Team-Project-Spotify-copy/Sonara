@@ -6,8 +6,8 @@ namespace Application.DTOs.Subscription;
 [Event("SubscriptionPurchased")]
 public class SubscriptionPurchasedEventDTO : IEventDTO
 {
-    [Parameter("uint256", "userId", 1, true)]
-    public BigInteger UserId { get; set; }
+    [Parameter("string", "userId", 1, false)]
+    public string UserId { get; set; } = null!;
 
     [Parameter("uint8", "planType", 2, false)]
     public byte PlanType { get; set; }

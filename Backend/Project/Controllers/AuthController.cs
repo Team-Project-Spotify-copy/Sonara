@@ -26,9 +26,9 @@ public class AuthController : ControllerBase
         if (!isHuman)
             return BadRequest("Invalid reCAPTCHA token.");
 
-        var userId = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new { UserId = userId });
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken});
     }
 
     [HttpPost("login")]
@@ -41,7 +41,7 @@ public class AuthController : ControllerBase
 
         var result = await _mediator.Send(command, cancellationToken);
         SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
-        return Ok(new { AccessToken = result.AccessToken });
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken });
     }
 
     [HttpPost("refresh")]

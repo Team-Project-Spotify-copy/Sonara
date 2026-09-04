@@ -14,12 +14,26 @@
   font-family: var(--font-sans);
 }
 
+.app-shell.app-shell--no-rail {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "topbar"
+    "main";
+}
+
 .app-shell--with-player {
   grid-template-rows: var(--topbar-height) minmax(0, 1fr) auto;
   grid-template-areas:
     "topbar topbar"
     "rail   main"
     "player player";
+}
+
+.app-shell.app-shell--no-rail.app-shell--with-player {
+  grid-template-areas:
+    "topbar"
+    "main"
+    "player";
 }
 
 .app-shell__topbar { grid-area: topbar; min-width: 0; }
@@ -79,7 +93,7 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: var(--panel-padding);
+  /* padding: var(--panel-padding); */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

@@ -1,8 +1,9 @@
-import React from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
+import axios from "axios";
 import image from "../assets/images/register-bg.png";
 import { buySubscription } from "../utilites/blockchainUtils";
 import { AccountContext } from "../contexts/account.store";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../css/SubscriptionPage.css";
 
 export const PLAN_TYPE = Object.freeze({
@@ -11,18 +12,117 @@ export const PLAN_TYPE = Object.freeze({
   FAMILY: 2,
 });
 
+const PLAN_NAME_BY_TYPE = {
+  [PLAN_TYPE.INDIVIDUAL]: "Individual",
+  [PLAN_TYPE.DUO]: "Duo",
+  [PLAN_TYPE.FAMILY]: "Family",
+};
+
+const STATUS = {
+  PENDING: "pending",
+  CONFIRMING: "confirming",
+  CONFIRMED: "confirmed",
+  ERROR: "error",
+  TIMEOUT: "timeout",
+};
+
+const api = import.meta.env.VITE_API;
+
+const fetchMySubscription = async (accessToken) => {
+  try {
+    const headers = accessToken
+      ? { Authorization: `Bearer ${accessToken}` }
+      : {};
+
+    const res = await axios.get(`${api}/subscriptions/me`, { headers });
+    return res.data;
+  } catch (err) {
+    if (err.response?.status === 404) return null;
+    console.error("Failed to fetch current subscription:", err);
+    return null;
+  }
+};
+
+const waitForExpectedPlan = async (
+  accessToken,
+  expectedPlanName,
+  timeoutMs = 20000,
+  intervalMs = 1500,
+) => {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const sub = await fetchMySubscription(accessToken);
+    if (sub?.plan?.name === expectedPlanName) {
+      return sub; 
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return null; 
+};
+
 export default function SubscriptionPage() {
-  const navigate = useNavigate();
+  const { userId, accessToken } = useContext(AccountContext);
 
-  const { userId } = React.useContext(AccountContext);
+  const [status, setStatus] = useState(null);
+  const [activePlan, setActivePlan] = useState(null);
+  const [currentSubscription, setCurrentSubscription] = useState(null);
+  const [isLoadingSubscription, setIsLoadingSubscription] = useState(true);
 
-  const handleBuySubscription = (planType) => {
+  const loadCurrentSubscription = useCallback(async () => {
+    setIsLoadingSubscription(true);
+    const sub = await fetchMySubscription(accessToken);
+    setCurrentSubscription(sub);
+    setIsLoadingSubscription(false);
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (!userId || !accessToken) {
+      setIsLoadingSubscription(false);
+      return;
+    }
+    loadCurrentSubscription();
+  }, [userId, accessToken, loadCurrentSubscription]);
+
+  const handleBuySubscription = async (planType) => {
     if (!userId) {
       console.error("User is not authenticated");
       return;
     }
-    buySubscription(userId, planType);
+    if (status === STATUS.PENDING || status === STATUS.CONFIRMING) return;
+
+    setActivePlan(planType);
+    setStatus(STATUS.PENDING);
+
+    const result = await buySubscription(userId, planType);
+
+    if (!result.success) {
+      setStatus(STATUS.ERROR);
+      return;
+    }
+
+    setStatus(STATUS.CONFIRMING);
+
+    const expectedPlanName = PLAN_NAME_BY_TYPE[planType];
+    const updatedSub = await waitForExpectedPlan(accessToken, expectedPlanName);
+
+    if (updatedSub) {
+      setCurrentSubscription(updatedSub); 
+      setStatus(STATUS.CONFIRMED);
+    } else {
+      setStatus(STATUS.TIMEOUT);
+    }
   };
+
+  const statusMessage = {
+    [STATUS.PENDING]: "Підтвердіть транзакцію в MetaMask...",
+    [STATUS.CONFIRMING]: "Транзакція підтверджена, активуємо підписку...",
+    [STATUS.CONFIRMED]: "Підписку активовано! 🎉",
+    [STATUS.ERROR]: "Помилка транзакції. Спробуйте ще раз.",
+    [STATUS.TIMEOUT]:
+      "Транзакція пройшла, але активація затримується. Оновіть сторінку за хвилину.",
+  }[status];
+
+  const isBusy = status === STATUS.PENDING || status === STATUS.CONFIRMING;
 
   const subscriptionPlans = [
     {
@@ -82,7 +182,7 @@ export default function SubscriptionPage() {
           <span>Home</span>
         </Link>
 
-        <Link className="nav-link-circle right" to="/profile">
+        <Link className="nav-link-circle right" to="/account/">
           Profile
         </Link>
       </div>
@@ -92,45 +192,67 @@ export default function SubscriptionPage() {
       >
         <h1 className="subscription-title">Choose Your Plan</h1>
 
+        {status && (
+          <p className={`subscription-status subscription-status--${status}`}>
+            {statusMessage}
+          </p>
+        )}
+
         <div className="plans-grid">
-          {subscriptionPlans.map((card, index) => (
-            <div key={index} className="plan-card">
-              <div>
-                <p className="plan-name">{card.Name}</p>
-                <p className="plan-accounts">{card.Accounts}</p>
-              </div>
+          {subscriptionPlans.map((card, index) => {
+            const isThisPlanBusy = isBusy && activePlan === card.planType;
+            const isCurrentPlan = currentSubscription?.plan?.name === card.Name;
 
-              <div>
-                <p className="plan-price">
-                  ${card.Price}
-                  <span className="plan-price-suffix"> /month</span>
-                </p>
+            let buttonLabel = "Choose Plan";
+            if (isThisPlanBusy) buttonLabel = "Обробка...";
+            else if (isLoadingSubscription) buttonLabel = "Завантаження...";
+            else if (isCurrentPlan) buttonLabel = "Ваш поточний план";
 
-                <p className="plan-billing">Billed monthly</p>
+            const isDisabled = isBusy || isLoadingSubscription || isCurrentPlan;
 
-                <hr className="plan-divider" />
-
-                <p className="plan-description">
-                  {card.SubscriptionDescription}
-                </p>
-              </div>
-
-              <button
-                className="plan-button"
-                onClick={() => handleBuySubscription(card.planType)}
+            return (
+              <div
+                key={index}
+                className={'plan-card'}
               >
-                Choose Plan
-              </button>
+                <div>
+                  <p className="plan-name">{card.Name}</p>
+                  <p className="plan-accounts">{card.Accounts}</p>
+                </div>
 
-              <div>
-                {card.Features.map((feature, featureIndex) => (
-                  <p key={featureIndex} className="plan-feature-item">
-                    {feature}
+                <div>
+                  <p className="plan-price">
+                    ${card.Price}
+                    <span className="plan-price-suffix"> /month</span>
                   </p>
-                ))}
+
+                  <p className="plan-billing">Billed monthly</p>
+
+                  <hr className="plan-divider" />
+
+                  <p className="plan-description">
+                    {card.SubscriptionDescription}
+                  </p>
+                </div>
+
+                <button
+                  className={'plan-button'}
+                  disabled={isDisabled}
+                  onClick={() => handleBuySubscription(card.planType)}
+                >
+                  {buttonLabel}
+                </button>
+
+                <div>
+                  {card.Features.map((feature, featureIndex) => (
+                    <p key={featureIndex} className="plan-feature-item">
+                      {feature}
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import image from "../../assets/images/profile.png";
+import image from "../../assets/images/profile-bg.png";
 import { AccountContext } from "../../contexts/account.store";
 import Shelf from "../media/Shelf";
 import EditProfileForm from "./EditProfileForm";
