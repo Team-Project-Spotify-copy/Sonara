@@ -1,9 +1,9 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
 import axios from "axios";
 import image from "../assets/images/register-bg.png";
 import { buySubscription } from "../utilites/blockchainUtils";
 import { AccountContext } from "../contexts/account.store";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../css/SubscriptionPage.css";
 
 export const PLAN_TYPE = Object.freeze({
@@ -61,7 +61,6 @@ const waitForExpectedPlan = async (
 };
 
 export default function SubscriptionPage() {
-  const navigate = useNavigate();
   const { userId, accessToken } = useContext(AccountContext);
 
   const [status, setStatus] = useState(null);
@@ -214,7 +213,7 @@ export default function SubscriptionPage() {
             return (
               <div
                 key={index}
-                className={`plan-card${isCurrentPlan ? " plan-card--current" : ""}`}
+                className={'plan-card'}
               >
                 <div>
                   <p className="plan-name">{card.Name}</p>
@@ -237,7 +236,7 @@ export default function SubscriptionPage() {
                 </div>
 
                 <button
-                  className={`plan-button${isCurrentPlan ? " plan-button--current" : ""}`}
+                  className={'plan-button'}
                   disabled={isDisabled}
                   onClick={() => handleBuySubscription(card.planType)}
                 >

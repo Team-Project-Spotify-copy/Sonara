@@ -18,7 +18,7 @@ public static class TestData
             Email = $"{username}@tests.local",
             PasswordHash = "not-a-real-hash",
             RoleId = SeededUserRoleId,
-            SubscriptionId = SeededFreeSubscriptionId,
+            ActiveSubscriptionId = SeededFreeSubscriptionId,
             CreatedAt = DateTime.UtcNow
         };
     }
