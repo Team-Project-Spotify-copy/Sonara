@@ -1,18 +1,24 @@
-using MediatR;
-using Domain.Entities.Users;
+using Application.DTOs.Auth;
 using Application.Interfaces;
+using Domain.Entities.Users;
+using MediatR;
 
 namespace Application.Commands.Auth;
 
-public record RegisterCommand(string Email, string Username, string Password, string token) : IRequest<Guid>;
+public record RegisterCommand(string Email, string Username, string Password, string token) : IRequest<AuthResultDto>;
 
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResultDto>
 {
     private readonly IAuthRepository _authRepository;
+    private readonly ITokenService _tokenService;
 
-    public RegisterCommandHandler(IAuthRepository authRepository) => _authRepository = authRepository;
+    public RegisterCommandHandler(IAuthRepository authRepository, ITokenService tokenService)
+    {
+        _authRepository = authRepository;
+        _tokenService = tokenService;
+    }
 
-    public async Task<Guid> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<AuthResultDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         if (await _authRepository.EmailExistsAsync(request.Email))
             throw new InvalidOperationException("Email is already registered.");
@@ -26,13 +32,18 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Guid>
             ActiveSubscriptionId = null
         };
 
+        await _authRepository.AddUserAsync(user);
+        await _authRepository.SaveChangesAsync();
+
         var freeSub = await _authRepository.CreateDefaultSubscriptionForUserAsync(user.Id);
 
         user.ActiveSubscriptionId = freeSub.Id;
 
-        await _authRepository.AddUserAsync(user);
+        var accessToken = _tokenService.GenerateAccessToken(user);
+        var refreshToken = _tokenService.GenerateRefreshToken(user.Id);
+
         await _authRepository.SaveChangesAsync();
 
-        return user.Id;
+        return new AuthResultDto(user.Id, accessToken, refreshToken.Token, refreshToken.ExpiresAt);
     }
 }

@@ -30,6 +30,6 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResultDto>
         await _authRepository.AddRefreshTokenAsync(refreshToken);
         await _authRepository.SaveChangesAsync();
 
-        return new AuthResultDto(accessToken, refreshToken.Token, refreshToken.ExpiresAt);
+        return new AuthResultDto(null, accessToken, refreshToken.Token, refreshToken.ExpiresAt);
     }
 }

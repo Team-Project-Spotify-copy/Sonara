@@ -1,3 +1,3 @@
 namespace Application.DTOs.Auth;
 
-public record AuthResultDto(string AccessToken, string RefreshToken, DateTime RefreshTokenExpiresAt);
+public record AuthResultDto(Guid? UserId, string AccessToken, string RefreshToken, DateTime RefreshTokenExpiresAt);

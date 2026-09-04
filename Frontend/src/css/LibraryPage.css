@@ -10,6 +10,85 @@
     overflow-y: auto;
     margin-bottom: 75px;
     box-sizing: border-box;
+    scrollbar-width: none;
+}
+
+.library-container::-webkit-scrollbar {
+    display: none;
+}
+
+.library-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.library-create-wrapper {
+    position: relative;
+}
+
+.btn-create-library {
+    width: 170px;
+    height: 52px;
+    background-color: #504F4F;
+    color: #FFFFFF;
+    border: none;
+    margin-right: 20px;
+    padding: 16px 36px 16px 36px;
+    border-radius: 76px;
+    font-size: 20px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-create-library:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.create-plus-icon {
+    width: 25px;
+    height: 20px;
+}
+
+.create-dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    background-color: #282828;
+    border-radius: 8px;
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.5);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 160px;
+    z-index: 100;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    margin-right: 25px;
+}
+
+.create-dropdown-menu button {
+    background: transparent;
+    border: none;
+    color: #b3b3b3;
+    padding: 10px 0px;
+    text-align: center;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.create-dropdown-menu button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
 .library-title {

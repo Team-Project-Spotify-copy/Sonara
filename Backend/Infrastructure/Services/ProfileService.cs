@@ -12,13 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Services;
 
-public class ProfileServices : IProfileServices
+public class ProfileService : IProfileService
 {
     private readonly SonaraDbContext _context;
     private readonly IBlobService _blobService;
     private readonly IMapper _mapper;
 
-    public ProfileServices(SonaraDbContext context, IBlobService blobService, IMapper mapper)
+    public ProfileService(SonaraDbContext context, IBlobService blobService, IMapper mapper)
     {
         _context = context;
         _blobService = blobService;
@@ -27,12 +27,14 @@ public class ProfileServices : IProfileServices
 
     public async Task<bool> FollowOnUser(Guid userId, string username)
     {
+        // Шукаємо користувача за Username або за іменем його ArtistProfile
         var targetUser = await _context.Users
+            .Where(u => u.Username == username || (u.ArtistProfile != null && u.ArtistProfile.Name == username))
             .Select(u => new { u.Id, u.Username })
-            .FirstOrDefaultAsync(u => u.Username == username);
+            .FirstOrDefaultAsync();
 
         if (targetUser == null)
-            throw new KeyNotFoundException($"User with username '{username}' was not found.");
+            throw new KeyNotFoundException($"User or artist with identifier '{username}' was not found.");
 
         if (targetUser.Id == userId)
             throw new InvalidOperationException("You cannot follow yourself.");
@@ -41,7 +43,7 @@ public class ProfileServices : IProfileServices
             .AnyAsync(f => f.FollowerId == userId && f.FollowedId == targetUser.Id);
 
         if (isAlreadyFollowing)
-            return false; 
+            return false;
 
         var followerEntry = new Follower
         {
@@ -53,14 +55,15 @@ public class ProfileServices : IProfileServices
         _context.Set<Follower>().Add(followerEntry);
         await _context.SaveChangesAsync();
 
-        return true; 
+        return true;
     }
 
     public async Task<bool> UnFollowOnUser(Guid userId, string username)
     {
         var followEntry = await _context.Followers
-            .FirstOrDefaultAsync(f => f.FollowerId == userId && f.FollowedUser.Username == username);
-        
+            .FirstOrDefaultAsync(f => f.FollowerId == userId &&
+                (f.FollowedUser.Username == username || (f.FollowedUser.ArtistProfile != null && f.FollowedUser.ArtistProfile.Name == username)));
+
         if (followEntry == null)
             return false;
 
@@ -70,23 +73,11 @@ public class ProfileServices : IProfileServices
         return true;
     }
 
-    public async Task<ProfileDto> GetProfileAsync(Guid userId)
-    {
-        var mapUser = await _context.Users
-            .AsNoTracking()
-            .Where(u => u.Id == userId)
-            .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync()
-                ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
-
-        return mapUser;
-    }
-
     public async Task<ProfileDto> GetUserByUsernameAsync(Guid userId, string username)
     {
         var mapUser = await _context.Users
             .AsNoTracking()
-            .Where(u => u.Username == username)
+            .Where(u => u.Username == username || (u.ArtistProfile != null && u.ArtistProfile.Name == username))
             .Select(u => new ProfileDto
             {
                 Email = u.Email,
@@ -98,7 +89,7 @@ public class ProfileServices : IProfileServices
                 IsFollowing = u.Followers.Any(f => f.FollowerId == userId),
 
                 Playlists = u.Playlists
-                    .Where(p => !p.IsPrivate || p.UserId == userId) 
+                    .Where(p => !p.IsPrivate || p.UserId == userId)
                     .Select(p => new PlaylistDto(
                         p.Id,
                         p.UserId,
@@ -129,11 +120,22 @@ public class ProfileServices : IProfileServices
                     }).ToList()
             })
             .FirstOrDefaultAsync()
-                ?? throw new KeyNotFoundException($"User with username '{username}' was not found.");
+                ?? throw new KeyNotFoundException($"User or artist with identifier '{username}' was not found.");
 
         return mapUser;
     }
 
+    public async Task<ProfileDto> GetProfileAsync(Guid userId)
+    {
+        var mapUser = await _context.Users
+            .AsNoTracking()
+            .Where(u => u.Id == userId)
+            .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync()
+                ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
+
+        return mapUser;
+    }
     public async Task<bool> SetAvatarAsync(Guid userId, IFormFile avatarFile)
     {
         await UpdateAvatarAsync(userId, avatarFile);

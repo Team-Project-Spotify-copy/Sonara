@@ -11,9 +11,9 @@ namespace WebApp.Controllers;
 [Authorize]
 public class ProfileController : ControllerBase
 {
-    private readonly IProfileServices _profileServices;
+    private readonly IProfileService _profileServices;
 
-    public ProfileController(IProfileServices profileServices)
+    public ProfileController(IProfileService profileServices)
     {
         _profileServices = profileServices;
     }

@@ -2,18 +2,22 @@ import image from "../../assets/images/library-bg.png";
 import "../../css/LibraryPage.css";
 import { useState } from "react";
 import { motion } from "framer-motion";
-
+import { useNavigate } from "react-router-dom";
 import useLibrary from "../../hooks/useLibrary.js";
 import Shelf from "../media/Shelf.jsx";
+import AddEntityModal from "./AddEntityModal.jsx";
 
 export default function Library() {
+  const navigate = useNavigate();
   const [buttons, setButtons] = useState([
     { key: "all", label: "All" },
     { key: "playlists", label: "Playlists" },
     { key: "podcasts", label: "Podcasts" },
-    { key: "albums", label: "Albums" },
     { key: "artists", label: "Artists" },
   ]);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState(null);
 
   const [selectedCategory, setSelectedCategory] = useState("all");
   const {
@@ -21,6 +25,11 @@ export default function Library() {
     status: libraryStatus,
     error: libraryError,
   } = useLibrary();
+
+  const handleAddOptionSelect = (type) => {
+    setIsMenuOpen(false);
+    setActiveModal(type);
+  };
 
   const handleClick = (clickedKey) => {
     setSelectedCategory(clickedKey);
@@ -32,13 +41,18 @@ export default function Library() {
     });
   };
 
+  const handleItemSelect = (item) => {
+    navigate(
+      `/${item.kind === "artist" ? "account" : item.kind}/${item.kind === "artist" ? item.RouteKey : item.id}`,
+    );
+  };
+
   const categoryMap = {
     playlists: "playlist",
     podcasts: "podcast",
-    albums: "album",
     artists: "artist",
   };
-  
+
   const filteredItems =
     selectedCategory === "all"
       ? libraryItems
@@ -48,7 +62,6 @@ export default function Library() {
 
   const playlists = libraryItems.filter((item) => item.kind === "playlist");
   const podcasts = libraryItems.filter((item) => item.kind === "podcast");
-  const albums = libraryItems.filter((item) => item.kind === "album");
   const artists = libraryItems.filter((item) => item.kind === "artist");
 
   return (
@@ -56,7 +69,42 @@ export default function Library() {
       className="library-container"
       style={{ backgroundImage: `url(${image})` }}
     >
-      <h1 className="library-title">Library</h1>
+      <div className="library-header-top">
+        <h1 className="library-title">Library</h1>
+
+        <div className="library-create-wrapper">
+          <button
+            className="btn-create-library"
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+          >
+            <svg
+              className="create-plus-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+            >
+              <path d="M12 4v16m-8-8h16" />
+            </svg>{" "}
+            Create
+          </button>
+
+          {isMenuOpen && (
+            <div className="create-dropdown-menu">
+              <button onClick={() => handleAddOptionSelect("playlist")}>
+                New Playlist
+              </button>
+              <button onClick={() => handleAddOptionSelect("podcast")}>
+                Add Podcast
+              </button>
+              <button onClick={() => handleAddOptionSelect("artist")}>
+                Follow Artist
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="library-buttons">
         {buttons.map((btn) => {
@@ -109,7 +157,7 @@ export default function Library() {
                 shape={"square"}
                 items={playlists}
                 loading={false}
-                onSelect={() => {}}
+                onSelect={handleItemSelect}
               />
             )}
             {podcasts.length > 0 && (
@@ -119,27 +167,17 @@ export default function Library() {
                 shape={"square"}
                 items={podcasts}
                 loading={false}
-                onSelect={() => {}}
-              />
-            )}
-            {albums.length > 0 && (
-              <Shelf
-                key={"shelf-albums"}
-                title={"Albums"}
-                shape={"square"}
-                items={albums}
-                loading={false}
-                onSelect={() => {}}
+                onSelect={handleItemSelect}
               />
             )}
             {artists.length > 0 && (
               <Shelf
                 key={"shelf-artists"}
                 title={"Artists"}
-                shape={"square"}
+                shape={"round"}
                 items={artists}
                 loading={false}
-                onSelect={() => {}}
+                onSelect={handleItemSelect}
               />
             )}
           </>
@@ -147,10 +185,22 @@ export default function Library() {
           <Shelf
             key={`shelf-${selectedCategory}`}
             title={buttons.find((b) => b.key === selectedCategory)?.label}
-            shape={"square"}
+            shape={selectedCategory === "artists" ? "round" : "square"}
             items={filteredItems}
             loading={false}
-            onSelect={() => {}}
+            onSelect={handleItemSelect}
+          />
+        )}
+
+        {activeModal && (
+          <AddEntityModal
+            type={activeModal}
+            onClose={() => setActiveModal(null)}
+            onSuccess={(newItem) => {
+              console.log("Успішно створено/додано:", newItem);
+              setActiveModal(null);
+              window.location.reload();
+            }}
           />
         )}
       </div>

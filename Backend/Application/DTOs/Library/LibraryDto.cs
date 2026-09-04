@@ -12,10 +12,6 @@ public class LibraryItemDto
     public string? AudioUrl { get; set; }
     public string? Kind { get; set; }
 }
-public class LibraryDto
-{
-    public List<LibraryItemDto> Items { get; set; } = new List<LibraryItemDto>();
-}
 
 public class LibraryCreateDto
 {

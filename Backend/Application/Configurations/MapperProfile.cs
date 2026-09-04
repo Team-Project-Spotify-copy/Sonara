@@ -3,7 +3,6 @@ using Application.DTOs.Music;
 using Application.DTOs.Playlists;
 using Application.DTOs.Subscription;
 using Application.DTOs.Users;
-using Application.Enums;
 using AutoMapper;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;

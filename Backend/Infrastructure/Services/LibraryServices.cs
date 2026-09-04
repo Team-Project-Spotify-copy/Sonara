@@ -16,21 +16,14 @@ public class LibraryServices : ILibraryServices
         _mapper = mapper;
     }
 
-    public async Task<LibraryCreateDto> AddToLibrary(Guid userId, Guid itemId)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<List<LibraryItemDto>> GetLibraryAsync(Guid userId)
     {
         var playlists = await GetPlaylistsAsync(userId);
         var podcasts = await GetPodcastsAsync(userId);
-        var albums = await GetAlbumsAsync(userId);
         var artists = await GetArtistsAsync(userId);
 
         return playlists
             .Concat(podcasts)
-            .Concat(albums)
             .Concat(artists)
             .ToList();
     }
@@ -60,15 +53,5 @@ public class LibraryServices : ILibraryServices
             .ToListAsync();
 
         return _mapper.Map<List<LibraryItemDto>>(artists);
-    }
-
-    public async Task<List<LibraryItemDto>> GetAlbumsAsync(Guid userId)
-    {
-        var albums = await _db.Albums
-            .Include(a => a.Artist)
-            .Where(a => a.Artist.UserId == userId)
-            .ToListAsync();
-
-        return _mapper.Map<List<LibraryItemDto>>(albums);
     }
 }
