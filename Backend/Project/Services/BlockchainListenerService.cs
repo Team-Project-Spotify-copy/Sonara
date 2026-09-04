@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Application.DTOs.Subscription;
+﻿using Application.DTOs.Subscription;
 using Application.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
 using Nethereum.Hex.HexTypes;
@@ -58,7 +57,6 @@ public class BlockchainListenerService : BackgroundService
                 }
                 else if (latestBlock.Value > lastProcessedBlock.Value)
                 {
-                    // ВИПРАВЛЕНО: Створення BlockParameter через HexBigInteger
                     var nextBlockHex = new HexBigInteger(lastProcessedBlock.Value + 1);
 
                     var filterInput = eventHandler.CreateFilterInput(
@@ -71,7 +69,7 @@ public class BlockchainListenerService : BackgroundService
                     foreach (var change in changes)
                     {
                         var log = change.Event;
-                        _logger.LogInformation("Отримано івент! UserId (BigInteger): {UserId}, Plan: {Plan}", log.UserId, log.PlanType);
+                        _logger.LogInformation("Отримано івент! UserId (string): {UserId}, Plan: {Plan}", log.UserId, log.PlanType);
 
                         await ProcessSubscriptionAsync(log, stoppingToken);
                     }
@@ -90,7 +88,7 @@ public class BlockchainListenerService : BackgroundService
 
             try
             {
-                await Task.Delay(5000, stoppingToken);
+                await Task.Delay(10000, stoppingToken);
             }
             catch (OperationCanceledException)
             {
@@ -106,22 +104,9 @@ public class BlockchainListenerService : BackgroundService
         var dbContext = scope.ServiceProvider.GetRequiredService<SonaraDbContext>();
         var subscriptionService = scope.ServiceProvider.GetRequiredService<ISubscriptionService>();
 
-        // ВИПРАВЛЕНО: Конвертація uint256 (BigInteger) у Guid
-        Guid userId;
-        try
+        if (!Guid.TryParse(log.UserId, out var userId))
         {
-            // log.UserId має тип BigInteger від Nethereum (uint256)
-            byte[] bytes = log.UserId.ToByteArray();
-
-            // Guid має розмір точно 16 байт, вирівнюємо масив при потребі
-            byte[] guidBytes = new byte[16];
-            Array.Copy(bytes, guidBytes, Math.Min(bytes.Length, 16));
-
-            userId = new Guid(guidBytes);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Не вдалося сконвертувати uint256 UserId у Guid: {UserId}", log.UserId);
+            _logger.LogWarning("Не вдалося розпарсити UserId рядок у Guid: {UserId}", log.UserId);
             return;
         }
 

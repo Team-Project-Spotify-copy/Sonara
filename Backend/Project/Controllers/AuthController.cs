@@ -41,7 +41,7 @@ public class AuthController : ControllerBase
 
         var result = await _mediator.Send(command, cancellationToken);
         SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
-        return Ok(new { AccessToken = result.AccessToken });
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken });
     }
 
     [HttpPost("refresh")]

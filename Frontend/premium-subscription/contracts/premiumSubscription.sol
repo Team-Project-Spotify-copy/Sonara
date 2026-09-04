@@ -7,7 +7,7 @@ contract premiumSubscription {
     enum PlanType { INDIVIDUAL, DUO, FAMILY }
 
     event SubscriptionPurchased(
-        uint256 indexed userId,
+        string userId,
         PlanType planType,
         address indexed buyer,
         uint256 amountPaid
@@ -21,7 +21,7 @@ contract premiumSubscription {
         owner = payable(msg.sender);
     }
 
-    function buySubscription(uint256 _userId, PlanType _planType) external payable {
+    function buySubscription(string calldata _userId, PlanType _planType) external payable {
         if (_planType == PlanType.INDIVIDUAL) {
             if (msg.value < 0.00213708 ether) revert InsufficientETH();
         } else if (_planType == PlanType.DUO) {

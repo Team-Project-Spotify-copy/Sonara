@@ -23,6 +23,18 @@
     color: #ffffff;
 }
 
+.subscription-status{
+    color: #ffffff;
+    font-family: Inter;
+}
+.plan-card--current {
+  border: 2px solid var(--accent-color, #1db954);
+}
+
+.plan-button--current {
+  background-color: #444;
+  cursor: not-allowed;
+}
 .nav-link-circle.left {
     left: 131px;
 }

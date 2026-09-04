@@ -8,7 +8,8 @@ import axios from "axios";
 import "../css/Login.css";
 
 function Login() {
-  const { setEmail, setAccessToken } = React.useContext(AccountContext);
+  const { setUserId, setEmail, setAccessToken } =
+    React.useContext(AccountContext);
   const navigate = useNavigate();
 
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -19,17 +20,24 @@ function Login() {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    const captchaToken = await resolveCaptchaToken(executeRecaptcha, "login_submit");
+    const captchaToken = await resolveCaptchaToken(
+      executeRecaptcha,
+      "login_submit",
+    );
 
     if (!captchaToken) {
       alert("Не вдалося отримати токен reCAPTCHA");
       return;
     }
 
-    const accessToken = await loginRequest(email, password, captchaToken);
+    const response = await loginRequest(email, password, captchaToken);
 
-    if (accessToken) {
+    if (response) {
+      const accessToken = response.accessToken || response;
+      const userId = response.userId;
+
       setEmail(email);
+      if (userId) setUserId(userId);
       setAccessToken(accessToken);
       navigate("/");
     }
@@ -45,7 +53,7 @@ function Login() {
         token,
       });
 
-      return response.data.accessToken;
+      return response.data;
     } catch (error) {
       if (error.response) {
         console.error("Помилка від сервера:", error.response.data);
