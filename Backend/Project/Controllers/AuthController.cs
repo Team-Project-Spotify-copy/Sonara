@@ -26,9 +26,9 @@ public class AuthController : ControllerBase
         if (!isHuman)
             return BadRequest("Invalid reCAPTCHA token.");
 
-        var userId = await _mediator.Send(command, cancellationToken);
+        var result = await _mediator.Send(command, cancellationToken);
 
-        return Ok(new { UserId = userId });
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken});
     }
 
     [HttpPost("login")]
@@ -41,7 +41,7 @@ public class AuthController : ControllerBase
 
         var result = await _mediator.Send(command, cancellationToken);
         SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
-        return Ok(new { AccessToken = result.AccessToken });
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken });
     }
 
     [HttpPost("refresh")]
@@ -65,5 +65,27 @@ public class AuthController : ControllerBase
             SameSite = SameSiteMode.None,
             Expires = expires
         });
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+
+        return Ok(new { Message = "If that email is registered, we have sent a code to reset your password." });
+    }
+
+    [HttpPost("verify-reset-code")]
+    public async Task<IActionResult> VerifyResetCode(VerifyResetCodeCommand command, CancellationToken cancellationToken)
+    {
+        var resetToken = await _mediator.Send(command, cancellationToken);
+        return Ok(new { ResetToken = resetToken });
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordCommand command, CancellationToken cancellationToken)
+    {
+        await _mediator.Send(command, cancellationToken);
+        return Ok(new { Message = "Password changed successfully." });
     }
 }

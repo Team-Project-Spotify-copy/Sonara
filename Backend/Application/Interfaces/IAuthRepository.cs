@@ -12,4 +12,5 @@ public interface IAuthRepository
     Task<RefreshToken?> GetActiveRefreshTokenAsync(string token);
     Task AddRefreshTokenAsync(RefreshToken refreshToken);
     Task SaveChangesAsync();
+    Task RevokeAllRefreshTokensAsync(Guid userId);
 }

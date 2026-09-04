@@ -75,9 +75,13 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<BlockchainListenerService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<ISubscriptionReminderService, SubscriptionReminderService>();
+builder.Services.AddHostedService<SubscriptionReminderBackgroundService>();
 builder.Services.AddHttpClient<IRecaptchaServices, RecaptchaServices>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+builder.Services.AddScoped<ILibraryServices, LibraryServices>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -91,7 +95,8 @@ builder.Services.AddScoped<IMusicCatalogService, CachedMusicCatalogService>();
 builder.Services.AddScoped<ITrackStreamService, TrackStreamService>();
 builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IProfileServices, ProfileServices>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IPodcastService, PodcastService>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
 

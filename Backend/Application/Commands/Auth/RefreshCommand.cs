@@ -32,6 +32,6 @@ public class RefreshCommandHandler : IRequestHandler<RefreshCommand, AuthResultD
         await _authRepository.AddRefreshTokenAsync(newRefreshToken);
         await _authRepository.SaveChangesAsync();
 
-        return new AuthResultDto(newAccessToken, newRefreshToken.Token, newRefreshToken.ExpiresAt);
+        return new AuthResultDto(null, newAccessToken, newRefreshToken.Token, newRefreshToken.ExpiresAt);
     }
 }

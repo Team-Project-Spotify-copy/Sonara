@@ -46,17 +46,19 @@ const PLAN_PRICES: Record<PlanType, string> = {
   [PlanType.FAMILY]: "0.00444092",
 };
 
-export const buySubscription = async (userId: number, planType: PlanType): Promise<boolean> => {
+
+export const buySubscription = async (
+  userId: string,
+  planType: PlanType
+): Promise<{ success: boolean; txHash?: string }> => {
   return (
     (await withContract(async (contract) => {
       const price = PLAN_PRICES[planType];
-      
       const tx = await contract.buySubscription(userId, planType, {
         value: ethers.parseEther(price),
       });
-
-      await tx.wait();
-      return true;
-    })) ?? false
+      const receipt = await tx.wait();
+      return { success: receipt.status === 1, txHash: tx.hash };
+    })) ?? { success: false }
   );
 };

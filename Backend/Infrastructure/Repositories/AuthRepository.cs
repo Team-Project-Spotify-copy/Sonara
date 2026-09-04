@@ -48,4 +48,16 @@ public class AuthRepository : IAuthRepository
         await _context.RefreshTokens.AddAsync(refreshToken);
 
     public Task SaveChangesAsync() => _context.SaveChangesAsync();
+
+    public async Task RevokeAllRefreshTokensAsync(Guid userId)
+    {
+        var activeTokens = await _context.RefreshTokens
+            .Where(rt => rt.UserId == userId && rt.RevokedAt == null)
+            .ToListAsync();
+
+        foreach (var token in activeTokens)
+        {
+            token.RevokedAt = DateTime.UtcNow;
+        }
+    }
 }

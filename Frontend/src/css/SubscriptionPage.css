@@ -23,6 +23,11 @@
     color: #ffffff;
 }
 
+.subscription-status{
+    color: #ffffff;
+    font-family: Inter;
+}
+
 .nav-link-circle.left {
     left: 131px;
 }

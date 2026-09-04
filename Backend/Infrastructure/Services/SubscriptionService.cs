@@ -96,10 +96,10 @@ public class SubscriptionService : ISubscriptionService
 
         string planName = planTypeByte switch
         {
-            1 => "Individual",
-            2 => "Duo",
-            3 => "Family",
-            _ => "Free"
+            0 => "Individual",
+            1 => "Duo",
+            2 => "Family",
+            _ => throw new InvalidOperationException($"Unknown plan type byte: {planTypeByte}")
         };
 
         var plan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Name == planName, ct)
@@ -158,10 +158,10 @@ public class SubscriptionService : ISubscriptionService
             return false;
 
         bool isSelfRemoval = currentUserId == userIdToRemove;
-        bool isOwner = activeSub.OwnerId == currentUserId; 
+        bool isOwner = activeSub.OwnerId == currentUserId;
 
         if (!isSelfRemoval && !isOwner)
-            return false; 
+            return false;
 
         var user = activeSub.Members.FirstOrDefault(u => u.Id == userIdToRemove);
         if (user == null)
@@ -227,5 +227,4 @@ public class SubscriptionService : ISubscriptionService
         await _db.SaveChangesAsync(ct);
         return true;
     }
-
 }

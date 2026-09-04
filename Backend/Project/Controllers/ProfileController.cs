@@ -1,5 +1,5 @@
 ﻿using Application.DTOs.Users;
-using Application.Interfaces;
+using Application.Interfaces.Services;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,9 @@ namespace WebApp.Controllers;
 [Authorize]
 public class ProfileController : ControllerBase
 {
-    private readonly IProfileServices _profileServices;
+    private readonly IProfileService _profileServices;
 
-    public ProfileController(IProfileServices profileServices)
+    public ProfileController(IProfileService profileServices)
     {
         _profileServices = profileServices;
     }

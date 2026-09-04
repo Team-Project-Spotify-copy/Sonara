@@ -41,35 +41,40 @@ function Register() {
     }
   };
 
-  async function registerRequest(email, password, token) {
-    try {
-      const api = import.meta.env.VITE_API;
+async function registerRequest(email, password, token) {
+  try {
+    const api = import.meta.env.VITE_API;
+    var username = email.split("@")[0];
 
-      var username = email.split("@")[0];
+    const response = await axios.post(`${api}/auth/register`, {
+      email,
+      username,
+      password,
+      token,
+    });
 
-      const response = await axios.post(`${api}/auth/register`, {
-        email,
-        username,
-        password,
-        token,
-      });
+    console.log("Register response:", response.data);
 
-      return response.data.UserId;
-    } catch (error) {
-      console.error("Error during register request:", error);
+    if (response.data.AccessToken) {
+      localStorage.setItem("token", response.data.accessToken);
     }
+
+    return response.data.userId;
+  } catch (error) {
+    console.error("Error during register request:", error);
   }
+}
 
   return (
-    <div className="regsiter-page">
-      <div className="regsiter-container">
-        <div className="regsiter-intro">
-          <div className="regsiter-avatar"></div>
+    <div className="register-page">
+      <div className="register-container">
+        <div className="register-intro">
+          <div className="register-avatar"></div>
 
-          <h1 className="regsiter-title">Let's get started!</h1>
+          <h1 className="register-title">Let's get started!</h1>
 
-          <div className="regsiter-form-wrapper">
-            <form className="regsiter-form" onSubmit={onFinish}>
+          <div className="register-form-wrapper">
+            <form className="register-form" onSubmit={onFinish}>
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   Email
@@ -114,9 +119,9 @@ function Register() {
               </button>
             </form>
 
-            <p className="regsiter-divider">or</p>
+            <p className="register-divider">or</p>
 
-            <div className="regsiter-social-group">
+            <div className="register-social-group">
               <button type="button" className="btn-social">
                 Google
               </button>
@@ -125,7 +130,7 @@ function Register() {
               </button>
             </div>
 
-            <p className="regsiter-footer-text">
+            <p className="register-footer-text">
               Already have an account?{" "}
               <Link to="/login" className="app-link">
                 Log in!
@@ -143,8 +148,8 @@ function Register() {
         </div>
       </div>
 
-      <div className="regsiter-bg-image">
-        <img src={image} alt="regsiter Background" />
+      <div className="register-bg-image">
+        <img src={image} alt="register Background" />
       </div>
     </div>
   );
