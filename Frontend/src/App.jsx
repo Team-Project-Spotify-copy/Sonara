@@ -6,6 +6,7 @@ import CreateNewPassword from "./components/CreateNewPassword.jsx";
 import SubscriptionPage from "./components/SubscriptionPage.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import Account from "./components/AccountPage.jsx";
+import PlaylistPage from "./components/PlaylistPage.jsx";
 import Song from "./components/Song.jsx";
 import RootLayout from "./layouts/RootLayout.jsx";
 import { PlayerProvider } from "./contexts/player.context.jsx";
@@ -23,10 +24,11 @@ function App() {
               <Route path="/account" element={<Account />} />
               <Route path="/account/:username" element={<Account />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/create-new-password" element={<CreateNewPassword />}/>
+              <Route path="/create-new-password" element={<CreateNewPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/song" element={<Song />} />
               <Route path="/song/:id" element={<Song />} />
+              <Route path="/playlist/:id" element={<PlaylistPage />} />
               <Route path="/subscriptions" element={<SubscriptionPage />} />
             </Route>
           </Routes>
