@@ -1,51 +1,126 @@
+/* Figma 707:3955 - top bar, 100px tall, identical in all three Home states.
+   The controls use a warm glass fill: a copper-tinted gradient over #1a1a1a. */
+
 .topbar {
   display: flex;
   align-items: center;
   gap: var(--space-4);
+  width: 100%;
   height: var(--topbar-height);
 }
 
-.topbar__search {
+.topbar__center {
   flex: 1 1 auto;
   display: flex;
+  align-items: center;
   justify-content: center;
+  gap: var(--space-2);
   min-width: 0;
 }
 
-.topbar__avatar {
+/* Shared pill/circle control. */
+.topbar__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
-  width: var(--control-size);
-  height: var(--control-size);
+  padding: var(--space-4);
   border: none;
-  border-radius: var(--radius-pill);
-  background-color: var(--color-surface);
+  border-radius: var(--radius-round);
+  color: var(--color-text);
+  cursor: pointer;
+  background-image:
+    linear-gradient(180deg, var(--chrome-tint-weak) 0%, var(--chrome-tint-strong) 100%),
+    linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface) 100%);
+  transition: transform var(--transition-fast), filter var(--transition-fast);
+}
+
+/* The gradient direction differs per control in the design. */
+.topbar__control--home {
+  background-image:
+    linear-gradient(0deg, var(--chrome-tint-strong) 0%, var(--chrome-tint-weak) 100%),
+    linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface) 100%);
+}
+
+.topbar__control:hover { transform: scale(var(--hover-scale)); filter: brightness(1.12); }
+.topbar__control:active { transform: scale(var(--press-scale)); }
+.topbar__control:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.topbar__control img { display: block; width: 24px; height: 24px; }
+
+.topbar__avatar-image {
+  display: block;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-round);
   background-size: cover;
   background-position: center;
+}
+
+/* Search pill: 432px wide, radius 53, warm glass, magnifier on the right. */
+.topbar__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--search-max-width);
+  min-width: 0;
+  padding: var(--space-4) var(--space-6) var(--space-4) var(--space-3);
+  border-radius: var(--radius-pill);
+  background-image:
+    linear-gradient(270deg, var(--chrome-tint-strong) 0%, var(--chrome-tint-weak) 100%),
+    linear-gradient(90deg, var(--color-surface) 0%, var(--color-surface) 100%);
+}
+
+/* The pill chrome lives on .topbar__search; the nested field is a plain row.
+   .search-field carries its own height/padding/background for standalone use. */
+.topbar__search .search-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+}
+
+.topbar__search .search-field__input {
+  width: 100%;
+  padding: 0 var(--space-2);
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-subtitle-s1);
+  line-height: var(--leading-body);
+}
+
+.topbar__search .search-field__input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.topbar__search .search-field__input:focus { outline: none; }
+.topbar__search:focus-within { outline: var(--focus-ring-width) solid var(--color-accent); }
+
+.topbar__search-icon {
+  flex: 0 0 auto;
+  display: block;
+  width: 24px;
+  height: 24px;
+  margin-left: var(--space-2);
+  pointer-events: none;
+}
+
+.topbar__search .search-field__clear {
+  flex: 0 0 auto;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
   cursor: pointer;
-  transition:
-    background-color var(--transition-base),
-    opacity var(--transition-base),
-    transform var(--transition-fast);
 }
 
-.topbar__avatar:hover {
-  opacity: 0.9;
-  background-color: var(--color-surface-raised);
-  transform: scale(var(--hover-scale));
-}
-
-.topbar__avatar:active {
-  transform: scale(var(--press-scale));
-  opacity: 0.75;
-}
-
-.topbar__avatar:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
-}
-
-@media (max-width: 640px) {
-  .topbar__avatar:last-child { display: none; }
+@media (max-width: 900px) {
+  .topbar__control--settings { display: none; }
 }
 
 /* Account control + sign-out menu */

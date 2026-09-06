@@ -1,13 +1,20 @@
 :root {
-  --color-bg: #121212;
-  --color-surface: #1b1b1b;
-  --color-surface-raised: #504f4f;
-  --color-text: #ffffff;
-  --color-text-muted: #b0b0b0;
-  --color-accent: #d9d9d9;
+  /* Figma: Spotify Sonara (Copy) - Home 707:3844 / 707:4771 / 707:3964 */
+  --color-bg: #0d0d0d;              /* Black 95% */
+  --color-surface: #1a1a1a;         /* Black 90% */
+  --color-surface-raised: #333333;  /* Black 80% */
+  --color-text: #ffffff;            /* White */
+  --color-text-muted: #808080;      /* Black 50% */
+  --color-accent: #ba3d03;          /* Copper */
+  --color-golden: #ffd04e;          /* Golden */
+  --color-amber: #ff8c19;           /* Amber */
 
-  --color-scrim-from: rgba(27, 27, 27, 0.84);
-  --color-scrim-to: rgba(27, 27, 27, 0);
+  /* Warm glass used by the top-bar controls. */
+  --chrome-tint-strong: rgba(229, 132, 35, 0.3);
+  --chrome-tint-weak: rgba(48, 15, 0, 0.2);
+
+  --color-scrim-from: rgba(26, 26, 26, 0.84);
+  --color-scrim-to: rgba(26, 26, 26, 0);
   --backdrop-opacity: 1;
 
   --focus-ring-width: 2px;
@@ -20,13 +27,21 @@
   --font-sans: "Helvetica Neue", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: "Aprila", var(--font-sans);
 
-  --text-shelf-title: 28px;
-  --text-card-title: 20px;
-  --text-body: 16px;
+  /* Helvetica Neue scale from the Figma text styles. */
+  --text-shelf-title: 28px;   /* H5  Bold 28/34 */
+  --text-h6: 24px;            /* H6  Bold 24/28 */
+  --text-card-title: 24px;    /* H6, used for card titles */
+  --text-subtitle-s1: 18px;   /* S1  Bold 18/28 */
+  --text-body: 16px;          /* B1  Regular 16/24 */
   --text-sm: 14px;
+
+  --leading-shelf-title: 34px;
+  --leading-h6: 28px;
+  --leading-body: 24px;
 
   --weight-regular: 400;
   --weight-medium: 500;
+  --weight-bold: 700;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -52,7 +67,7 @@
   --rail-width-collapsed: clamp(76px, 6.5vw, 125px);
   --rail-width-expanded: clamp(260px, 21.6vw, 415px);
 
-  --topbar-height: 60px;
+  --topbar-height: 100px;
   --player-height: 134px;
   --player-height-compact: 112px;
 
@@ -61,7 +76,8 @@
 
   --card-size: clamp(132px, 12vw, 188px);
   --rail-item-size: clamp(56px, 4.9vw, 93px);
-  --search-max-width: 424px;
+  --search-max-width: 432px;
+  --rail-toggle-size: 56px;
 
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;

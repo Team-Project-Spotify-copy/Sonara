@@ -13,6 +13,10 @@ const MIN_QUERY_LENGTH = 2;
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
+  // Figma 707:3844 (collapsed) <-> 707:4771 (expanded). Same page, one
+  // user-toggled state - not two screens.
+  const [railExpanded, setRailExpanded] = useState(false);
+  const [libraryFilter, setLibraryFilter] = useState("all");
 
   const { results, status: searchStatus, error: searchError } = useSearch(query, {
     minLength: MIN_QUERY_LENGTH,
@@ -35,6 +39,7 @@ export default function HomePage() {
 
   return (
     <AppShell
+      railExpanded={railExpanded}
       topBar={<TopBar query={query} onQueryChange={setQuery} />}
       rail={
         <LibraryRail
@@ -42,6 +47,10 @@ export default function HomePage() {
           loading={libraryStatus === "loading"}
           error={libraryError}
           onSelect={handleSelect}
+          expanded={railExpanded}
+          onToggleExpanded={() => setRailExpanded((open) => !open)}
+          filter={libraryFilter}
+          onFilterChange={setLibraryFilter}
         />
       }
     >

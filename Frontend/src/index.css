@@ -9,7 +9,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: #121212;
+  background-color: var(--color-bg, #0d0d0d);
   font-family: 'Helvetica Neue', sans-serif;
 }
 

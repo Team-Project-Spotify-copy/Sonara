@@ -2,10 +2,25 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchField from "../search/SearchField.jsx";
 import { useAccount } from "../../contexts/account.store";
+import settingsIcon from "../../assets/icons/settings.svg";
+import homeIcon from "../../assets/icons/home.svg";
+import searchIcon from "../../assets/icons/search.svg";
+import accountIcon from "../../assets/icons/account.svg";
 import "../../css/TopBar.css";
 import "../../css/auth.css";
 
-export default function TopBar({ query, onQueryChange, avatarUrl, onMenuClick, onProfileClick }) {
+/**
+ * Figma 707:3955 - identical across all three Home states, so it is shared
+ * chrome rather than per-state UI. Settings on the left, home + search pill in
+ * the middle, account on the right; all three controls use the warm glass fill.
+ */
+export default function TopBar({
+  query,
+  onQueryChange,
+  avatarUrl,
+  onMenuClick,
+  onProfileClick,
+}) {
   const { isAuthenticated, isLoading, username, email, logout } = useAccount();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -54,25 +69,55 @@ export default function TopBar({ query, onQueryChange, avatarUrl, onMenuClick, o
     <div className="topbar">
       <button
         type="button"
-        className="topbar__avatar"
-        aria-label="Menu"
+        className="topbar__control topbar__control--settings"
+        aria-label="Settings"
         onClick={onMenuClick}
-      />
-      <div className="topbar__search">
-        <SearchField value={query} onChange={onQueryChange} />
+      >
+        <img src={settingsIcon} alt="" aria-hidden="true" width="24" height="24" />
+      </button>
+
+      <div className="topbar__center">
+        <button
+          type="button"
+          className="topbar__control topbar__control--home"
+          aria-label="Home"
+          onClick={() => navigate("/")}
+        >
+          <img src={homeIcon} alt="" aria-hidden="true" width="24" height="24" />
+        </button>
+
+        <div className="topbar__search">
+          <SearchField value={query} onChange={onQueryChange} />
+          <img
+            className="topbar__search-icon"
+            src={searchIcon}
+            alt=""
+            aria-hidden="true"
+            width="24"
+            height="24"
+          />
+        </div>
       </div>
 
       <div className="topbar__account" ref={menuRef}>
         <button
           type="button"
-          className="topbar__avatar"
+          className="topbar__control topbar__control--account"
           aria-label={isAuthenticated ? "Account menu" : "Sign in"}
           aria-haspopup={isAuthenticated ? "menu" : undefined}
           aria-expanded={isAuthenticated ? menuOpen : undefined}
-          style={avatarUrl ? { backgroundImage: `url(${avatarUrl})` } : undefined}
           disabled={isLoading}
           onClick={handleAccountClick}
-        />
+        >
+          {avatarUrl ? (
+            <span
+              className="topbar__avatar-image"
+              style={{ backgroundImage: `url(${avatarUrl})` }}
+            />
+          ) : (
+            <img src={accountIcon} alt="" aria-hidden="true" width="24" height="24" />
+          )}
+        </button>
 
         {menuOpen && isAuthenticated && (
           <div className="topbar__menu" role="menu">
