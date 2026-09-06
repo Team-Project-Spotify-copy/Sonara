@@ -11,6 +11,7 @@ Last updated: 2026-09-06 · branch `integration/recovery`
 | JWT | Working. `sub`, `email`, role, `iss=SonaraApi`, `aud=SonaraClients`. |
 | reCAPTCHA v3 | Working. Server secret valid. In Development the literal token `dev-dummy-token` bypasses verification (`RecaptchaServices.DevBypassToken`). |
 | Ethereum / Hardhat | Working. `npx hardhat node` + `npx hardhat run scripts/deploy.js --network localhost` deploys deterministically to the configured `Ethereum:ContractAddress`. |
+| CORS (dev) | `Cors:AllowedOrigins` in `appsettings.Development.json` lists `5173`, **`5174`** and `3000`. Vite has no fixed port, so it drifts 5173 -> 5174 when 5173 is taken; both are allowed. The policy uses `WithOrigins(...) + AllowCredentials()` for the refresh cookie, so `AllowAnyOrigin()` is not usable. |
 | Redis | **Not installed.** Not needed to start. While down: anonymous search, popular tracks/albums, and the entire password-reset flow return 500 (`RedisCacheService` has no error handling). |
 
 Setup steps are in [`DEVELOPMENT.md`](../DEVELOPMENT.md).
@@ -44,6 +45,14 @@ Register validation now rejects a malformed email, a blank username, and a passw
 ### Verified end to end (browser, real Neon)
 
 Login → token stored → profile hydrated → redirect back to the originally requested route · session survives a full page reload · guards redirect anonymous users · logout clears storage and redirects · error and loading states render · no JavaScript console errors.
+
+Re-verified from origin **`http://localhost:5174`** after the CORS fix:
+`OPTIONS /api/auth/login` → 204 with `Access-Control-Allow-Origin: http://localhost:5174`
+and `Allow-Credentials: true`; `POST /api/auth/login` → 200; `/api/profile` → 200;
+`/api/library` → 200 (the pre-login 401 is the interceptor refreshing, then retrying);
+`POST /api/auth/refresh` → 200; page reload keeps the session. No CORS errors in the
+console. An unknown origin is still refused (verified with `http://evil.example`), so
+the allowlist is intact.
 
 ## Blockers
 
