@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Application.Commands.Auth;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +27,8 @@ public class AuthController : ControllerBase
             return BadRequest("Invalid reCAPTCHA token.");
 
         var result = await _mediator.Send(command, cancellationToken);
-
-        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken});
+        SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken });
     }
 
     [HttpPost("login")]
@@ -54,6 +54,30 @@ public class AuthController : ControllerBase
         var result = await _mediator.Send(new RefreshCommand(refreshToken), cancellationToken);
         SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
         return Ok(new { AccessToken = result.AccessToken });
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(CancellationToken cancellationToken)
+    {
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        await _mediator.Send(new LogoutCommand(refreshToken), cancellationToken);
+
+        ClearRefreshTokenCookie();
+
+        return NoContent();
+    }
+
+    private void ClearRefreshTokenCookie()
+    {
+        // Must mirror the attributes used when the cookie was written, otherwise
+        // the browser keeps the original cookie.
+        Response.Cookies.Delete("refreshToken", new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.None
+        });
     }
 
     private void SetRefreshTokenCookie(string token, DateTime expires)

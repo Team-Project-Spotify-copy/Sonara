@@ -47,3 +47,57 @@
 @media (max-width: 640px) {
   .topbar__avatar:last-child { display: none; }
 }
+
+/* Account control + sign-out menu */
+.topbar__account {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.topbar__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  min-width: 180px;
+  padding: 6px;
+  background: var(--color-surface-raised, #1f1f1f);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-card, 0 8px 24px rgba(0, 0, 0, 0.4));
+}
+
+.topbar__menu-identity {
+  margin: 0;
+  padding: 8px 10px 6px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #b3b3b3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.topbar__menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm, 8px);
+  color: var(--color-text, #fff);
+  font: inherit;
+  font-size: var(--text-sm, 0.875rem);
+  text-align: left;
+  cursor: pointer;
+}
+
+.topbar__menu-item:hover:not(:disabled),
+.topbar__menu-item:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.topbar__menu-item:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

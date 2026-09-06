@@ -1,69 +1,71 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { resolveCaptchaToken } from "../utils/recaptcha";
-import image from "../assets/images/register-bg.png";
 import { useNavigate, Link } from "react-router-dom";
-import { AccountContext } from "../contexts/account.store";
-import axios from "axios";
+import { resolveCaptchaToken } from "../utils/recaptcha";
+import { useAccount } from "../contexts/account.store";
+import image from "../assets/images/register-bg.png";
 import "../css/Register.css";
+import "../css/auth.css";
+
+const MIN_PASSWORD_LENGTH = 8;
 
 function Register() {
-  const { setEmail, setUserId } = React.useContext(AccountContext);
+  const { register } = useAccount();
   const navigate = useNavigate();
-
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
 
   const onFinish = async (event) => {
     event.preventDefault();
+    if (submitting) return;
+
     const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
-    const confirmPassword = formData.get("confirm-password");
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
+    const confirmPassword = String(formData.get("confirm-password") ?? "");
 
+    // Mirrors the server rules in RegisterCommandHandler.Validate.
+    if (!email.includes("@")) {
+      setError("Enter a valid email address.");
+      return;
+    }
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setError(`Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`);
+      return;
+    }
     if (password !== confirmPassword) {
-      console.error("Passwords do not match");
+      setError("Passwords do not match.");
       return;
     }
 
-    const captchaToken = await resolveCaptchaToken(executeRecaptcha, "register_submit");
+    setSubmitting(true);
+    setError(null);
 
-    if (!captchaToken) {
-      alert("Не вдалося отримати токен reCAPTCHA");
-      return;
-    }
+    try {
+      const captchaToken = await resolveCaptchaToken(executeRecaptcha, "register_submit");
 
-    const userId = await registerRequest(email, password, captchaToken);
+      if (!captchaToken) {
+        setError("Could not verify that you are human. Reload the page and try again.");
+        return;
+      }
 
-    if (userId) {
-      setEmail(email);
-      setUserId(userId);
-      navigate("/");
+      await register({
+        email,
+        username: email.split("@")[0],
+        password,
+        token: captchaToken,
+      });
+
+      // Registration returns a session, so the user lands signed in.
+      navigate("/", { replace: true });
+    } catch (err) {
+      setError(err?.message ?? "Could not create your account. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
-
-async function registerRequest(email, password, token) {
-  try {
-    const api = import.meta.env.VITE_API;
-    var username = email.split("@")[0];
-
-    const response = await axios.post(`${api}/auth/register`, {
-      email,
-      username,
-      password,
-      token,
-    });
-
-    console.log("Register response:", response.data);
-
-    if (response.data.AccessToken) {
-      localStorage.setItem("token", response.data.accessToken);
-    }
-
-    return response.data.userId;
-  } catch (error) {
-    console.error("Error during register request:", error);
-  }
-}
 
   return (
     <div className="register-page">
@@ -74,7 +76,13 @@ async function registerRequest(email, password, token) {
           <h1 className="register-title">Let's get started!</h1>
 
           <div className="register-form-wrapper">
-            <form className="register-form" onSubmit={onFinish}>
+            <form className="register-form" onSubmit={onFinish} noValidate>
+              {error && (
+                <p className="auth-message auth-message--error" role="alert">
+                  {error}
+                </p>
+              )}
+
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   Email
@@ -84,6 +92,8 @@ async function registerRequest(email, password, token) {
                   id="email"
                   name="email"
                   required
+                  autoComplete="email"
+                  disabled={submitting}
                   className="form-input"
                 />
               </div>
@@ -97,6 +107,9 @@ async function registerRequest(email, password, token) {
                   id="password"
                   name="password"
                   required
+                  minLength={MIN_PASSWORD_LENGTH}
+                  autoComplete="new-password"
+                  disabled={submitting}
                   className="form-input"
                 />
               </div>
@@ -110,22 +123,26 @@ async function registerRequest(email, password, token) {
                   id="confirm-password"
                   name="confirm-password"
                   required
+                  minLength={MIN_PASSWORD_LENGTH}
+                  autoComplete="new-password"
+                  disabled={submitting}
                   className="form-input"
                 />
               </div>
 
-              <button type="submit" className="btn-primary">
-                Continue
+              <button type="submit" className="btn-primary" disabled={submitting}>
+                {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
+                {submitting ? "Creating account…" : "Continue"}
               </button>
             </form>
 
             <p className="register-divider">or</p>
 
             <div className="register-social-group">
-              <button type="button" className="btn-social">
+              <button type="button" className="btn-social" disabled title="Not available yet">
                 Google
               </button>
-              <button type="button" className="btn-social">
+              <button type="button" className="btn-social" disabled title="Not available yet">
                 Facebook
               </button>
             </div>
@@ -135,21 +152,13 @@ async function registerRequest(email, password, token) {
               <Link to="/login" className="app-link">
                 Log in!
               </Link>
-              <br />
-              <Link
-                to="/forgot-password"
-                className="app-link"
-                style={{ fontWeight: "normal" }}
-              >
-                Agree to our Terms of Service and Privacy Policy.
-              </Link>
             </p>
           </div>
         </div>
       </div>
 
       <div className="register-bg-image">
-        <img src={image} alt="register Background" />
+        <img src={image} alt="" aria-hidden="true" />
       </div>
     </div>
   );
