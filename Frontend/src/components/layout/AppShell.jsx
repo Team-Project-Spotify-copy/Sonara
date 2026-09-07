@@ -10,11 +10,16 @@ export default function AppShell({
   showBackdrop = true,
   showMain = true,
   showRail = true,
+  railExpanded = false,
   style,
 }) {
   const hasRail = showRail && rail;
   return (
-    <div className={`app-shell ${!hasRail ? "app-shell--no-rail" : ""}${player ? " app-shell--with-player" : ""}`}>
+    <div
+      className={`app-shell ${!hasRail ? "app-shell--no-rail" : ""}${player ? " app-shell--with-player" : ""}${
+        hasRail && railExpanded ? " app-shell--rail-expanded" : ""
+      }`}
+    >
       <header className="app-shell__topbar">{topBar}</header>
       {hasRail && <aside className="app-shell__rail">{rail}</aside>}
 

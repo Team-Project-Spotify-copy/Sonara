@@ -1,82 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { resolveCaptchaToken } from "../utils/recaptcha";
-import image from "../assets/images/login-bg.png";
-import { useNavigate, Link } from "react-router-dom";
-import { AccountContext } from "../contexts/account.store";
-import axios from "axios";
+import { useAccount } from "../contexts/account.store";
+import image from "../assets/images/auth-gradient-bg.png";
+import logo from "../assets/icons/sonara-mark.svg";
 import "../css/Login.css";
+import "../css/auth.css";
 
 function Login() {
-  const { setUserId, setEmail, setAccessToken } =
-    React.useContext(AccountContext);
+  const { login } = useAccount();
   const navigate = useNavigate();
-
+  const location = useLocation();
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Send the user back where the guard interrupted them, if anywhere.
+  const redirectTo = location.state?.from?.pathname ?? "/";
 
   const onFinish = async (event) => {
     event.preventDefault();
+    if (submitting) return;
+
     const formData = new FormData(event.currentTarget);
-    const email = formData.get("email");
-    const password = formData.get("password");
+    const email = String(formData.get("email") ?? "").trim();
+    const password = String(formData.get("password") ?? "");
 
-    const captchaToken = await resolveCaptchaToken(
-      executeRecaptcha,
-      "login_submit",
-    );
-
-    if (!captchaToken) {
-      alert("Не вдалося отримати токен reCAPTCHA");
+    if (!email || !password) {
+      setError("Enter your email and password.");
       return;
     }
 
-    const response = await loginRequest(email, password, captchaToken);
+    setSubmitting(true);
+    setError(null);
 
-    if (response) {
-      const accessToken = response.accessToken || response;
-      const userId = response.userId;
-
-      setEmail(email);
-      if (userId) setUserId(userId);
-      setAccessToken(accessToken);
-      navigate("/");
-    }
-  };
-
-  async function loginRequest(email, password, token) {
     try {
-      const api = import.meta.env.VITE_API;
+      const captchaToken = await resolveCaptchaToken(executeRecaptcha, "login_submit");
 
-      const response = await axios.post(`${api}/auth/login`, {
-        email,
-        password,
-        token,
-      });
-
-      return response.data;
-    } catch (error) {
-      if (error.response) {
-        console.error("Помилка від сервера:", error.response.data);
-      } else if (error.request) {
-        console.error("Немає відповіді від сервера:", error.request);
-      } else {
-        console.error("Помилка налаштування запиту:", error.message);
+      if (!captchaToken) {
+        setError("Could not verify that you are human. Reload the page and try again.");
+        return;
       }
 
-      return null;
+      await login({ email, password, token: captchaToken });
+      navigate(redirectTo, { replace: true });
+    } catch (err) {
+      setError(err?.message ?? "Could not sign you in. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-  }
+  };
 
   return (
     <div className="login-page">
       <div className="login-container">
         <div className="login-intro">
-          <div className="login-avatar"></div>
+          <img src={logo} alt="Sonara" className="login-logo" />
 
           <h1 className="login-title">Welcome back!</h1>
 
           <div className="login-form-wrapper">
-            <form className="login-form" onSubmit={onFinish}>
+            <form className="login-form" onSubmit={onFinish} noValidate>
+              {error && (
+                <p className="auth-message auth-message--error" role="alert">
+                  {error}
+                </p>
+              )}
+
               <div className="form-group">
                 <label htmlFor="email" className="form-label">
                   Email
@@ -86,6 +78,8 @@ function Login() {
                   id="email"
                   name="email"
                   required
+                  autoComplete="email"
+                  disabled={submitting}
                   className="form-input"
                 />
               </div>
@@ -99,22 +93,25 @@ function Login() {
                   id="password"
                   name="password"
                   required
+                  autoComplete="current-password"
+                  disabled={submitting}
                   className="form-input"
                 />
               </div>
 
-              <button type="submit" className="btn-primary">
-                Continue
+              <button type="submit" className="btn-primary" disabled={submitting}>
+                {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
+                {submitting ? "Signing in…" : "Continue"}
               </button>
             </form>
 
             <p className="login-divider">or</p>
 
             <div className="login-social-group">
-              <button type="button" className="btn-social">
+              <button type="button" className="btn-social" disabled title="Not available yet">
                 Google
               </button>
-              <button type="button" className="btn-social">
+              <button type="button" className="btn-social" disabled title="Not available yet">
                 Facebook
               </button>
             </div>
@@ -138,7 +135,7 @@ function Login() {
       </div>
 
       <div className="login-bg-image">
-        <img src={image} alt="Login Background" />
+        <img src={image} alt="" aria-hidden="true" />
       </div>
     </div>
   );

@@ -1,8 +1,11 @@
 .app-shell {
   display: grid;
+  /* Figma: the shell is viewport-height and the main panel scrolls inside it
+     (707:3964 is the panel's full content, not a taller page). */
+  height: 100dvh;
   min-height: 100dvh;
   box-sizing: border-box;
-  padding: var(--space-4) var(--shell-gutter) 0;
+  padding: 0 var(--shell-gutter) 0;
   gap: var(--shell-gap);
   grid-template-columns: var(--rail-width-collapsed) minmax(0, 1fr);
   grid-template-rows: var(--topbar-height) minmax(0, 1fr);
@@ -36,7 +39,12 @@
     "player";
 }
 
-.app-shell__topbar { grid-area: topbar; min-width: 0; }
+.app-shell__topbar {
+  grid-area: topbar;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
 .app-shell__rail   { grid-area: rail;   min-height: 0; }
 
 .app-shell__player {
@@ -93,7 +101,8 @@
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  /* padding: var(--panel-padding); */
+  /* Figma 707:3857 - main panel pt-32 px-32, sections 52 apart. */
+  padding: var(--panel-padding) var(--panel-padding) var(--space-8);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -102,8 +111,16 @@
   scrollbar-color: var(--color-surface-raised) transparent;
 }
 
-@media (min-width: 1600px) {
-  .app-shell { grid-template-columns: var(--rail-width-expanded) minmax(0, 1fr); }
+/* Figma 707:3844 (collapsed 125px) <-> 707:4771 (expanded 415px).
+   The rail width is a user-toggled state, not a viewport breakpoint: the main
+   panel gives up exactly the width the rail gains (1575 -> 1285 for 125 -> 415). */
+.app-shell--rail-expanded {
+  grid-template-columns: var(--rail-width-expanded) minmax(0, 1fr);
+}
+
+.app-shell,
+.app-shell__rail {
+  transition: grid-template-columns var(--transition-base);
 }
 
 @media (max-width: 900px) {
