@@ -12,7 +12,9 @@ export function getAccessToken() {
   return localStorage.getItem("accessToken");
 }
 
-function setAccessToken(token) {
+export const AUTH_EXPIRED_EVENT = "auth:expired";
+
+export function setAccessToken(token) {
   if (token) {
     localStorage.setItem("accessToken", token);
   } else {
@@ -42,6 +44,9 @@ function refreshAccessToken() {
     })
     .catch(() => {
       setAccessToken(null);
+      // Tell the app the session is gone so it can clear state and redirect.
+      // Without a listener the user would sit on a page that keeps 401ing.
+      window.dispatchEvent(new CustomEvent(AUTH_EXPIRED_EVENT));
       return null;
     })
     .finally(() => {

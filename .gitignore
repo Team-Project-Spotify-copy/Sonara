@@ -354,3 +354,14 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Audio assets never belong in the repository - they live in Azure Blob
+# Storage and are uploaded with Frontend/scripts/import-music.mjs.
+*.mp3
+*.m4a
+*.aac
+*.ogg
+*.oga
+*.opus
+*.wav
+*.flac

@@ -1,81 +1,147 @@
+/* Figma 707:3845 (collapsed) / 707:4772 (expanded).
+   Panel: #1a1a1a, radius 8, padding 16, column gap 16. */
+
 .rail {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  box-sizing: border-box;
   height: 100%;
   min-height: 0;
   padding: var(--space-4);
-  box-sizing: border-box;
+  overflow: hidden;
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
 }
 
+/* Fade over the rail's right edge so clipped labels dissolve rather than cut.
+   Figma 707:4792 — 223px, rgba(27,27,27,0.84) -> transparent. */
+.rail::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  right: 0;
+  z-index: 2;
+  width: clamp(48px, 54%, 223px);
+  pointer-events: none;
+  background: linear-gradient(to left, rgba(27, 27, 27, 0.84), rgba(27, 27, 27, 0));
+}
+
+.rail--expanded::after {
+  width: clamp(64px, 30%, 223px);
+}
+
+/* ---- header (expanded only) ---- */
+
 .rail__header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: var(--space-3);
-  flex: 0 0 auto;
+  position: relative;
+  z-index: 3;
+}
+
+.rail__header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .rail__title {
   margin: 0;
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
+  font-size: var(--text-h6);
+  line-height: var(--leading-h6);
+  font-weight: var(--weight-bold);
   color: var(--color-text);
-  white-space: nowrap;
 }
 
 .rail__actions {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-4);
+  position: relative;
+  z-index: 3;
+}
+
+.rail__actions--stacked {
+  flex-direction: column;
+  align-items: center;
 }
 
 .rail__action {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex: 0 0 auto;
-  width: var(--control-size);
-  height: var(--control-size);
+  padding: var(--space-4);
   border: none;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-round);
   background-color: var(--color-surface-raised);
-  color: var(--color-accent);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-base),
-    color var(--transition-base),
-    transform var(--transition-fast);
-}
-
-.rail__action:hover {
   color: var(--color-text);
-  transform: scale(var(--hover-scale));
+  cursor: pointer;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
 }
 
+.rail__action--accent {
+  background-color: var(--color-accent);
+}
+
+.rail__action:hover { transform: scale(var(--hover-scale)); }
 .rail__action:active { transform: scale(var(--press-scale)); }
+.rail__action img { display: block; width: 24px; height: 24px; }
 
-.rail__action:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
+/* ---- filter chips (expanded only) ---- */
+
+.rail__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
 }
+
+.rail__chip {
+  padding: 12px var(--space-6);
+  border: none;
+  border-radius: 76px;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  line-height: 16px;
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.rail__chip--active {
+  background-color: #ffffff;
+  color: var(--color-surface);
+}
+
+/* ---- rows ---- */
 
 .rail__list {
+  position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-surface-raised) transparent;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
 }
 
-.rail__row { display: flex; }
+.rail__list::-webkit-scrollbar { width: 0; height: 0; }
+
+.rail__row { min-width: 0; }
 
 .rail__item {
   display: flex;
@@ -86,27 +152,14 @@
   border: none;
   background: none;
   color: inherit;
-  cursor: pointer;
+  font: inherit;
   text-align: left;
-  border-radius: var(--radius-sm);
-  transition:
-    background-color var(--transition-base),
-    transform var(--transition-fast);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform var(--transition-fast);
 }
 
-.rail__item:hover {
-  background-color: var(--color-surface-raised);
-  transform: translateX(2px);
-}
-
-.rail__item:active { transform: scale(var(--press-scale)); }
-
-.rail__item:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
-}
-
-.rail__item:hover .rail__art { transform: scale(var(--hover-scale)); }
+.rail__item:hover { transform: translateX(2px); }
 
 .rail__art {
   flex: 0 0 auto;
@@ -116,7 +169,6 @@
   background-color: var(--color-surface-raised);
   background-size: cover;
   background-position: center;
-  transition: transform var(--transition-fast);
 }
 
 .rail__art--round { border-radius: var(--radius-round); }
@@ -124,72 +176,52 @@
 .rail__meta {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
   min-width: 0;
+  /* Never squeezes the artwork: in the collapsed rail the label column is
+     simply clipped by the panel, exactly as the Figma component does. */
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 220px;
 }
 
 .rail__name {
-  font-size: var(--text-card-title);
-  font-weight: var(--weight-medium);
-}
-
-.rail__sub {
-  font-size: var(--text-body);
-  color: var(--color-text-muted);
-}
-
-.rail__name,
-.rail__sub {
+  font-size: var(--text-subtitle-s1);
+  line-height: var(--leading-h6);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.rail__empty {
-  margin: 0;
+.rail__sub {
   font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-regular);
   color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rail__item--skeleton { pointer-events: none; }
-.rail__item--skeleton .rail__art { animation: rail-pulse 1.4s ease-in-out infinite; }
 
 .rail__item--skeleton .rail__name,
 .rail__item--skeleton .rail__sub {
-  height: 1em;
   width: 120px;
-  border-radius: var(--radius-sm);
+  height: 12px;
+  border-radius: 4px;
   background-color: var(--color-surface-raised);
-  animation: rail-pulse 1.4s ease-in-out infinite;
 }
 
-.rail__item--skeleton .rail__sub { width: 72px; }
+.rail__item--skeleton .rail__sub { width: 80px; margin-top: 6px; }
 
-@keyframes rail-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.55; }
+.rail__empty {
+  position: relative;
+  z-index: 3;
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .rail__item--skeleton .rail__art,
-  .rail__item--skeleton .rail__name,
-  .rail__item--skeleton .rail__sub { animation: none; }
-}
-
-.rail__title,
-.rail__meta,
-.rail__empty { display: none; }
-
-.rail__header { justify-content: center; }
-.rail__actions { flex-direction: column; gap: var(--space-4); }
-.rail__item { justify-content: center; }
-
-@media (min-width: 1600px) {
-  .rail { gap: var(--space-16); }
-  .rail__title { display: block; }
-  .rail__meta { display: flex; }
-  .rail__empty { display: block; }
-  .rail__header { justify-content: space-between; }
-  .rail__actions { flex-direction: row; gap: var(--space-2); }
-  .rail__item { justify-content: flex-start; }
-}
+.rail:not(.rail--expanded) .rail__empty { display: none; }
