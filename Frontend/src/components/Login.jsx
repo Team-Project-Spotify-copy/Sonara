@@ -3,7 +3,8 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { resolveCaptchaToken } from "../utils/recaptcha";
 import { useAccount } from "../contexts/account.store";
-import image from "../assets/images/login-bg.png";
+import image from "../assets/images/auth-gradient-bg.png";
+import logo from "../assets/icons/sonara-mark.svg";
 import "../css/Login.css";
 import "../css/auth.css";
 
@@ -56,7 +57,7 @@ function Login() {
     <div className="login-page">
       <div className="login-container">
         <div className="login-intro">
-          <div className="login-avatar"></div>
+          <img src={logo} alt="Sonara" className="login-logo" />
 
           <h1 className="login-title">Welcome back!</h1>
 

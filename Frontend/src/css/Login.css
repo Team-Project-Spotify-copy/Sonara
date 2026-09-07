@@ -1,8 +1,11 @@
+/* Same treatment as Register: the page was a hard 1920x1080 canvas, which put
+   the background panel (x 825-1820) outside the viewport on anything narrower
+   than 1820px. Fill the viewport; min-height keeps the 880px card's rhythm. */
 .login-page {
     display: flex;
     position: relative;
-    width: 1920px;
-    height: 1080px;
+    width: 100%;
+    min-height: 1080px;
     background-color: #121212;
 }
 
@@ -29,11 +32,12 @@
     gap: 12px;
 }
 
-.login-avatar {
+/* Sonara mark, same asset and sizing Register uses (archived .auth-logo: 64x64). */
+.login-logo {
+    display: block;
     width: 64px;
     height: 64px;
-    border-radius: 50%;
-    background-color: #504f4f;
+    flex-shrink: 0;
 }
 
 .login-title {
@@ -86,15 +90,21 @@
     margin-top: 8px;
 }
 
+/* Design gutters: 100px around, 20px between card and panel. At 1920x1080 this
+   resolves to exactly 995x880 - identical to the old fixed rule - but it now
+   shrinks with the viewport instead of running off the canvas. */
 .login-bg-image {
     position: absolute;
     left: 825px;
     top: 100px;
+    right: 100px;
+    bottom: 100px;
 }
 
 .login-bg-image img {
-    width: 995px;
-    height: 880px;
+    display: block;
+    width: 100%;
+    height: 100%;
     border-radius: 8px;
     object-fit: cover;
 }

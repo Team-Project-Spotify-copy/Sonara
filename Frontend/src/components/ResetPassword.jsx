@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { forgotPassword, verifyResetCode } from "../api/auth.service.js";
-import image from "../assets/images/reset-ps-bg.png";
+import image from "../assets/images/auth-gradient-bg.png";
+import logo from "../assets/icons/sonara-mark.svg";
 import "../css/ResetPassword.css";
 import "../css/auth.css";
 
@@ -68,7 +69,7 @@ function ResetPassword() {
   };
 
   return (
-    <div className="reset-password-page">
+    <div className="reset-password-page reset-password-page--fluid">
       <div className="reset-password-container">
         <button type="button" className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
           <svg
@@ -88,7 +89,7 @@ function ResetPassword() {
         </button>
 
         <div className="reset-password-intro">
-          <div className="reset-password-avatar"></div>
+          <img src={logo} alt="Sonara" className="reset-password-logo" />
 
           <h1 className="reset-password-title">Reset Your Password</h1>
           <p className="reset-password-text-under-title">
