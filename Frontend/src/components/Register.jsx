@@ -3,7 +3,8 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useNavigate, Link } from "react-router-dom";
 import { resolveCaptchaToken } from "../utils/recaptcha";
 import { useAccount } from "../contexts/account.store";
-import image from "../assets/images/register-bg.png";
+import image from "../assets/images/auth-gradient-bg.png";
+import logo from "../assets/icons/sonara-mark.svg";
 import "../css/Register.css";
 import "../css/auth.css";
 
@@ -71,7 +72,7 @@ function Register() {
     <div className="register-page">
       <div className="register-container">
         <div className="register-intro">
-          <div className="register-avatar"></div>
+          <img src={logo} alt="Sonara" className="register-logo" />
 
           <h1 className="register-title">Let's get started!</h1>
 
