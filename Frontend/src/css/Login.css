@@ -1,6 +1,3 @@
-/* Same treatment as Register: the page was a hard 1920x1080 canvas, which put
-   the background panel (x 825-1820) outside the viewport on anything narrower
-   than 1820px. Fill the viewport; min-height keeps the 880px card's rhythm. */
 .login-page {
     display: flex;
     position: relative;
@@ -32,7 +29,6 @@
     gap: 12px;
 }
 
-/* Sonara mark, same asset and sizing Register uses (archived .auth-logo: 64x64). */
 .login-logo {
     display: block;
     width: 64px;

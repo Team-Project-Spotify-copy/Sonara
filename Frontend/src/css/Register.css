@@ -1,7 +1,3 @@
-/* The page used to be a hard 1920x1080 canvas, which pushed the background
-   panel (x 825-1820) off-screen on anything narrower than 1820px and forced a
-   horizontal scrollbar. Fill the viewport instead; min-height keeps the 880px
-   card's vertical rhythm intact. */
 .register-page {
     display: flex;
     position: relative;
@@ -34,9 +30,6 @@
     gap: 12px;
 }
 
-/* Sonara mark, restored from origin/archive/home-feed-cache-and-auth-ui
-   (.auth-logo there: 64x64, display block; .register-intro already uses the
-   same 12px gap the archived .auth-header did). */
 .register-logo {
     display: block;
     width: 64px;

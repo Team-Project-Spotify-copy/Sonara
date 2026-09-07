@@ -13,8 +13,6 @@ const MIN_QUERY_LENGTH = 2;
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
-  // Figma 707:3844 (collapsed) <-> 707:4771 (expanded). Same page, one
-  // user-toggled state - not two screens.
   const [railExpanded, setRailExpanded] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState("all");
 
@@ -37,8 +35,6 @@ export default function HomePage() {
   const handleSelect = (item) => {
     if (item.kind !== "track") return;
 
-    // Song.jsx loads the real track for :id and hands the catalog to the
-    // existing player, so navigating is all this needs to do.
     navigate(`/song/${item.id}`);
   };
 
