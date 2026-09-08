@@ -1,8 +1,8 @@
 .register-page {
     display: flex;
     position: relative;
-    width: 1920px;
-    height: 1080px;
+    width: 100%;
+    min-height: 1080px;
     background-color: #121212;
 }
 
@@ -30,11 +30,11 @@
     gap: 12px;
 }
 
-.register-avatar {
-    min-width: 64px;
-    min-height: 64px;
-    border-radius: 50%;
-    background-color: #504f4f;
+.register-logo {
+    display: block;
+    width: 64px;
+    height: 64px;
+    flex-shrink: 0;
 }
 
 .register-title {
@@ -87,15 +87,22 @@
     margin-top: 8px;
 }
 
+/* Design gutters: 100px around, 20px between card and panel.
+   left 825 + right 100 => 995px wide at 1920; top 100 + bottom 100 => 880px
+   tall at 1080. Same pixels as before at the design size, but it now shrinks
+   with the viewport instead of running off the canvas. */
 .register-bg-image {
     position: absolute;
     left: 825px;
     top: 100px;
+    right: 100px;
+    bottom: 100px;
 }
 
 .register-bg-image img {
-    width: 995px;
-    height: 880px;
+    display: block;
+    width: 100%;
+    height: 100%;
     border-radius: 8px;
     object-fit: cover;
 }

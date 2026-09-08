@@ -43,15 +43,32 @@ export function normalizeMediaItem(raw, fallbackKind) {
   const artist = pick(raw, "artistName", "artist", "author", "owner", "creator");
   const artistName = artist && typeof artist === "object" ? pick(artist, "name", "title") : artist;
 
+  const imageUrl =
+    pick(raw, "imageUrl", "coverUrl", "artworkUrl", "pictureUrl", "thumbnailUrl") ?? null;
+  const durationSeconds = toSeconds(pick(raw, "durationSeconds", "duration", "lengthSeconds"));
+  const durationMs = pick(raw, "durationMs") ?? (durationSeconds ? durationSeconds * 1000 : 0);
+
   return {
     id: String(id ?? `${kind}-${title ?? Math.random().toString(36).slice(2)}`),
     kind,
     title: title ?? "Unknown",
     subtitle: artistName ?? pick(raw, "description", "subtitle") ?? "",
-    imageUrl:
-      pick(raw, "imageUrl", "coverUrl", "artworkUrl", "pictureUrl", "thumbnailUrl") ?? null,
+    imageUrl,
     audioUrl: pick(raw, "audioUrl", "streamUrl", "url", "fileUrl", "blobUrl") ?? null,
-    durationSeconds: toSeconds(pick(raw, "durationSeconds", "duration", "lengthSeconds")),
+    durationSeconds,
+
+    // player.context.jsx and PlayerBar.jsx read these names off the queued item.
+    // Without them a card-initiated play renders with no artwork and no artist,
+    // and the hasStream guard cannot short-circuit a track with no audio.
+    artistName: artistName ?? null,
+    artworkUrl: imageUrl,
+    durationMs,
+    hasStream: pick(raw, "hasStream"),
+    isLiked: pick(raw, "isLiked") ?? false,
+    artistId: pick(raw, "artistId") ?? null,
+    albumId: pick(raw, "albumId") ?? null,
+    albumTitle: pick(raw, "albumTitle") ?? null,
+
     raw,
   };
 }

@@ -1,0 +1,89 @@
+/* Shared auth feedback: loading, error and success states.
+   Layout/typography for each screen stays in its own stylesheet. */
+
+.auth-gate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 12px);
+  min-height: 60vh;
+  color: var(--color-text-muted, #b3b3b3);
+}
+
+.auth-gate__label {
+  font-size: var(--text-sm, 0.875rem);
+  margin: 0;
+}
+
+.auth-spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: auth-spin 0.7s linear infinite;
+}
+
+.auth-spinner--inline {
+  width: 16px;
+  height: 16px;
+  border-width: 2px;
+  display: inline-block;
+  vertical-align: -3px;
+  margin-right: 8px;
+}
+
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-spinner {
+    animation-duration: 2s;
+  }
+}
+
+.auth-message {
+  margin: 0 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm, 8px);
+  font-size: var(--text-sm, 0.875rem);
+  line-height: 1.4;
+}
+
+.auth-message--error {
+  background: rgba(220, 65, 65, 0.14);
+  border: 1px solid rgba(220, 65, 65, 0.45);
+  color: #ffb3b3;
+}
+
+.auth-message--success {
+  background: rgba(60, 190, 120, 0.14);
+  border: 1px solid rgba(60, 190, 120, 0.45);
+  color: #a7e8c4;
+}
+
+.auth-field-error {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: #ffb3b3;
+}
+
+/* Disabled submit while a request is in flight. */
+.btn-primary[disabled],
+.reset-password-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-logout {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
