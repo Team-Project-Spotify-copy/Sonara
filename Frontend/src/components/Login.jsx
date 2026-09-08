@@ -29,7 +29,7 @@ function Login() {
       alert("Не вдалося отримати токен reCAPTCHA");
       return;
     }
-
+    console.log(email, password)
     const response = await loginRequest(email, password, captchaToken);
 
     if (response) {

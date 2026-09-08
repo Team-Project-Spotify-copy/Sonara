@@ -42,6 +42,8 @@ export default function PlaylistPage
   return (
     <AppShell
       topBar={<TopBar query={query} onQueryChange={setQuery} />}
+      showBackdrop={searching ? true : false}
+      showMain={searching ? true : false}
       rail={
         <LibraryRail
           items={libraryItems}
@@ -60,9 +62,7 @@ export default function PlaylistPage
           onSelect={handleSelect}
         />
       ) : (
-        
-          <Playlist/>
-        
+        <Playlist />
       )}
     </AppShell>
   );
