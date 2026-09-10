@@ -210,12 +210,10 @@ public class AlbumService : IAlbumService
 
         if (track == null) return null;
 
-        // Прив'язуємо трек до альбому
         track.AlbumId = album.Id;
 
         await _db.SaveChangesAsync(ct);
 
-        // Повторно збираємо актуальний стан альбому для відповіді
         return new AlbumDto
         {
             Id = album.Id,

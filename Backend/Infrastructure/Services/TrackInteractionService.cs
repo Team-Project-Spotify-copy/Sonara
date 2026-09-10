@@ -84,25 +84,30 @@ public class TrackInteractionService : ITrackInteractionService
             ct);
     }
 
-    public async Task<ListenRegistrationDto> RegisterListenAsync(
-        Guid trackId,
-        Guid userId,
-        int? durationListenedMs,
-        CancellationToken ct = default)
+    public async Task<ListenRegistrationDto> RegisterListenAsync(Guid mediaId, Guid userId, int? durationListenedMs, CancellationToken ct = default)
     {
-        var track = await _db.Tracks.FirstOrDefaultAsync(t => t.Id == trackId, ct)
-            ?? throw new NotFoundException(nameof(Track), trackId);
+        var track = await _db.Tracks.FirstOrDefaultAsync(t => t.Id == mediaId, ct);
 
-        var required = track.DurationMs > 0
-            ? Math.Min(MeaningfulListenMs, Math.Max(1, track.DurationMs / 2))
+        var episode = track == null ? await _db.PodcastEpisodes.FirstOrDefaultAsync(e => e.Id == mediaId, ct) : null;
+
+        if (track == null && episode == null)
+        {
+            throw new NotFoundException("MediaItem", mediaId);
+        }
+
+        var durationMs = track?.DurationMs ?? episode?.DurationMs ?? 0;
+        var currentPlaysCount = track?.PlaysCount ?? 0;
+
+        var required = durationMs > 0
+            ? Math.Min(MeaningfulListenMs, Math.Max(1, durationMs / 2))
             : MeaningfulListenMs;
 
         var listened = Math.Max(0, durationListenedMs ?? 0);
 
         var result = new ListenRegistrationDto
         {
-            TrackId = trackId,
-            PlaysCount = track.PlaysCount,
+            TrackId = mediaId,
+            PlaysCount = currentPlaysCount,
             RequiredListenedMs = required
         };
 
@@ -114,7 +119,7 @@ public class TrackInteractionService : ITrackInteractionService
 
         var windowStart = DateTime.UtcNow.AddSeconds(-DuplicateWindowSeconds);
         var recentlyRecorded = await _db.ListeningHistories
-            .AnyAsync(h => h.UserId == userId && h.TrackId == trackId && h.ListenedAt >= windowStart, ct);
+            .AnyAsync(h => h.UserId == userId && h.TrackId == mediaId && h.ListenedAt >= windowStart, ct);
 
         if (recentlyRecorded)
         {
@@ -126,18 +131,21 @@ public class TrackInteractionService : ITrackInteractionService
 
         _db.ListeningHistories.Add(new ListeningHistory
         {
-            TrackId = trackId,
+            TrackId = mediaId,
             UserId = userId,
             ListenedAt = listenedAt,
             DurationListenedMs = listened
         });
 
-        track.PlaysCount += 1;
+        if (track != null)
+        {
+            track.PlaysCount += 1;
+            result.PlaysCount = track.PlaysCount;
+        }
 
         await _db.SaveChangesAsync(ct);
 
         result.Status = ListenRecordStatus.Recorded;
-        result.PlaysCount = track.PlaysCount;
         result.ListenedAt = listenedAt;
         return result;
     }
