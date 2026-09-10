@@ -34,6 +34,9 @@ export default function LibraryPage() {
       showBackdrop={searching ? true : false}
       showMain={searching ? true : false}
       showRail={false}
+      style={{
+        "--panel-padding": searching ? "24px" : "0px",
+      }}
     >
       {searching ? (
         <SearchResults

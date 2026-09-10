@@ -8,6 +8,8 @@ import SubscriptionPage from "./components/SubscriptionPage.jsx";
 import ResetPassword from "./components/ResetPassword.jsx";
 import Account from "./components/AccountPage.jsx";
 import PlaylistPage from "./components/PlaylistPage.jsx";
+import PodcastPage from "./components/PodcastPage.jsx";
+import AlbumPage from "./components/AlbumPage.jsx";
 import Library from "./components/LibraryPage.jsx";
 import Song from "./components/Song.jsx";
 import RootLayout from "./layouts/RootLayout.jsx";
@@ -28,11 +30,16 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/create-new-password" element={<CreateNewPassword />}/>
+              <Route
+                path="/create-new-password"
+                element={<CreateNewPassword />}
+              />
               <Route path="/song" element={<Song />} />
               <Route path="/song/:id" element={<Song />} />
-              <Route path="/playlist/:id" element={<PlaylistPage />} />
-              
+              <Route path="/playlist/:name" element={<PlaylistPage />} />
+              <Route path="/podcast/:name" element={<PodcastPage />} />
+              <Route path="/album/:name" element={<AlbumPage />} />
+
               {/* Signed-in only */}
               <Route element={<RequireAuth />}>
                 <Route path="/library" element={<Library />} />

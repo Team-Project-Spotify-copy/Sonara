@@ -119,6 +119,10 @@
   cursor: pointer;
 }
 
+.topbar__control--settings{
+  margin-left: 35px; /* replace */
+}
+
 @media (max-width: 900px) {
   .topbar__control--settings { display: none; }
 }
@@ -128,6 +132,7 @@
   position: relative;
   display: flex;
   align-items: center;
+  margin-right: 30px; /* replace */
 }
 
 .topbar__menu {

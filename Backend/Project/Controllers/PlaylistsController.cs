@@ -40,6 +40,16 @@ public class PlaylistsController : ControllerBase
         return Ok(await _playlistService.GetByIdAsync(id, _currentUser.UserId, ct));
     }
 
+    [HttpGet("{name}")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PlaylistDto>> GetByName(string name, CancellationToken ct)
+    {
+        return Ok(await _playlistService.GetByNameAsync(name, _currentUser.UserId, ct));
+    }
+
     [HttpPost]
     [Consumes("multipart/form-data")]
     [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status201Created)]
@@ -87,16 +97,26 @@ public class PlaylistsController : ControllerBase
         return Ok(await _playlistService.GetTracksAsync(id, _currentUser.UserId, ct));
     }
 
-    [HttpPost("{id:guid}/tracks")]
+    [HttpPost("{id:guid}/tracks/{trackId:guid}")]
     [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PlaylistDto>> AddTrack(Guid id, [FromBody] AddTrackToPlaylistRequest request, CancellationToken ct)
+    public async Task<ActionResult<PlaylistDto>> AddTrack(Guid id, Guid trackId, CancellationToken ct)
     {
         var userId = RequireUserId();
-        return Ok(await _playlistService.AddTrackAsync(id, userId, request.TrackId, ct));
+        return Ok(await _playlistService.AddTrackAsync(id, userId, trackId, ct));
+    }
+
+    [HttpPost("{id:guid}/tracks/{trackName}")]
+    [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<PlaylistDto>> AddTrack(Guid id, string trackName, CancellationToken ct)
+    {
+        var userId = RequireUserId();
+        return Ok(await _playlistService.AddTrackAsync(id, userId, trackName, ct));
     }
 
     [HttpDelete("{id:guid}/tracks/{trackId:guid}")]

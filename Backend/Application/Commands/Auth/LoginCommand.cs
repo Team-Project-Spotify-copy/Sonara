@@ -22,7 +22,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResultDto>
         var user = await _authRepository.GetUserByEmailAsync(request.Email);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            throw new UnauthorizedAccessException("Invalid email or password.");
+                throw new UnauthorizedAccessException("Invalid email or password.");
 
         var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken(user.Id);

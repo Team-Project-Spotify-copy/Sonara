@@ -33,9 +33,17 @@ export default function HomePage() {
   // and hands it to the existing player. Other kinds have no route yet, so they
   // stay inert rather than gaining a half-built destination.
   const handleSelect = (item) => {
-    if (item.kind !== "track") return;
-
-    navigate(`/song/${item.id}`);
+    console.log(item)
+    if (item.kind == "track") 
+      navigate(`/song/${item.id}`);
+    if (item.kind == "playlist") 
+      navigate(`/playlist/${item.title}`);
+    if (item.kind == "podcast") 
+      navigate(`/podcast/${item.title}`);
+    if (item.kind == "album") 
+      navigate(`/album/${item.title}`);
+    if (item.kind == "artist") 
+      navigate(`/account/${item.title}`);
   };
 
   return (

@@ -26,6 +26,7 @@ export default function Library() {
     error: libraryError,
   } = useLibrary();
 
+  // console.log(items);
   const handleAddOptionSelect = (type) => {
     setIsMenuOpen(false);
     setActiveModal(type);

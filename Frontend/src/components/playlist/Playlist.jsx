@@ -1,24 +1,52 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { AccountContext } from "../../contexts/account.store";
+import TrackItem from "./TrackItem";
 import image from "../../assets/images/playlist-header-bg.png";
-import axios from 'axios';
+import axios from "axios";
+import { usePlayer } from "../../contexts/player.store";
+import AddTrackModal from "./AddTrackModal";
 
 export default function Playlist() {
   const { accessToken } = React.useContext(AccountContext);
-  const [playlists, setPlaylists] = useState([]);
-
+  const [playlist, setPlaylist] = useState([]);
+  const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [isAddTrackModalOpen, setIsAddTrackModalOpen] = useState(false);
+  const { setQueueAndPlay } = usePlayer();
   const api = import.meta.env.VITE_API;
-  
+  const { name } = useParams();
+
   const fetchPlaylists = async () => {
     try {
-      const response = await axios.get(`${api}/playlists/1`, {
-        headers: {Authorization: `Bearer ${accessToken}`}
-    });
+      const response = await axios.get(`${api}/playlists/${name}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
       const data = response.data;
 
       if (response.status === 200 && response.data) {
-        console.log(response.data);
-        setPlaylists(data);
+        console.log(data);
+        setPlaylist(data);
+      } else {
+        console.error("Error fetching user data");
+      }
+    } catch (error) {
+      console.error("Error fetching playlist:", error);
+    }
+  };
+
+  const fetchPlaylistsTracks = async () => {
+    try {
+      const response = await axios.get(
+        `${api}/playlists/${playlist.id}/tracks`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
+      const data = response.data;
+
+      if (response.status === 200 && response.data) {
+        const tracks = data.map((item) => item.track);
+        setPlaylistTracks(tracks);
       } else {
         console.error("Error fetching user data");
       }
@@ -28,9 +56,25 @@ export default function Playlist() {
   };
 
   useEffect(() => {
-    fetchPlaylists();
-  }, []);
+    if (name) {
+      fetchPlaylists();
+    }
+  }, [name]);
 
+  useEffect(() => {
+    if (playlist?.id) {
+      fetchPlaylistsTracks();
+    }
+  }, [playlist]);
+
+  const handleTrackAdded = () => {
+    fetchPlaylists();
+    fetchPlaylistsTracks();
+  };
+
+  const totalMinutes = playlist.totalDurationMs / 60000;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = Math.floor(totalMinutes % 60);
   return (
     <div className="playlist-container">
       <div
@@ -48,7 +92,7 @@ export default function Playlist() {
         }}
       >
         <img
-          src="https://i.pinimg.com/1200x/aa/b6/87/aab687ca9ce12dd53df0a498db1d9748.jpg"
+          src={playlist.coverUrl}
           alt="Playlist Header"
           style={{
             width: "300px",
@@ -68,7 +112,7 @@ export default function Playlist() {
               fontWeight: "700",
             }}
           >
-            Playlist Name
+            {playlist.name || "Playlist Name"}
           </p>
           <p
             style={{
@@ -79,7 +123,11 @@ export default function Playlist() {
               fontWeight: "400",
             }}
           >
-            Artist <span className="profile-dot">•</span> 3 h 14 min
+            {playlist.ownerUsername || "Artist"}{" "}
+            <span className="profile-dot">•</span>{" "}
+            {hours > 0
+              ? `${hours}` + " h " + `${minutes}` + " min"
+              : `${minutes}` + " min"}
           </p>
         </div>
       </div>
@@ -114,6 +162,7 @@ export default function Playlist() {
               borderRadius: "50%",
             }}
           ></div>
+
           <div
             style={{
               backgroundColor: "#504F4F",
@@ -122,6 +171,7 @@ export default function Playlist() {
               borderRadius: "50%",
             }}
           ></div>
+
           <div
             style={{
               backgroundColor: "#504F4F",
@@ -132,6 +182,7 @@ export default function Playlist() {
           ></div>
 
           <button
+            onClick={() => setIsAddTrackModalOpen(true)}
             style={{
               borderRadius: "76px",
               display: "flex",
@@ -146,7 +197,7 @@ export default function Playlist() {
               fontFamily: "Inter",
               backgroundColor: "#504F4F",
               color: "white",
-              marginLeft: "auto", 
+              marginLeft: "auto",
               cursor: "pointer",
             }}
           >
@@ -161,7 +212,7 @@ export default function Playlist() {
             >
               <path d="M12 4v16m-8-8h16" />
             </svg>
-            Create
+            Add Track
           </button>
 
           <div
@@ -191,14 +242,53 @@ export default function Playlist() {
             }}
           >
             <p style={{ margin: 0 }}># Name</p>
-            <p style={{ margin: 0 }}>Date added</p>
-            <p style={{ margin: 0 }}>Time</p>
+
+            <div style={{ display: "flex", gap: "120px" }}>
+              <p style={{ margin: 0 }}>Date added</p>
+              <p style={{ margin: 0 }}>Time</p>
+            </div>
           </div>
           <hr
             style={{ border: "0.5px solid #333", width: "100%", margin: 0 }}
           />
         </div>
+
+        <div
+          className="tracks"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "12px",
+          }}
+        >
+          {playlistTracks.map((track, index) => (
+            <div
+              key={index}
+              onClick={() => {
+                setQueueAndPlay(playlistTracks, index, { autoplay: true });
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              <TrackItem
+                countPosition={index + 1}
+                CoverUrl={track.artworkUrl}
+                Name={track.title}
+                Artist={track.artistName}
+                date={track.createdAt}
+                duration={track.durationSeconds}
+              />
+            </div>
+          ))}
+        </div>
       </div>
+
+      {isAddTrackModalOpen && (
+        <AddTrackModal
+          playlistId={playlist.id}
+          onClose={() => setIsAddTrackModalOpen(false)}
+          onSuccess={handleTrackAdded}
+        />
+      )}
     </div>
   );
 }

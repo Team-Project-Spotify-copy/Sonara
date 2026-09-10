@@ -2,20 +2,18 @@ import { useState } from "react";
 import AppShell from "../components/layout/AppShell.jsx";
 import TopBar from "../components/layout/TopBar.jsx";
 import LibraryRail from "../components/layout/LibraryRail.jsx";
-import Shelf from "../components/media/Shelf.jsx";
 import SearchResults from "../components/search/SearchResults.jsx";
 import Playlist from "./playlist/Playlist.jsx";
 import useSearch from "../hooks/useSearch.js";
-import useHomeFeed from "../hooks/useHomeFeed.js";
 import useLibrary from "../hooks/useLibrary.js";
 import { usePlayer } from "../contexts/player.store";
 
 const MIN_QUERY_LENGTH = 2;
 
-export default function PlaylistPage
-() {
+export default function PlaylistPage() {
   const [query, setQuery] = useState("");
-
+  const [railExpanded, setRailExpanded] = useState(false);
+  const [libraryFilter, setLibraryFilter] = useState("all");
   const {
     results,
     status: searchStatus,
@@ -23,7 +21,6 @@ export default function PlaylistPage
   } = useSearch(query, {
     minLength: MIN_QUERY_LENGTH,
   });
-  const { shelves, status: feedStatus } = useHomeFeed();
   const {
     items: libraryItems,
     status: libraryStatus,
@@ -41,6 +38,7 @@ export default function PlaylistPage
 
   return (
     <AppShell
+      railExpanded={railExpanded}
       topBar={<TopBar query={query} onQueryChange={setQuery} />}
       showBackdrop={searching ? true : false}
       showMain={searching ? true : false}
@@ -50,8 +48,15 @@ export default function PlaylistPage
           loading={libraryStatus === "loading"}
           error={libraryError}
           onSelect={handleSelect}
+          expanded={railExpanded}
+          onToggleExpanded={() => setRailExpanded((open) => !open)}
+          filter={libraryFilter}
+          onFilterChange={setLibraryFilter}
         />
       }
+      style={{
+        "--panel-padding": searching ? "24px" : "0px",
+      }}
     >
       {searching ? (
         <SearchResults

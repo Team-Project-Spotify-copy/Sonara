@@ -5,12 +5,12 @@ import { AccountProvider } from "./contexts/account.context.jsx";
 import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  // <StrictMode>
     <AccountProvider>
       <GoogleReCaptchaProvider
         reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}>
         <App />
       </GoogleReCaptchaProvider>
     </AccountProvider>
-  </StrictMode>,
+  // </StrictMode>,
 );
