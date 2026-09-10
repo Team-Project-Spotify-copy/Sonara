@@ -182,9 +182,15 @@ public class TrackInteractionService : ITrackInteractionService
     private async Task EnsureTrackExistsAsync(Guid trackId, CancellationToken ct)
     {
         var exists = await _db.Tracks.AnyAsync(t => t.Id == trackId, ct);
+
         if (!exists)
         {
-            throw new NotFoundException(nameof(Track), trackId);
+            exists = await _db.PodcastEpisodes.AnyAsync(e => e.Id == trackId, ct);
+        }
+
+        if (!exists)
+        {
+            throw new NotFoundException("MediaItem", trackId);
         }
     }
 }
