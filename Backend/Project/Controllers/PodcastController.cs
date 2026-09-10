@@ -24,7 +24,6 @@ namespace WebApp.Controllers
             _currentUser = currentUser;
         }
 
-        // GET: api/podcasts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PodcastDto>>> GetAll()
         {
@@ -43,7 +42,6 @@ namespace WebApp.Controllers
             return Ok(podcasts);
         }
 
-        // GET: api/podcasts/{id}
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<PodcastDetailsDto>> GetById(Guid id)
         {
@@ -52,7 +50,25 @@ namespace WebApp.Controllers
             return Ok(podcast);
         }
 
-        // POST: api/podcasts
+        [HttpGet("{podcastName}")]
+        public async Task<ActionResult<PodcastDetailsDto>> GetByName(string podcastName)
+        {
+            var podcast = await _podcastService.GetByNameAsync(podcastName);
+            if (podcast == null) return NotFound();
+            return Ok(podcast);
+        }
+        
+        [HttpPost("{id}/episodes")]
+        public async Task<ActionResult<PodcastDetailsDto>> AddPodcastEpisode(Guid id, [FromQuery] string episodeName)
+        {
+            var userId = _currentUser.UserId
+                ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
+
+            var podcast = await _podcastService.AddEpisodeAsync(id, episodeName, userId);
+            if (podcast == null) return NotFound();
+            return Ok(podcast);
+        }
+
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<PodcastDto>> Create([FromForm] CreatePodcastDto dto)
@@ -64,7 +80,6 @@ namespace WebApp.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdPodcast.Id }, createdPodcast);
         }
 
-        // PUT: api/podcasts/{id}
         [HttpPut("{id:guid}")]
         [Authorize]
         public async Task<ActionResult<PodcastDto>> Update(Guid id, [FromForm] UpdatePodcastDto dto)
@@ -83,7 +98,6 @@ namespace WebApp.Controllers
             }
         }
 
-        // DELETE: api/podcasts/{id}
         [HttpDelete("{id:guid}")]
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)

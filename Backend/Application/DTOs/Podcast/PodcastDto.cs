@@ -29,5 +29,6 @@ public class UpdatePodcastDto
 public class PodcastDetailsDto : PodcastDto
 {
     public string? AuthorAvatarUrl { get; set; }
+    public int TotalDurationMs { get; set; }
     public ICollection<PodcastEpisodeDto> Episodes { get; set; } = new List<PodcastEpisodeDto>();
 }

@@ -34,7 +34,12 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResul
             Username = request.Username,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
             RoleId = await _authRepository.GetDefaultRoleIdAsync(),
-            ActiveSubscriptionId = null
+            ActiveSubscriptionId = null,
+            ArtistProfile = new Artist
+            {
+                Id = Guid.NewGuid(),
+                Name = request.Username,
+            }
         };
 
         await _authRepository.AddUserAsync(user);

@@ -1,0 +1,76 @@
+.entity-item-container {
+    width: 100%;
+    height: 93px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    box-sizing: border-box;
+    color: #b3b3b3;
+    font-family: sans-serif;
+}
+
+.entity-item-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.entity-item-position {
+    width: 18px;
+    height: 32px;
+    text-align: center;
+    font-size: 32px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    color: #b0b0b0;
+}
+
+.entity-item-cover {
+    width: 93px;
+    height: 93px;
+    border-radius: 8px;
+    object-fit: cover;
+    background-color: #2a2a2a;
+}
+
+.entity-item-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.entity-item-title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 500;
+    font-family: "Inter", sans-serif;
+}
+
+.entity-item-artist {
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    color: #b0b0b0;
+}
+
+.entity-item-right {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    font-size: 14px;
+}
+
+.entity-item-date {
+    margin-right: 60px;
+    font-size: 16px;
+    color: #b0b0b0;
+}
+
+.entity-item-duration {
+    width: 40px;
+    text-align: right;
+    margin-right: -15px;
+    font-size: 16px;
+    color: #b0b0b0;
+}

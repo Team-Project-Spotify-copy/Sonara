@@ -108,12 +108,12 @@ public class PlaylistsController : ControllerBase
         return Ok(await _playlistService.AddTrackAsync(id, userId, trackId, ct));
     }
 
-    [HttpPost("{id:guid}/tracks/{trackName}")]
+    [HttpPost("{id:guid}/tracks")]
     [ProducesResponseType(typeof(PlaylistDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<PlaylistDto>> AddTrack(Guid id, string trackName, CancellationToken ct)
+    public async Task<ActionResult<PlaylistDto>> AddTrack(Guid id, [FromQuery] string trackName, CancellationToken ct)
     {
         var userId = RequireUserId();
         return Ok(await _playlistService.AddTrackAsync(id, userId, trackName, ct));

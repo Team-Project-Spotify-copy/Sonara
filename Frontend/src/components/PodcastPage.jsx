@@ -1,9 +1,10 @@
-import React from 'react'
+import BasePage from "../components/layout/BasePage.jsx";
+import Podcast from "./playlist/Podcst.jsx";
 
 export default function PodcastPage() {
   return (
-    <div>
-      <h1>Podcast page</h1>
-    </div>
+    <BasePage showBackdrop={false} showMain={false}>
+      <Podcast />
+    </BasePage>
   );
 }

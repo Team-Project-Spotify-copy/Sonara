@@ -120,7 +120,7 @@
 }
 
 .topbar__control--settings{
-  margin-left: 35px; /* replace */
+  margin-left: 34px; /* replace */
 }
 
 @media (max-width: 900px) {

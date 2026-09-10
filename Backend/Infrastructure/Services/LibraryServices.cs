@@ -20,10 +20,12 @@ public class LibraryServices : ILibraryServices
     {
         var playlists = await GetPlaylistsAsync(userId);
         var podcasts = await GetPodcastsAsync(userId);
+        var albums = await GetAlbumsAsync(userId);
         var artists = await GetArtistsAsync(userId);
 
         return playlists
             .Concat(podcasts)
+            .Concat(albums)
             .Concat(artists)
             .ToList();
     }
@@ -32,6 +34,15 @@ public class LibraryServices : ILibraryServices
     {
         var playlists = await _playlistService.GetMyPlaylistsAsync(userId);
         return _mapper.Map<List<LibraryItemDto>>(playlists);
+    }
+
+    public async Task<List<LibraryItemDto>> GetAlbumsAsync(Guid userId)
+    {
+        var albums = await _db.Albums
+            .Where(u => u.Artist.UserId == userId)
+            .ToListAsync();
+
+        return _mapper.Map<List<LibraryItemDto>>(albums);
     }
 
     public async Task<List<LibraryItemDto>> GetPodcastsAsync(Guid userId)

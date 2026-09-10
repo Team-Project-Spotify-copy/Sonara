@@ -27,6 +27,7 @@ public interface IMusicCatalogService
     Task<IReadOnlyList<TrackDto>> GetTracksByIdsAsync(IReadOnlyCollection<Guid> ids, Guid? currentUserId, CancellationToken ct = default);
 
     Task<AlbumDto> GetAlbumByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default);
+    Task<AlbumDto> GetAlbumByNameAsync(string albumName, Guid? currentUserId, CancellationToken ct = default);
 
     Task<ArtistDto> GetArtistByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default);
 

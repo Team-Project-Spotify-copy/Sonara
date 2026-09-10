@@ -6,6 +6,7 @@ using Application.Interfaces.Services;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;
 using Microsoft.EntityFrameworkCore;
+using NBitcoin.Secp256k1;
 
 namespace Infrastructure.Services;
 
@@ -218,7 +219,8 @@ public class PlaylistService : IPlaylistService
 
     private async Task<Playlist> FindOrThrowAsync(string playlistName, CancellationToken ct)
     {
-        var playlist = await _db.Playlists.FirstOrDefaultAsync(p => p.Name == playlistName, ct);
+        var playlist = await _db.Playlists     
+            .FirstOrDefaultAsync(p => p.Name == playlistName, ct);
 
         if (playlist is null)
         {

@@ -7,7 +7,7 @@ import EditProfileForm from "./EditProfileForm";
 import axios from "axios";
 import "../../css/Account.css";
 
-export default function Account() {
+export default function Account({onSelect}) {
   const { accessToken } = React.useContext(AccountContext);
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
@@ -35,8 +35,8 @@ export default function Account() {
       const response = await axios.get(endpoint, { headers });
 
       if (response.status === 200 && response.data) {
-        setProfile(response.data);
         console.log(response.data);
+        setProfile(response.data);
       } else {
         console.error("Error fetching user data");
       }
@@ -84,12 +84,13 @@ export default function Account() {
 
   const historyItems =
     profile?.history?.map((item) => ({
-      id: item.id || item.track?.id,
+      id: item.track?.id,
       title: item.track?.title || "Unknown Track",
       name: item.track?.title || "Unknown Track",
       imageUrl: item.track?.artworkUrl,
       coverUrl: item.track?.artworkUrl,
       listenedAt: item.listenedAt,
+      kind: "track",
     })) || [];
 
   const playlistItems =
@@ -100,6 +101,7 @@ export default function Account() {
       imageUrl: playlist.coverUrl,
       coverUrl: playlist.coverUrl,
       subtitle: playlist.ownerUsername,
+      kind: "playlist", 
     })) || [];
 
   return (
@@ -151,7 +153,7 @@ export default function Account() {
           items={historyItems}
           shape="square"
           loading={loading}
-          onSelect={(item) => console.log("Selected track:", item)}
+          onSelect={onSelect}
         />
 
         <Shelf
@@ -159,7 +161,7 @@ export default function Account() {
           items={playlistItems}
           shape="square"
           loading={loading}
-          onSelect={(item) => console.log("Selected playlist:", item)}
+          onSelect={onSelect}
         />
       </div>
 

@@ -1,9 +1,10 @@
-import React from 'react'
+import BasePage from "../components/layout/BasePage.jsx";
+import Album from "./playlist/Album.jsx";
 
-export default function AlbumPage() {
+export default function PodcastPage() {
   return (
-    <div>
-      <h1>Album page</h1>
-    </div>
-  )
+    <BasePage showBackdrop={false} showMain={false}>
+      <Album />
+    </BasePage>
+  );
 }

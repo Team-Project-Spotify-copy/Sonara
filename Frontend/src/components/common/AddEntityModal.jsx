@@ -1,26 +1,32 @@
-import React,{ useState } from "react";
+import React, { useState } from "react";
 import { AccountContext } from "../../contexts/account.store";
 import "../../css/AddEntityModal.css";
 
-export default function AddTrackModal({ playlistId, onClose, onSuccess }) {
-  const [trackName, setTrackName] = useState("");
+export default function AddEntityModal({
+  entityId,
+  entityType,
+  onClose,
+  onSuccess,
+  apiEndpointBuilder,
+}) {
+  const [elementName, setElementName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const { accessToken } = React.useContext(AccountContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-
       const headers = {
         "Content-Type": "application/json",
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       };
 
-      const endpoint = `https://localhost:7083/api/playlists/${playlistId}/tracks/${trackName}`;
+      const endpoint = apiEndpointBuilder(entityId, elementName);
 
       const response = await fetch(endpoint, {
         method: "POST",
@@ -33,13 +39,13 @@ export default function AddTrackModal({ playlistId, onClose, onSuccess }) {
       }
 
       const contentType = response.headers.get("content-type");
-      let updatedPlaylist = null;
+      let updatedEntity = null;
       if (contentType && contentType.includes("application/json")) {
-        updatedPlaylist = await response.json();
+        updatedEntity = await response.json();
       }
 
       if (onSuccess) {
-        onSuccess(updatedPlaylist);
+        onSuccess(updatedEntity);
       }
       onClose();
     } catch (err) {
@@ -53,7 +59,10 @@ export default function AddTrackModal({ playlistId, onClose, onSuccess }) {
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
-        <h2>Add Track to Playlist</h2>
+        <h2>
+          {entityType == "Podcast" ? "Add Episode to" : "Add Track to"}Add Track
+          to {entityType}
+        </h2>
 
         {error && (
           <div
@@ -67,9 +76,13 @@ export default function AddTrackModal({ playlistId, onClose, onSuccess }) {
         <form onSubmit={handleSubmit}>
           <input
             type="text"
-            placeholder="Enter track Name..."
-            value={trackId}
-            onChange={(e) => setTrackName(e.target.value)}
+            placeholder={
+              entityType == "Podcast"
+                ? "Enter Episode Name..."
+                : "Enter Track Name..."
+            }
+            value={elementName}
+            onChange={(e) => setElementName(e.target.value)}
             required
           />
 

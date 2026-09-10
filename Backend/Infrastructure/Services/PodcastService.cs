@@ -85,6 +85,38 @@ namespace Infrastructure.Services
             };
         }
 
+        public async Task<PodcastDetailsDto?> GetByNameAsync(string podcastName)
+        {
+            var podcast = await _db.Podcasts
+                .Include(p => p.Author)
+                .Include(p => p.Episodes)
+                .FirstOrDefaultAsync(p => p.Title == podcastName);
+
+            if (podcast == null) return null;
+
+            return new PodcastDetailsDto
+            {
+                Id = podcast.Id,
+                AuthorId = podcast.AuthorId,
+                Title = podcast.Title,
+                Description = podcast.Description,
+                CoverUrl = podcast.CoverUrl,
+                AuthorName = podcast.Author.Username,
+                AuthorAvatarUrl = podcast.Author.AvatarUrl,
+                TotalDurationMs = podcast.Episodes.Sum(e => e.DurationMs),
+                Episodes = podcast.Episodes.Select(e => new PodcastEpisodeDto
+                {
+                    Id = e.Id,
+                    PodcastId = e.PodcastId,
+                    Title = e.Title,
+                    Description = e.Description,
+                    AudioUrl = e.AudioUrl,
+                    DurationMs = e.DurationMs,
+                    ReleaseDate = e.ReleaseDate
+                }).ToList()
+            };
+        }
+
         public async Task<PodcastDto> CreateAsync(Guid authorId, CreatePodcastDto dto)
         {
             string? coverUrl = null;
@@ -171,6 +203,53 @@ namespace Infrastructure.Services
             _db.Podcasts.Remove(podcast);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<PodcastDetailsDto?> AddEpisodeAsync(Guid id, string podcastEpisodeName, Guid currentUserId)
+        {
+            var podcast = await _db.Podcasts
+                .Include(p => p.Author)
+                .Include(p => p.Episodes)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
+            if (podcast == null) return null;
+
+            if (podcast.AuthorId != currentUserId)
+                throw new UnauthorizedAccessException("You are not allowed to modify this podcast.");
+
+            var episode = await _db.PodcastEpisodes
+                .FirstOrDefaultAsync(e => e.Title == podcastEpisodeName);
+
+            if (episode == null)
+                return null;
+
+            if (!podcast.Episodes.Any(e => e.Id == episode.Id))
+            {
+                podcast.Episodes.Add(episode);
+                await _db.SaveChangesAsync();
+            }
+
+            return new PodcastDetailsDto
+            {
+                Id = podcast.Id,
+                AuthorId = podcast.AuthorId,
+                Title = podcast.Title,
+                Description = podcast.Description,
+                CoverUrl = podcast.CoverUrl,
+                AuthorName = podcast.Author.Username,
+                AuthorAvatarUrl = podcast.Author?.AvatarUrl,
+                TotalDurationMs = podcast.Episodes.Sum(e => e.DurationMs),
+                Episodes = podcast.Episodes.Select(e => new PodcastEpisodeDto
+                {
+                    Id = e.Id,
+                    PodcastId = e.PodcastId,
+                    Title = e.Title,
+                    Description = e.Description,
+                    AudioUrl = e.AudioUrl,
+                    DurationMs = e.DurationMs,
+                    ReleaseDate = e.ReleaseDate
+                }).ToList()
+            };
         }
     }
 }

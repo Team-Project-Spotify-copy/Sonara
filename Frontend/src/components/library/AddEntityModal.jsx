@@ -18,6 +18,7 @@ export default function AddEntityModal({ type, onClose, onSuccess }) {
   const isArtist = type === "artist";
   const isPlaylist = type === "playlist";
   const isPodcast = type === "podcast";
+  const isAlbum = type === "album";
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -44,12 +45,10 @@ export default function AddEntityModal({ type, onClose, onSuccess }) {
       };
 
       if (isArtist) {
-        console.log("Відправляємо username:", formData.username);
         endpoint = `https://localhost:7083/api/profile/${encodeURIComponent(formData.username)}/follow`;
         options = {
           method: "POST",
           headers: headers,
-
         };
       } else if (isPlaylist) {
         endpoint = "https://localhost:7083/api/playlists";
@@ -66,8 +65,10 @@ export default function AddEntityModal({ type, onClose, onSuccess }) {
           headers: headers,
           body: data,
         };
-      } else if (isPodcast) {
-        endpoint = "https://localhost:7083/api/podcasts";
+      } else if (isPodcast || isAlbum) {
+        endpoint = isPodcast
+          ? "https://localhost:7083/api/podcasts"
+          : "https://localhost:7083/api/albums";
 
         const data = new FormData();
         data.append("Title", formData.title);
@@ -112,7 +113,9 @@ export default function AddEntityModal({ type, onClose, onSuccess }) {
             ? "Follow Artist"
             : isPlaylist
               ? "Create Playlist"
-              : "Add Podcast"}
+              : isAlbum
+                ? "Create Album"
+                : "Add Podcast"}
         </h2>
 
         {error && (
@@ -163,7 +166,11 @@ export default function AddEntityModal({ type, onClose, onSuccess }) {
               <input
                 type="text"
                 placeholder={
-                  isPlaylist ? "Playlist name..." : "Podcast title..."
+                  isPlaylist
+                    ? "Playlist name..."
+                    : isAlbum
+                      ? "Album title..."
+                      : "Podcast title..."
                 }
                 value={isPlaylist ? formData.name : formData.title}
                 onChange={(e) =>
@@ -206,7 +213,10 @@ export default function AddEntityModal({ type, onClose, onSuccess }) {
             </>
           )}
 
-          <div className="modal-actions" style={{ marginTop: "20px" }}>
+          <div
+            className="modal-actions"
+            style={{ marginTop: "20px" }}
+          >
             <button type="button" onClick={onClose} disabled={loading}>
               Cancel
             </button>

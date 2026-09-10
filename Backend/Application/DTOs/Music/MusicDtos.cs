@@ -113,11 +113,21 @@ public class CreateAlbumDto
     [StringLength(200, MinimumLength = 1)]
     public string Title { get; set; } = string.Empty;
 
-    [Required]
+    [Required]  
     public IFormFile CoverImage { get; set; } = null!;
 
     public DateTime ReleaseDate { get; set; }
 
     [Required]
     public Guid ArtistId { get; set; }
+}
+
+public class UpdateAlbumDto
+{
+    [StringLength(200, MinimumLength = 1)]
+    public string? Title { get; set; }
+
+    public IFormFile? CoverImage { get; set; }
+
+    public DateTime? ReleaseDate { get; set; }
 }
