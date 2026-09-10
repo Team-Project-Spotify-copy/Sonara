@@ -10,7 +10,7 @@
     overflow-y: auto;
     margin-bottom: 75px;
     box-sizing: border-box;
-    scrollbar-width: none;
+    /* scrollbar-width: none; */
 }
 
 .library-container::-webkit-scrollbar {

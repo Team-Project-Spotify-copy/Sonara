@@ -30,6 +30,8 @@ public class CachedMusicCatalogService : IMusicCatalogService
 
     public Task<AlbumDto> GetAlbumByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default)
         => _inner.GetAlbumByIdAsync(id, currentUserId, ct);
+    public Task<AlbumDto> GetAlbumByNameAsync(string albumName, Guid? currentUserId, CancellationToken ct = default)
+        => _inner.GetAlbumByNameAsync(albumName, currentUserId, ct);
 
     public Task<ArtistDto> GetArtistByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default)
         => _inner.GetArtistByIdAsync(id, currentUserId, ct);
@@ -79,4 +81,6 @@ public class CachedMusicCatalogService : IMusicCatalogService
         await _cache.SetAsync(key, result.ToList(), PopularListsTtl);
         return result;
     }
+
+
 }

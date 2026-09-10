@@ -13,6 +13,7 @@ export default function Library() {
     { key: "all", label: "All" },
     { key: "playlists", label: "Playlists" },
     { key: "podcasts", label: "Podcasts" },
+    { key: "albums", label: "Albums" },
     { key: "artists", label: "Artists" },
   ]);
 
@@ -50,6 +51,7 @@ export default function Library() {
   const categoryMap = {
     playlists: "playlist",
     podcasts: "podcast",
+    albums: "album",
     artists: "artist",
   };
 
@@ -62,6 +64,7 @@ export default function Library() {
 
   const playlists = libraryItems.filter((item) => item.kind === "playlist");
   const podcasts = libraryItems.filter((item) => item.kind === "podcast");
+  const albums = libraryItems.filter((item) => item.kind === "album");
   const artists = libraryItems.filter((item) => item.kind === "artist");
 
   return (
@@ -92,11 +95,14 @@ export default function Library() {
 
           {isMenuOpen && (
             <div className="create-dropdown-menu">
+              <button onClick={() => handleAddOptionSelect("podcast")}>
+                New Podcast
+              </button>
               <button onClick={() => handleAddOptionSelect("playlist")}>
                 New Playlist
               </button>
-              <button onClick={() => handleAddOptionSelect("podcast")}>
-                Add Podcast
+              <button onClick={() => handleAddOptionSelect("album")}>
+                New Album
               </button>
               <button onClick={() => handleAddOptionSelect("artist")}>
                 Follow Artist
@@ -166,6 +172,16 @@ export default function Library() {
                 title={"Podcasts"}
                 shape={"square"}
                 items={podcasts}
+                loading={false}
+                onSelect={handleItemSelect}
+              />
+            )}
+            {albums.length > 0 && (
+              <Shelf
+                key={"shelf-albums"}
+                title={"Albums"}
+                shape={"square"}
+                items={albums}
                 loading={false}
                 onSelect={handleItemSelect}
               />

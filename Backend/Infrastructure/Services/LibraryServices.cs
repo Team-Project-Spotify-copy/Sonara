@@ -20,10 +20,12 @@ public class LibraryServices : ILibraryServices
     {
         var playlists = await GetPlaylistsAsync(userId);
         var podcasts = await GetPodcastsAsync(userId);
+        var albums = await GetAlbumsAsync(userId);
         var artists = await GetArtistsAsync(userId);
 
         return playlists
             .Concat(podcasts)
+            .Concat(albums)
             .Concat(artists)
             .ToList();
     }
@@ -34,9 +36,20 @@ public class LibraryServices : ILibraryServices
         return _mapper.Map<List<LibraryItemDto>>(playlists);
     }
 
+    public async Task<List<LibraryItemDto>> GetAlbumsAsync(Guid userId)
+    {
+        var albums = await _db.Albums
+            .AsNoTracking()
+            .Where(u => u.Artist.UserId == userId)
+            .ToListAsync();
+
+        return _mapper.Map<List<LibraryItemDto>>(albums);
+    }
+
     public async Task<List<LibraryItemDto>> GetPodcastsAsync(Guid userId)
     {
         var podcasts = await _db.Users
+            .AsNoTracking()
             .Where(u => u.Id == userId)
             .SelectMany(u => u.Podcasts)
             .ToListAsync();
@@ -47,6 +60,7 @@ public class LibraryServices : ILibraryServices
     public async Task<List<LibraryItemDto>> GetArtistsAsync(Guid userId)
     {
         var artists = await _db.Artists
+            .AsNoTracking()
             .Where(a => a.User.Followers.Any(f => f.FollowerId == userId))
             .Include(a => a.User)
                 .ThenInclude(u => u.Followers)

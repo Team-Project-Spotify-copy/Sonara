@@ -6,6 +6,7 @@ using Application.Interfaces.Services;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;
 using Microsoft.EntityFrameworkCore;
+using NBitcoin.Secp256k1;
 
 namespace Infrastructure.Services;
 
@@ -39,6 +40,13 @@ public class PlaylistService : IPlaylistService
         var playlist = await FindOrThrowAsync(playlistId, ct);
         EnsureCanView(playlist, requestingUserId);
         return await ProjectAsync(playlistId, requestingUserId, ct);
+    }
+
+    public async Task<PlaylistDto> GetByNameAsync(string playlistName, Guid? requestingUserId, CancellationToken ct = default)
+    {
+        var playlist = await FindOrThrowAsync(playlistName, ct);
+        EnsureCanView(playlist, requestingUserId);
+        return await ProjectAsync(playlist.Id, requestingUserId, ct);
     }
 
     public async Task<PlaylistDto> CreateAsync(Guid ownerId, CreatePlaylistRequest request, CancellationToken ct = default)
@@ -151,6 +159,35 @@ public class PlaylistService : IPlaylistService
         return await ProjectAsync(playlistId, ownerId, ct);
     }
 
+    public async Task<PlaylistDto> AddTrackAsync(Guid playlistId, Guid ownerId, string trackName, CancellationToken ct = default)
+    {
+        var playlist = await FindOrThrowAsync(playlistId, ct);
+        EnsureIsOwner(playlist, ownerId);
+
+        var track = await _db.Tracks.FirstOrDefaultAsync(t => t.Title == trackName, ct);
+        if (track == null)
+        {
+            throw new NotFoundException(nameof(Track), trackName);
+        }
+
+        var alreadyAdded = await _db.PlaylistTracks
+            .AnyAsync(pt => pt.PlaylistId == playlistId && pt.Track.Title == trackName, ct);
+
+        if (!alreadyAdded)
+        {
+            _db.PlaylistTracks.Add(new PlaylistTrack
+            {
+                PlaylistId = playlistId,
+                TrackId = track.Id,
+                AddedAt = DateTime.UtcNow
+            });
+
+            await _db.SaveChangesAsync(ct);
+        }
+
+        return await ProjectAsync(playlistId, ownerId, ct);
+    }
+
     public async Task<PlaylistDto> RemoveTrackAsync(Guid playlistId, Guid ownerId, Guid trackId, CancellationToken ct = default)
     {
         var playlist = await FindOrThrowAsync(playlistId, ct);
@@ -175,6 +212,19 @@ public class PlaylistService : IPlaylistService
         if (playlist is null)
         {
             throw new NotFoundException(nameof(Playlist), playlistId);
+        }
+
+        return playlist;
+    }
+
+    private async Task<Playlist> FindOrThrowAsync(string playlistName, CancellationToken ct)
+    {
+        var playlist = await _db.Playlists     
+            .FirstOrDefaultAsync(p => p.Name == playlistName, ct);
+
+        if (playlist is null)
+        {
+            throw new NotFoundException(nameof(Playlist), playlistName);
         }
 
         return playlist;

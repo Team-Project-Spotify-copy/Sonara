@@ -1,10 +1,10 @@
 import BasePage from "../components/layout/BasePage.jsx";
-import Library from "./library/Library.jsx";
+import Playlist from "./playlist/Playlist.jsx";
 
-export default function PodcastPage() {
+export default function PlaylistPage() {
   return (
     <BasePage showBackdrop={false} showMain={false}>
-      <Library />
+      <Playlist />
     </BasePage>
   );
 }

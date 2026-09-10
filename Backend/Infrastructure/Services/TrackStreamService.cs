@@ -37,28 +37,46 @@ public class TrackStreamService : ITrackStreamService
         _lifetime = TimeSpan.FromMinutes(Math.Clamp(minutes, MinLifetimeMinutes, MaxLifetimeMinutes));
     }
 
-    public async Task<TrackStreamDto> ResolveAsync(Guid trackId, CancellationToken ct = default)
+    public async Task<TrackStreamDto> ResolveAsync(Guid id, CancellationToken ct = default)
     {
-        var track = await _context.Tracks
+        var mediaItem = await _context.Tracks
             .AsNoTracking()
-            .Where(t => t.Id == trackId)
-            .Select(t => new { t.Id, t.AudioUrl, t.DurationMs })
-            .FirstOrDefaultAsync(ct)
-            ?? throw new NotFoundException(nameof(Track), trackId);
+            .Where(t => t.Id == id)
+            .Select(t => new { t.Id, t.AudioUrl, DurationMs = (int)t.DurationMs })
+            .FirstOrDefaultAsync(ct);
 
-        if (string.IsNullOrWhiteSpace(track.AudioUrl))
+        if (mediaItem == null)
         {
-            throw new MediaUnavailableException(trackId);
+            var episode = await _context.PodcastEpisodes
+                .AsNoTracking()
+                .Where(e => e.Id == id)
+                .Select(e => new { e.Id, e.AudioUrl, DurationMs = (int)e.DurationMs })
+                .FirstOrDefaultAsync(ct);
+
+            if (episode != null)
+            {
+                mediaItem = new { episode.Id, episode.AudioUrl, episode.DurationMs };
+            }
+        }
+
+        if (mediaItem == null)
+        {
+            throw new NotFoundException("MediaItem", id);
+        }
+
+        if (string.IsNullOrWhiteSpace(mediaItem.AudioUrl))
+        {
+            throw new MediaUnavailableException(id);
         }
 
         string? signedUrl;
         try
         {
-            signedUrl = _blobService.TryCreateReadUrl(track.AudioUrl, _lifetime);
+            signedUrl = _blobService.TryCreateReadUrl(mediaItem.AudioUrl, _lifetime);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to build a stream URL for track {TrackId}", trackId);
+            _logger.LogError(ex, "Failed to build a stream URL for media item {MediaId}", id);
             throw new StorageUnavailableException(inner: ex);
         }
 
@@ -66,10 +84,10 @@ public class TrackStreamService : ITrackStreamService
 
         return new TrackStreamDto
         {
-            TrackId = track.Id,
-            Url = isSigned ? signedUrl! : track.AudioUrl,
-            ContentType = ResolveContentType(track.AudioUrl),
-            DurationMs = track.DurationMs,
+            TrackId = mediaItem.Id,
+            Url = isSigned ? signedUrl! : mediaItem.AudioUrl,
+            ContentType = ResolveContentType(mediaItem.AudioUrl),
+            DurationMs = mediaItem.DurationMs,
             Mode = isSigned ? TrackStreamMode.SignedUrl : TrackStreamMode.DirectUrl,
             ExpiresAt = isSigned ? DateTime.UtcNow.Add(_lifetime).AddMinutes(-1) : null,
             SupportsRangeRequests = true

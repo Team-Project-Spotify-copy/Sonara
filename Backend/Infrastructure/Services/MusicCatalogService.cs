@@ -155,6 +155,36 @@ public class MusicCatalogService : IMusicCatalogService
 
         return album;
     }
+    public async Task<AlbumDto> GetAlbumByNameAsync(string albumName, Guid? currentUserId, CancellationToken ct = default)
+    {
+        var album = await _context.Albums
+            .AsNoTracking()
+            .Where(a => a.Title == albumName)
+            .Select(a => new AlbumDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                CoverUrl = a.CoverUrl,
+                Type = a.Type,
+                ReleaseDate = a.ReleaseDate,
+                ArtistId = a.ArtistId,
+                ArtistName = a.Artist.Name,
+                TracksCount = a.Tracks.Count(),
+                TotalDurationMs = a.Tracks.Sum(t => t.DurationMs)
+            })
+            .FirstOrDefaultAsync(ct)
+            ?? throw new NotFoundException(nameof(Album), albumName);
+
+        album.Tracks = await _context.Tracks
+            .AsNoTracking()
+            .Where(t => t.AlbumId == album.Id)
+            .OrderBy(t => t.CreatedAt)
+            .ThenBy(t => t.Title)
+            .Select(CatalogProjections.Track(currentUserId))
+            .ToListAsync(ct);
+
+        return album;
+    }
 
     public async Task<ArtistDto> GetArtistByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default)
     {

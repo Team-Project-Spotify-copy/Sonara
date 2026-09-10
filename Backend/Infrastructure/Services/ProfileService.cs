@@ -145,8 +145,10 @@ public class ProfileService : IProfileService
 
     public async Task<string> UpdateAvatarAsync(Guid userId, IFormFile avatarFile)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId)
-                ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
+        var user = await _context.Users
+            .Include(u => u.ArtistProfile)
+            .FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
 
         string newUrl = await _blobService.ReplaceFileAsync(avatarFile, user.AvatarUrl, BlobFolder.Avatars);
 
@@ -154,6 +156,12 @@ public class ProfileService : IProfileService
             throw new InvalidOperationException("Failed to upload avatar");
 
         user.AvatarUrl = newUrl;
+
+        if (user.ArtistProfile != null)
+        {
+            user.ArtistProfile.AvatarUrl = newUrl;
+        }
+
         user.UpdatedAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync();
@@ -163,8 +171,10 @@ public class ProfileService : IProfileService
 
     public async Task<ProfileDto> UpdateProfileAsync(Guid userId, UpdateProfileDto profileDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId)
-                ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
+        var user = await _context.Users
+            .Include(u => u.ArtistProfile)
+            .FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
 
         _mapper.Map(profileDto, user);
 
@@ -176,6 +186,11 @@ public class ProfileService : IProfileService
                 throw new InvalidOperationException("Failed to upload avatar");
 
             user.AvatarUrl = newUrl;
+
+            if (user.ArtistProfile != null)
+            {
+                user.ArtistProfile.AvatarUrl = newUrl;
+            }
         }
 
         user.UpdatedAt = DateTime.UtcNow;

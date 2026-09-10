@@ -67,6 +67,14 @@ public class CatalogController : ControllerBase
         return Ok(await _catalogService.GetAlbumByIdAsync(id, _currentUser.UserId, ct));
     }
 
+    [HttpGet("albums/{albumName}")]
+    [ProducesResponseType(typeof(AlbumDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<AlbumDto>> GetAlbumbyName(string albumName, CancellationToken ct)
+    {
+        return Ok(await _catalogService.GetAlbumByNameAsync(albumName, _currentUser.UserId, ct));
+    }
+
     [HttpGet("artists/{id:guid}")]
     [ProducesResponseType(typeof(ArtistDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
