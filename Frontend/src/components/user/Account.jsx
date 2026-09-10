@@ -7,7 +7,7 @@ import EditProfileForm from "./EditProfileForm";
 import axios from "axios";
 import "../../css/Account.css";
 
-export default function Account({onSelect}) {
+export default function Account({ onSelect, onLibraryChange }) {
   const { accessToken } = React.useContext(AccountContext);
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
@@ -76,6 +76,11 @@ export default function Account({onSelect}) {
           CountFollowers: (prev.CountFollowers || 0) + 1,
         }));
       }
+
+      if (onLibraryChange) {
+        onLibraryChange();
+      }
+
     } catch (error) {
       console.error("Error toggling follow state:", error);
       GetAccountUser();
@@ -101,7 +106,7 @@ export default function Account({onSelect}) {
       imageUrl: playlist.coverUrl,
       coverUrl: playlist.coverUrl,
       subtitle: playlist.ownerUsername,
-      kind: "playlist", 
+      kind: "playlist",
     })) || [];
 
   return (
@@ -170,7 +175,13 @@ export default function Account({onSelect}) {
           profile={profile}
           accessToken={accessToken}
           onClose={() => setIsEditing(false)}
-          onUpdateSuccess={(updatedData) => setProfile(updatedData)}
+          onUpdateSuccess={(updatedData) => {
+            setProfile(updatedData);
+
+            if (onLibraryChange) {
+              onLibraryChange();
+            }
+          }}
         />
       )}
     </div>

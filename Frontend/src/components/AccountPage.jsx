@@ -3,7 +3,7 @@ import Account from "./user/Account.jsx";
 import { usePlayer } from "../contexts/player.store.js";
 import { useNavigate } from "react-router-dom";
 
-export default function PodcastPage() {
+export default function AccountPage() {
   const { setQueueAndPlay } = usePlayer();
   const navigate = useNavigate();
 

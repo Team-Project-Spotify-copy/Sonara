@@ -1,7 +1,7 @@
 import BasePage from "../components/layout/BasePage.jsx";
 import Album from "./playlist/Album.jsx";
 
-export default function PodcastPage() {
+export default function AlbumPage() {
   return (
     <BasePage showBackdrop={false} showMain={false}>
       <Album />

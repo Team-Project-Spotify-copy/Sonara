@@ -39,6 +39,7 @@ public class LibraryServices : ILibraryServices
     public async Task<List<LibraryItemDto>> GetAlbumsAsync(Guid userId)
     {
         var albums = await _db.Albums
+            .AsNoTracking()
             .Where(u => u.Artist.UserId == userId)
             .ToListAsync();
 
@@ -48,6 +49,7 @@ public class LibraryServices : ILibraryServices
     public async Task<List<LibraryItemDto>> GetPodcastsAsync(Guid userId)
     {
         var podcasts = await _db.Users
+            .AsNoTracking()
             .Where(u => u.Id == userId)
             .SelectMany(u => u.Podcasts)
             .ToListAsync();
@@ -58,6 +60,7 @@ public class LibraryServices : ILibraryServices
     public async Task<List<LibraryItemDto>> GetArtistsAsync(Guid userId)
     {
         var artists = await _db.Artists
+            .AsNoTracking()
             .Where(a => a.User.Followers.Any(f => f.FollowerId == userId))
             .Include(a => a.User)
                 .ThenInclude(u => u.Followers)

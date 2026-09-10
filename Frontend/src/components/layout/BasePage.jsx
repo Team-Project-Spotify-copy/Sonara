@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import AppShell from "./AppShell.jsx";
 import TopBar from "./TopBar.jsx";
 import LibraryRail from "./LibraryRail.jsx";
@@ -23,7 +23,7 @@ export default function BasePage({
   const [railExpanded, setRailExpanded] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState(initialFilter);
   const navigate = useNavigate();
-  
+
   const {
     results,
     status: searchStatus,
@@ -36,6 +36,7 @@ export default function BasePage({
     items: libraryItems,
     status: libraryStatus,
     error: libraryError,
+    refetch: refetchLibrary,
   } = useLibrary();
 
   const { setQueueAndPlay } = usePlayer();
@@ -96,7 +97,11 @@ const defaultHandleSelect = (item) => {
           onSelect={handleSelect}
         />
       ) : (
-        children
+        React.Children.map(children, (child) =>
+          React.isValidElement(child)
+            ? React.cloneElement(child, { onLibraryChange: refetchLibrary })
+            : child,
+        )
       )}
     </AppShell>
   );
