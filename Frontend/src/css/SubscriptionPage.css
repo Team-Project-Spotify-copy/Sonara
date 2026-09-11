@@ -1,9 +1,16 @@
 .subscription-container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 1080px;
-    background-color: #121212;
+    width: 100%;
+    overflow-y: visible;
+    height: auto;
+    scrollbar-width: none;
+}
+
+.subscription-container::-webkit-scrollbar {
+    display: none;
 }
 
 .nav-link-circle {
@@ -18,65 +25,115 @@
     text-decoration: none;
     position: absolute;
     top: 20px;
-    font-family: Inter;
+    font-family: "Inter", sans-serif;
     font-weight: bold;
     color: #ffffff;
 }
 
-.subscription-status{
+.subscription-status {
     color: #ffffff;
-    font-family: Inter;
+    font-family: "Inter", sans-serif;
 }
 
-.nav-link-circle.left {
-    left: 131px;
+.subscription-header {
+    width: 100%;
+    height: 268px;
+    border-radius: 8px;
+    margin-bottom: 100px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-.nav-link-circle.right {
-    right: 131px;
+.subscription-header-text {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-style: bold;
+    font-size: 40px;
+    line-height: 48px;
+    letter-spacing: 0%;
+    text-align: center;
+    margin-bottom: -5px;
+    margin-top: 50px;
+}
+
+.subscription-header-sub-text {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0%;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.subscription-header-div-button {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.subscription-header-button {
+    height: 48px;
+    width: 217px;
+    border: solid white 1.5px;
+    border-radius: 76px;
+    background-color: rgba(255, 255, 255, 0.0);
+    color: white;
+    padding: 12px 20px 14px 20px;
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: 0%;
 }
 
 .subscription-card-wrapper {
-    width: 1720px;
-    height: 847px;
-    position: absolute;
-    top: 100px;
-    left: 100px;
+    width: 100%;
+    height: auto;
+    padding-bottom: 50px;
     border-radius: 8px;
     text-align: center;
+    background-color: #1A1A1A;
 }
 
 .subscription-title {
-    width: 882px;
-    height: 68px;
-    position: absolute;
-    top: 46px;
-    left: 419px;
-    font-weight: 800;
-    font-size: 50px;
-    line-height: 130%;
+    width: 100%;
+    height: 48px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-style: bold;
+    font-size: 40px;
+    line-height: 48px;
     color: #ffffff;
     text-align: center;
-    font-family: Inter;
+}
+
+.subscription-sub-title {
+    font-family: "Inter", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0%;
+    color: #808080;
+    width: 100%;
 }
 
 .plans-grid {
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 40px;
-    width: 950px;
-    height: 650px;
-    position: absolute;
-    top: 150px;
-    left: 385px;
+    width: 100%;
+    height: auto;
+    margin-top: 50px;
 }
 
 .plan-card {
-    width: 290px;
-    height: 650px;
+    width: 300px;
+    height: 410px;
     border-radius: 20px;
-    border: 2px solid black;
     color: #f5f5f5;
     background-color: #f5f5f5;
     padding: 0 25px 0 25px;
@@ -84,92 +141,103 @@
     text-align: left;
 }
 
-.plan-name {
-    width: 240px;
-    height: 25px;
-    font-weight: bold;
-    font-size: 25px;
-    line-height: 100%;
-    color: #1f1f1f;
-    font-family: Inter;
-    padding-top: 20px;
-    margin-bottom: 25px;
+.plan-card.Free {
+    background-color: #FFD04E4D;
 }
 
-.plan-accounts {
+.plan-card.Individual {
+    background-color: #4E03004D;
+}
+
+.plan-card.Duo {
+    background-color: #BA3D034D;
+}
+
+.plan-card.Family {
+    background-color: #FF8C194D;
+}
+
+.plan-name {
     width: 240px;
-    height: 12px;
-    font-weight: 500;
-    font-size: 12px;
+    height: 48px;
+    font-family: "Inter", sans-serif;
+    font-weight: bold;
+    font-size: 40px;
     line-height: 100%;
-    color: #1f1f1f;
-    font-family: Inter;
+    margin-bottom: 50px;
 }
 
 .plan-price {
     width: 240px;
     height: 36px;
-    font-weight: bold;
-    font-size: 36px;
+    font-family: "Inter", sans-serif;
+    font-size: 24px;
+    font-weight: 500;
     line-height: 100%;
-    color: #1f1f1f;
-    font-family: Inter;
 }
 
 .plan-price-suffix {
-    font-size: 16px;
-    color: #aeaeae;
-    margin-bottom: 0px;
-    font-family: Inter;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: "Inter", sans-serif;
     font-weight: normal;
 }
 
-.plan-billing {
-    width: 240px;
-    height: 12px;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 100%;
-    color: #1f1f1f;
-    font-family: Inter;
-    margin-top: -30px;
+.dot {
+    margin-right: 5px;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.feature-text {
+    display: inline-block;
+    word-break: break-word;
 }
 
 .plan-divider {
     border: 1px solid #aeaeae;
-    margin: 20px 0 10px 0;
-    width: 222px;
+    margin: -25px 0px 10px 0px;
+    width: 245px;
 }
 
 .plan-description {
-    width: 240px;
-    height: 48px;
+    width: 100%;
+    height: 10px;
     font-weight: 500;
     font-size: 12px;
     line-height: 130%;
-    color: #1f1f1f;
-    font-family: Inter;
+    font-family: "Inter", sans-serif;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .plan-button {
-    width: 240px;
-    height: 31px;
-    border-radius: 8px;
+    width: 245px;
+    height: 56px;
+    border-radius: 76px;
     cursor: pointer;
-    background-color: #1f1f1f;
-    color: #ffffff;
-    margin-bottom: 20px;
     border: none;
-    font-family: Inter;
+    background-color: white;
+    color: rgba(13, 13, 13, 1);
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.plan-feature-container {
+    height: 125px;
+    width: 245px;
 }
 
 .plan-feature-item {
-    width: auto;
-    height: 12px;
-    font-weight: 500;
-    font-size: 12px;
-    line-height: 100%;
-    color: #1f1f1f;
-    font-family: Inter;
-    margin: 10px 0;
+    width: 240px;
+    height: auto;
+    font-weight: 100;
+    font-size: 16px;
+    line-height: 120%;
+    font-family: "Arial", sans-serif;
+    margin: 5px 0px 0px 0px;
+    text-align: left;
+    display: flex;
+    align-items: flex-start;
 }

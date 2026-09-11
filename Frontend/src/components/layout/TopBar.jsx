@@ -73,7 +73,13 @@ export default function TopBar({
         aria-label="Settings"
         onClick={onMenuClick}
       >
-        <img src={settingsIcon} alt="" aria-hidden="true" width="24" height="24" />
+        <img
+          src={settingsIcon}
+          alt=""
+          aria-hidden="true"
+          width="24"
+          height="24"
+        />
       </button>
 
       <div className="topbar__center">
@@ -83,7 +89,13 @@ export default function TopBar({
           aria-label="Home"
           onClick={() => navigate("/")}
         >
-          <img src={homeIcon} alt="" aria-hidden="true" width="24" height="24" />
+          <img
+            src={homeIcon}
+            alt=""
+            aria-hidden="true"
+            width="24"
+            height="24"
+          />
         </button>
 
         <div className="topbar__search">
@@ -115,13 +127,43 @@ export default function TopBar({
               style={{ backgroundImage: `url(${avatarUrl})` }}
             />
           ) : (
-            <img src={accountIcon} alt="" aria-hidden="true" width="24" height="24" />
+            <img
+              src={accountIcon}
+              alt=""
+              aria-hidden="true"
+              width="24"
+              height="24"
+            />
           )}
         </button>
 
         {menuOpen && isAuthenticated && (
           <div className="topbar__menu" role="menu">
-            <p className="topbar__menu-identity">{username || email || "Signed in"}</p>
+            <p className="topbar__menu-identity">
+              {username || email || "Signed in"}
+            </p>
+            <button
+              type="button"
+              role="menuitem"
+              className="topbar__menu-item"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/subscriptions");
+              }}
+            >
+              Subscription
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              className="topbar__menu-item"
+              onClick={() => {
+                setMenuOpen(false);
+                navigate("/library");
+              }}
+            >
+              Library
+            </button>
             <button
               type="button"
               role="menuitem"

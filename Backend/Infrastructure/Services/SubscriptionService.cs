@@ -200,7 +200,7 @@ public class SubscriptionService : ISubscriptionService
     {
         var activeSub = await _db.UserSubscriptions
             .Include(s => s.Members)
-            .FirstOrDefaultAsync(s => s.Id == activeSubId, ct);
+            .FirstOrDefaultAsync(s => s.Id == activeSubId, ct); 
 
         if (activeSub == null)
             return false;

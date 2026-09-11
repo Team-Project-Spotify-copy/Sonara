@@ -1,4 +1,3 @@
-import React from "react";
 import "../../css/EntityDetailViewItem.css";
 
 export default function EntityDetailViewItem({
