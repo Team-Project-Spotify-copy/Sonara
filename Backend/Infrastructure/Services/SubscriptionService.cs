@@ -105,6 +105,8 @@ public class SubscriptionService : ISubscriptionService
         var plan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Name == planName, ct)
             ?? throw new InvalidOperationException($"Plan {planName} not found");
 
+        var oldSubscription = await _db.UserSubscriptions.FirstOrDefaultAsync(s => s.OwnerId == user.Id, ct);
+
         var newSubscription = new UserSubscription
         {
             Id = Guid.NewGuid(),
@@ -115,9 +117,12 @@ public class SubscriptionService : ISubscriptionService
 
         newSubscription.Members.Add(user);
 
+        user.ActiveSubscriptionId = newSubscription.Id;
+
         await _db.UserSubscriptions.AddAsync(newSubscription, ct);
 
-        user.ActiveSubscriptionId = newSubscription.Id;
+        if (oldSubscription != null)
+            _db.UserSubscriptions.Remove(oldSubscription);
 
         await _db.SaveChangesAsync(ct);
 
@@ -195,7 +200,7 @@ public class SubscriptionService : ISubscriptionService
     {
         var activeSub = await _db.UserSubscriptions
             .Include(s => s.Members)
-            .FirstOrDefaultAsync(s => s.Id == activeSubId, ct);
+            .FirstOrDefaultAsync(s => s.Id == activeSubId, ct); 
 
         if (activeSub == null)
             return false;
