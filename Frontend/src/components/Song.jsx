@@ -165,25 +165,30 @@ export default function Song() {
     return artist.topTracks.reduce((sum, track) => sum + (track.playsCount ?? 0), 0);
   }, [artist]);
 
-  const hero = (
-    <>
-      <div className="song-hero">
-        <img className="song-hero-ambient" src={ambientGradient} alt="" />
-        <div className="song-hero-blur" />
-        <div
-          className="song-hero-grain"
-          style={{ backgroundImage: `url(${grainOverlay})` }}
-        />
-      </div>
-      <div className="song-rightrail" />
-    </>
+  // Figma 661:3243 - the stage is the shell-wide ambient panel the cover sits
+  // in. The wash is the artwork itself blurred out, with the exported gradient
+  // standing in when a track has no cover.
+  const stageSurface = (
+    <div className="song-stage__surface">
+      {artwork ? (
+        <div className="song-stage__wash" style={{ backgroundImage: `url(${artwork})` }} />
+      ) : (
+        <img className="song-stage__ambient" src={ambientGradient} alt="" />
+      )}
+      <div
+        className="song-stage__grain"
+        style={{ backgroundImage: `url(${grainOverlay})` }}
+      />
+    </div>
   );
 
   if (status === "loading" || status === "empty" || status === "error") {
     return (
       <div className="song-page">
-        {hero}
-        <div className="song-cover song-cover--idle" />
+        <div className="song-stage">
+          {stageSurface}
+          <div className="song-cover" />
+        </div>
         <p className="song-page-status">
           {status === "loading"
             ? "Loading…"
@@ -197,28 +202,30 @@ export default function Song() {
 
   return (
     <div className="song-page">
-      {hero}
+      <div className="song-stage">
+        {stageSurface}
 
-      {playerActive ? (
-        <div
-          className="song-cover song-cover--active"
-          style={artwork ? { backgroundImage: `url(${artwork})` } : undefined}
-          role="img"
-          aria-label={title ? `${title} — ${artistName}` : "Cover art"}
-        />
-      ) : (
-        <button
-          type="button"
-          className="song-cover song-cover--idle"
-          style={artwork ? { backgroundImage: `url(${artwork})` } : undefined}
-          onClick={togglePlay}
-          aria-label={title ? `Play ${title} by ${artistName}` : "Play"}
-        >
-          <span className="song-cover-hint">
-            <Glyph name="play" />
-          </span>
-        </button>
-      )}
+        {playerActive ? (
+          <div
+            className="song-cover"
+            style={artwork ? { backgroundImage: `url(${artwork})` } : undefined}
+            role="img"
+            aria-label={title ? `${title} — ${artistName}` : "Cover art"}
+          />
+        ) : (
+          <button
+            type="button"
+            className="song-cover song-cover--idle"
+            style={artwork ? { backgroundImage: `url(${artwork})` } : undefined}
+            onClick={togglePlay}
+            aria-label={title ? `Play ${title} by ${artistName}` : "Play"}
+          >
+            <span className="song-cover-hint">
+              <Glyph name="play" size={64} />
+            </span>
+          </button>
+        )}
+      </div>
 
       {!playerActive && (
         <div className="song-idle-meta">
@@ -267,7 +274,6 @@ export default function Song() {
           </div>
 
           <div className="song-lyrics">
-            <div className="song-lyrics-bg" />
             <p className="song-lyrics-body">
               <strong>{title}</strong>
               {details?.albumTitle

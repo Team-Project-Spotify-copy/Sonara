@@ -1,42 +1,50 @@
 .app-shell {
   display: grid;
   /* Figma: the shell is viewport-height and the main panel scrolls inside it
-     (707:3964 is the panel's full content, not a taller page). */
-  height: 100dvh;
-  min-height: 100dvh;
+     (707:3964 is the panel's full content, not a taller page). The player bar
+     is fixed, so its height comes out of the shell through --player-offset. */
+  height: calc(100dvh - var(--player-offset, 0px));
+  min-height: calc(100dvh - var(--player-offset, 0px));
   box-sizing: border-box;
   padding: 0 var(--shell-gutter) 0;
-  gap: var(--shell-gap);
-  grid-template-columns: var(--rail-width-collapsed) minmax(0, 1fr);
+  row-gap: var(--shell-gap);
+  column-gap: 0;
+  /* The third column is the docked lyrics / queue panel. RootLayout folds the
+     column gap into --side-panel so the track collapses to nothing when both
+     panels are closed and the main panel keeps its full width. */
+  grid-template-columns:
+    var(--rail-width-collapsed)
+    minmax(0, 1fr)
+    var(--side-panel, 0px);
   grid-template-rows: var(--topbar-height) minmax(0, 1fr);
   grid-template-areas:
-    "topbar topbar"
-    "rail   main";
+    "topbar topbar topbar"
+    "rail   main   panel";
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
 }
 
 .app-shell.app-shell--no-rail {
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) var(--side-panel, 0px);
   grid-template-areas:
-    "topbar"
-    "main";
+    "topbar topbar"
+    "main   panel";
 }
 
 .app-shell--with-player {
   grid-template-rows: var(--topbar-height) minmax(0, 1fr) auto;
   grid-template-areas:
-    "topbar topbar"
-    "rail   main"
-    "player player";
+    "topbar topbar topbar"
+    "rail   main   panel"
+    "player player player";
 }
 
 .app-shell.app-shell--no-rail.app-shell--with-player {
   grid-template-areas:
-    "topbar"
-    "main"
-    "player";
+    "topbar topbar"
+    "main   panel"
+    "player player";
 }
 
 .app-shell__topbar {
@@ -45,7 +53,7 @@
   display: flex;
   align-items: center;
 }
-.app-shell__rail   { grid-area: rail;   min-height: 0; }
+.app-shell__rail   { grid-area: rail;   min-height: 0; margin-right: var(--shell-gap); }
 
 .app-shell__player {
   grid-area: player;
@@ -115,7 +123,10 @@
    The rail width is a user-toggled state, not a viewport breakpoint: the main
    panel gives up exactly the width the rail gains (1575 -> 1285 for 125 -> 415). */
 .app-shell--rail-expanded {
-  grid-template-columns: var(--rail-width-expanded) minmax(0, 1fr);
+  grid-template-columns:
+    var(--rail-width-expanded)
+    minmax(0, 1fr)
+    var(--side-panel, 0px);
 }
 
 .app-shell,
@@ -124,7 +135,8 @@
 }
 
 @media (max-width: 900px) {
-  .app-shell {
+  .app-shell,
+  .app-shell--rail-expanded {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "topbar"

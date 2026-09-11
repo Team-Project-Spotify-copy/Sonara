@@ -1,50 +1,61 @@
+/* Song page - Figma 661:3243, the expanded player state: an ambient stage with
+   the cover, then the artist / next / similar cards beside the lyrics block.
+   The frame is drawn at 1920 wide with 100px gutters; the sizes below track the
+   shell's own gutter so the page matches the rest of the app at any width. */
 
 .song-page {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  padding: var(--space-6) var(--shell-gutter)
+    calc(var(--player-offset, 0px) + var(--space-13));
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+}
+
+.song-page-status {
+  margin: var(--space-6) 0 0;
+  font-size: var(--text-body);
+  color: var(--color-text-dim);
+}
+
+/* ------------------------------------------------------------- the stage */
+
+/* Figma 661:3269 - 1720x847 inside the gutters, radius 8. */
+.song-stage {
   position: relative;
-  width: 1920px;
-  min-height: 1080px;
-  background-color: #121212;
-  font-family: 'Helvetica Neue', sans-serif;
-}
-
-.song-rightrail {
-  position: absolute;
-  top: 16px;
-  left: 1820px;
-  width: 100px;
-  height: 1064px;
-  background-color: #121212;
-  z-index: 2;
-}
-
-.song-hero {
-  position: absolute;
-  top: 99px;
-  left: 100px;
-  width: 1720px;
-  height: 847px;
-  border-radius: 8px;
-  background-color: #1b1b1b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: min(847px, 72vh);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
-.song-hero-ambient {
+.song-stage__surface {
   position: absolute;
-  top: 24px;
-  left: 83px;
-  width: 1560.372px;
-  height: 823.656px;
-  display: block;
+  inset: 0;
+  background-color: var(--color-panel);
+}
+
+.song-stage__wash {
+  position: absolute;
+  inset: -20%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(90px) saturate(1.4);
+  transform: scale(1.2);
+}
+
+.song-stage__ambient {
+  position: absolute;
+  inset: -5%;
+  width: 110%;
+  height: 110%;
   filter: blur(90px);
 }
 
-.song-hero-blur {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(27, 27, 27, 0.01);
-}
-
-.song-hero-grain {
+.song-stage__grain {
   position: absolute;
   inset: 0;
   background-repeat: repeat;
@@ -54,33 +65,25 @@
   pointer-events: none;
 }
 
+/* Figma 661:3272 - a 580px cover centred in the stage. */
 .song-cover {
-  position: absolute;
-  top: 267px;
-  width: 512px;
-  height: 512px;
-  border-radius: 20px;
-  background-color: #504f4f;
+  position: relative;
+  width: min(580px, 62vh, 72vw);
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-raised);
   background-size: cover;
   background-position: center;
-  border: none;
-  padding: 0;
-  z-index: 2;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
 }
 
-.song-cover--idle {
-  left: 704px;
-  cursor: pointer;
-}
+.song-cover--idle { cursor: pointer; }
 
-.song-cover--active {
-  left: 718px;
-}
-
-.song-cover--idle:focus-visible,
-.song-cover--active:focus-visible {
-  outline: 2px solid #ffffff;
-  outline-offset: 4px;
+.song-cover:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-text);
+  outline-offset: var(--focus-ring-offset);
 }
 
 .song-cover-hint {
@@ -89,10 +92,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 20px;
-  background-color: rgba(18, 18, 18, 0.45);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  background-color: rgba(13, 13, 13, 0.45);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-base);
 }
 
 .song-cover--idle:hover .song-cover-hint,
@@ -100,163 +104,153 @@
   opacity: 1;
 }
 
-.song-cover-hint svg {
-  width: 96px;
-  height: 96px;
-  fill: #ffffff;
-}
-
+/* Figma 661:3163 - the name sits under the stage before playback starts. */
 .song-idle-meta {
-  position: absolute;
-  top: 982px;
-  left: 100px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  z-index: 2;
+  gap: var(--space-2);
+  margin-top: var(--space-8);
 }
 
 .song-idle-title {
   margin: 0;
-  font-size: 32px;
-  font-weight: 500;
-  line-height: normal;
-  color: #ffffff;
+  font-size: var(--space-8);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
 }
 
 .song-idle-artist {
   margin: 0;
-  font-size: 24px;
-  font-weight: 400;
-  line-height: normal;
-  color: #b0b0b0;
+  font-size: var(--text-h6);
+  color: var(--color-text-dim);
 }
 
 .song-idle-error {
   margin: 0;
-  font-size: 16px;
-  color: #b0b0b0;
+  font-size: var(--text-body);
+  color: var(--color-amber);
 }
 
+/* ------------------------------------------------------------ the details */
+
+/* Figma 661:3303 - a 596px column of cards beside a 616px lyrics block. */
 .song-details {
-  position: absolute;
-  top: 983px;
-  left: 342px;
-  display: flex;
-  gap: 52px;
-  align-items: flex-start;
-  width: 1264px;
-  padding-bottom: 174px;
+  display: grid;
+  grid-template-columns: minmax(0, 596fr) minmax(0, 616fr);
+  gap: var(--space-13);
+  align-items: start;
+  max-width: 1264px;
+  margin: var(--space-13) auto 0;
 }
 
 .song-details-left {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 596px;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .song-card {
   box-sizing: border-box;
-  background-color: #1b1b1b;
-  border-radius: 8px;
-  padding: 32px;
-  width: 596px;
+  padding: var(--space-8);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-panel);
 }
 
 .song-card-title {
   margin: 0;
-  font-size: 28px;
-  font-weight: 400;
-  line-height: normal;
-  color: #ffffff;
+  font-size: var(--text-shelf-title);
+  line-height: var(--leading-shelf-title);
+  font-weight: var(--weight-regular);
+  color: var(--color-text);
 }
 
 .song-about {
   display: flex;
   flex-direction: column;
-  gap: 252px;
+  gap: var(--space-6);
   align-items: flex-start;
 }
 
 .song-about-body {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  width: 532px;
+  gap: var(--space-6);
+  width: 100%;
 }
 
 .song-about-row {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  gap: var(--space-4);
   width: 100%;
 }
 
 .song-about-identity {
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  width: 183px;
-  color: #ffffff;
+  gap: var(--space-3);
+  min-width: 0;
+  color: var(--color-text);
 }
 
 .song-about-name {
   margin: 0;
   font-size: 20px;
-  font-weight: 700;
-  line-height: normal;
+  font-weight: var(--weight-bold);
+  line-height: 1.4;
 }
 
 .song-about-stat {
   margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: normal;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-dim);
 }
 
+/* Figma 661:3312 - the Follow pill is Copper, 121x40. */
 .song-follow {
   display: flex;
   align-items: center;
-  padding: 12px 36px;
+  flex: 0 0 auto;
+  padding: var(--space-3) var(--space-8);
   border: none;
-  border-radius: 53px;
-  background-color: #504f4f;
-  color: #ffffff;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+  color: var(--color-text);
   font-family: inherit;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: center;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
   white-space: nowrap;
 }
 
 .song-follow:disabled {
   cursor: not-allowed;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .song-about-bio {
   margin: 0;
-  width: 463px;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: var(--text-body);
   line-height: 1.6;
-  color: #ffffff;
+  color: var(--color-text);
   white-space: pre-wrap;
 }
 
 .song-suggestion {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-4);
   align-items: flex-start;
 }
 
 .song-suggestion-item {
   display: flex;
-  gap: 16px;
+  gap: var(--space-4);
   align-items: center;
+  width: 100%;
+  min-width: 0;
   padding: 0;
   border: none;
   background: none;
@@ -264,18 +258,19 @@
   font-family: inherit;
   text-align: left;
   cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast);
 }
 
-.song-suggestion-item:disabled {
-  cursor: default;
-}
+.song-suggestion-item:hover:not(:disabled) { transform: translateX(2px); }
+.song-suggestion-item:disabled { cursor: default; }
 
 .song-suggestion-cover {
   flex-shrink: 0;
-  width: 93px;
-  height: 93px;
-  border-radius: 8px;
-  background-color: #504f4f;
+  width: clamp(64px, 6vw, 93px);
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
   background-size: cover;
   background-position: center;
 }
@@ -283,70 +278,87 @@
 .song-suggestion-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
 }
 
 .song-suggestion-name {
-  margin: 0;
   font-size: 20px;
-  font-weight: 500;
-  line-height: normal;
-  color: #ffffff;
+  line-height: 1.4;
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
 }
 
 .song-suggestion-artist {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: normal;
-  color: #b0b0b0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-dim);
 }
 
+.song-suggestion-name,
+.song-suggestion-artist {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Figma 661:3331 - the lyrics block, half-opacity panel with a bottom fade. */
 .song-lyrics {
   position: relative;
-  width: 616px;
-  height: 614px;
-  flex-shrink: 0;
-}
-
-.song-lyrics-bg {
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background-color: #1b1b1b;
-  opacity: 0.5;
+  min-width: 0;
+  height: min(614px, 70vh);
+  border-radius: var(--radius-sm);
+  background-color: rgba(27, 27, 27, 0.5);
+  overflow: hidden;
 }
 
 .song-lyrics-body {
-  position: absolute;
-  top: 32px;
-  left: 32px;
-  width: 552px;
-  height: 582px;
-  overflow: hidden;
-  padding: 10px 0;
   margin: 0;
-  font-size: 36px;
-  font-weight: 400;
+  height: 100%;
+  box-sizing: border-box;
+  padding: var(--space-8);
+  overflow: hidden;
+  font-size: clamp(20px, 2vw, 36px);
   line-height: 1.24;
-  color: #b0b0b0;
+  color: var(--color-text-dim);
   white-space: pre-wrap;
 }
 
 .song-lyrics-body strong {
   display: block;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
 }
 
 .song-lyrics-fade {
   position: absolute;
-  top: 265px;
-  left: 0;
-  width: 616px;
-  height: 349px;
-  border-radius: 8px;
-  background: linear-gradient(to top, #1b1b1b, rgba(27, 27, 27, 0));
+  inset: auto 0 0 0;
+  height: 57%;
+  background: linear-gradient(to top, var(--color-panel), rgba(27, 27, 27, 0));
   pointer-events: none;
+}
+
+/* --------------------------------------------------------------- narrower */
+
+@media (max-width: 1100px) {
+  .song-details {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+
+  .song-lyrics { height: min(480px, 60vh); }
+}
+
+@media (max-width: 700px) {
+  .song-page { padding: var(--space-4); padding-bottom: calc(var(--player-offset, 0px) + var(--space-8)); }
+  .song-stage { height: min(70vw, 60vh); }
+  .song-card { padding: var(--space-4); }
+  .song-card-title { font-size: var(--text-h6); line-height: var(--leading-h6); }
+  .song-idle-title { font-size: var(--text-h6); }
+  .song-idle-artist { font-size: var(--text-body); }
+
+  .song-about-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

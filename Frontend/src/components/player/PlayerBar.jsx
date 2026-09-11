@@ -1,10 +1,12 @@
-import React, { useCallback, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePlayer } from "../../contexts/player.store";
 import Glyph from "./Glyph.jsx";
+import PlayerStage from "./PlayerStage.jsx";
 import { formatTime } from "../../utils/time";
-import ambientGradient from "../../assets/player/song-ambient.svg";
-import grainOverlay from "../../assets/player/rectangle-50-tile.png";
 import "../../css/PlayerBar.css";
+
+/** Time before the immersive view drops its chrome (Figma 661:3134). */
+const IDLE_DELAY = 2600;
 
 export default function PlayerBar() {
   const {
@@ -14,6 +16,7 @@ export default function PlayerBar() {
     isLoadingStream,
     currentTime,
     duration,
+    volume,
     muted,
     shuffle,
     repeat,
@@ -22,125 +25,202 @@ export default function PlayerBar() {
     isAuthenticated,
     viewMode,
     queueOpen,
+    lyricsOpen,
     togglePlay,
     next,
     previous,
     seek,
+    setVolume,
     toggleMute,
     toggleShuffle,
     cycleRepeat,
     toggleLike,
     toggleQueue,
-    toggleFullscreen,
     toggleLyrics,
+    toggleFullscreen,
     collapsePlayer,
   } = usePlayer();
 
   const progressRef = useRef(null);
+  const [scrubRatio, setScrubRatio] = useState(null);
+  const [chromeVisible, setChromeVisible] = useState(true);
 
-  const onSeek = useCallback(
-    (event) => {
-      const element = progressRef.current;
-      if (!element || !duration) return;
-
-      const { left, width } = element.getBoundingClientRect();
-      const ratio = Math.min(1, Math.max(0, (event.clientX - left) / width));
-      seek(ratio * duration);
-    },
-    [duration, seek],
-  );
+  const immersive = viewMode === "fullscreen";
 
   const effectiveDuration = duration || (currentTrack?.durationMs ?? 0) / 1000;
 
+  const ratioFromEvent = useCallback((event) => {
+    const element = progressRef.current;
+    if (!element) return null;
+
+    const { left, width } = element.getBoundingClientRect();
+    if (!width) return null;
+
+    return Math.min(1, Math.max(0, (event.clientX - left) / width));
+  }, []);
+
+  const onScrubStart = useCallback(
+    (event) => {
+      if (!effectiveDuration) return;
+
+      const ratio = ratioFromEvent(event);
+      if (ratio === null) return;
+
+      setScrubRatio(ratio);
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+    },
+    [effectiveDuration, ratioFromEvent],
+  );
+
+  const onScrubMove = useCallback(
+    (event) => {
+      if (scrubRatio === null) return;
+
+      const ratio = ratioFromEvent(event);
+      if (ratio !== null) setScrubRatio(ratio);
+    },
+    [ratioFromEvent, scrubRatio],
+  );
+
+  const onScrubEnd = useCallback(
+    (event) => {
+      if (scrubRatio === null) return;
+
+      const ratio = ratioFromEvent(event) ?? scrubRatio;
+      setScrubRatio(null);
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+      seek(ratio * effectiveDuration);
+    },
+    [effectiveDuration, ratioFromEvent, scrubRatio, seek],
+  );
+
+  const onProgressKeyDown = useCallback(
+    (event) => {
+      if (!effectiveDuration) return;
+
+      const step = event.shiftKey ? 30 : 5;
+      if (event.key === "ArrowRight") seek(Math.min(effectiveDuration, currentTime + step));
+      else if (event.key === "ArrowLeft") seek(Math.max(0, currentTime - step));
+      else if (event.key === "Home") seek(0);
+      else if (event.key === "End") seek(effectiveDuration);
+      else return;
+
+      event.preventDefault();
+    },
+    [currentTime, effectiveDuration, seek],
+  );
+
+  const displayedTime = scrubRatio !== null ? scrubRatio * effectiveDuration : currentTime;
+
   const progressPercent = useMemo(() => {
     if (!effectiveDuration) return 0;
-    return Math.min(100, Math.max(0, (currentTime / effectiveDuration) * 100));
-  }, [currentTime, effectiveDuration]);
+    return Math.min(100, Math.max(0, (displayedTime / effectiveDuration) * 100));
+  }, [displayedTime, effectiveDuration]);
+
+  // Full screen hides its chrome while the pointer rests (Figma 661:3134) and
+  // brings it back on any input (661:3167).
+  useEffect(() => {
+    if (!immersive) {
+      setChromeVisible(true);
+      return undefined;
+    }
+
+    let timer = null;
+
+    const schedule = () => {
+      setChromeVisible(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setChromeVisible(false), IDLE_DELAY);
+    };
+
+    schedule();
+    window.addEventListener("pointermove", schedule);
+    window.addEventListener("keydown", schedule);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("pointermove", schedule);
+      window.removeEventListener("keydown", schedule);
+    };
+  }, [immersive]);
+
+  useEffect(() => {
+    if (!immersive) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") collapsePlayer();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [collapsePlayer, immersive]);
 
   if (!hasStarted || !currentTrack) return null;
 
   const artwork = currentTrack.artworkUrl ?? null;
   const title = currentTrack.title ?? "";
   const artistName = currentTrack.artistName ?? "";
-  const immersive = viewMode !== "normal";
 
   return (
-    <div className={`player player--${viewMode}`} data-node-id="324:971">
+    <div
+      className={[
+        "player",
+        immersive ? "player--immersive" : "player--docked",
+        immersive && !chromeVisible ? "player--idle" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+      data-node-id="845:4302"
+    >
       {immersive && (
-        <div className="player-stage" aria-hidden="true">
-          <div className="player-stage-surface" data-node-id="324:929">
-            <img className="player-stage-ambient" src={ambientGradient} alt="" />
-            <div className="player-stage-blur" />
-            <div
-              className="player-stage-grain"
-              style={{ backgroundImage: `url(${grainOverlay})` }}
-              data-node-id="324:951"
-            />
-          </div>
-        </div>
+        <PlayerStage
+          artwork={artwork}
+          title={title}
+          artistName={artistName}
+          showMeta={!chromeVisible}
+          onCollapse={collapsePlayer}
+        />
       )}
 
-      {immersive && (
-        <div className="player-immersive">
-          <div
-            className="player-artwork"
-            style={artwork ? { backgroundImage: `url(${artwork})` } : undefined}
-            role="img"
-            aria-label={title ? `${title} — ${artistName}` : "Cover art"}
-            data-node-id="324:938"
-          />
+      <div className="player-bar">
+        {error && <p className="player-bar__error">{error}</p>}
 
-          {viewMode === "lyrics" && (
-            <section className="player-lyrics" data-node-id="324:1036">
-              <div className="player-lyrics-bg" />
-              <div className="player-lyrics-body">
-                <p className="player-lyrics-head">{title}</p>
-                <p className="player-lyrics-text">
-                  {artistName ? `${artistName}\n\n` : ""}
-                  Lyrics aren’t available for this track yet.
-                </p>
-              </div>
-              <div className="player-lyrics-fade" />
-            </section>
-          )}
-
-          {viewMode === "fullscreen" && (
-            <div className="player-immersive-meta" data-node-id="324:939">
-              <p className="player-immersive-title">{title || "Name"}</p>
-              <p className="player-immersive-artist">{artistName || "Artist"}</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      <div className="player-bar" data-node-id="324:972">
-        {error && <p className="player-error">{error}</p>}
-
-        <div className="player-bar-left">
+        <div className="player-bar__lead">
           <button
             type="button"
             className="player-cover"
             style={artwork ? { backgroundImage: `url(${artwork})` } : undefined}
             onClick={immersive ? collapsePlayer : toggleFullscreen}
             aria-label={immersive ? "Exit full screen" : "Open full screen"}
-            data-node-id="324:990"
           >
-            <span className="player-cover-hint">
+            <span className="player-cover__hint">
               <Glyph name={immersive ? "collapse" : "expand"} />
             </span>
           </button>
 
-          <div className="player-meta" data-node-id="324:991">
-            <p className="player-title">{title}</p>
-            <p className="player-artist">{artistName}</p>
+          <div className="player-meta">
+            <p className="player-meta__title">{title}</p>
+            <p className="player-meta__artist">{artistName}</p>
           </div>
+
+          <button
+            type="button"
+            className={`player-like${isLiked ? " player-like--on" : ""}`}
+            onClick={toggleLike}
+            disabled={!isAuthenticated}
+            aria-pressed={isLiked}
+            aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
+            title={isAuthenticated ? undefined : "Sign in to save tracks"}
+          >
+            <Glyph name="star" filled={isLiked} />
+          </button>
         </div>
 
-        <div className="player-center" data-node-id="324:973">
-          <div className="player-transport" data-node-id="324:974">
+        <div className="player-center">
+          <div className="player-transport">
             <button
               type="button"
-              className="player-btn player-btn--sm"
+              className="player-btn player-btn--step"
               onClick={previous}
               aria-label="Previous track"
             >
@@ -148,7 +228,7 @@ export default function PlayerBar() {
             </button>
             <button
               type="button"
-              className="player-btn player-btn--lg"
+              className="player-btn player-btn--primary"
               onClick={togglePlay}
               disabled={isLoadingStream}
               aria-label={isPlaying ? "Pause" : "Play"}
@@ -157,7 +237,7 @@ export default function PlayerBar() {
             </button>
             <button
               type="button"
-              className="player-btn player-btn--sm"
+              className="player-btn player-btn--step"
               onClick={next}
               aria-label="Next track"
             >
@@ -165,77 +245,109 @@ export default function PlayerBar() {
             </button>
           </div>
 
-          <div className="player-progress" data-node-id="324:978">
-            <p className="player-time">{formatTime(currentTime)}</p>
-            <button
-              type="button"
+          <div className="player-progress">
+            <p className="player-progress__time">{formatTime(displayedTime)}</p>
+            <div
               ref={progressRef}
-              className="player-progress-track"
-              onClick={onSeek}
-              disabled={!effectiveDuration}
+              className="player-progress__track"
+              role="slider"
+              tabIndex={0}
               aria-label="Seek"
-              data-node-id="324:980"
+              aria-valuemin={0}
+              aria-valuemax={Math.round(effectiveDuration)}
+              aria-valuenow={Math.round(displayedTime)}
+              aria-valuetext={formatTime(displayedTime)}
+              aria-disabled={!effectiveDuration}
+              onPointerDown={onScrubStart}
+              onPointerMove={onScrubMove}
+              onPointerUp={onScrubEnd}
+              onPointerCancel={onScrubEnd}
+              onKeyDown={onProgressKeyDown}
             >
-              <span className="player-progress-fill" style={{ width: `${progressPercent}%` }} />
-            </button>
-            <p className="player-time">{formatTime(effectiveDuration)}</p>
+              <span
+                className="player-progress__fill"
+                style={{ width: `${progressPercent}%` }}
+              />
+              <span
+                className="player-progress__knob"
+                style={{ left: `${progressPercent}%` }}
+              />
+            </div>
+            <p className="player-progress__time">{formatTime(effectiveDuration)}</p>
           </div>
         </div>
 
-        <div className="player-actions" data-node-id="324:984">
+        <div className="player-actions">
           <button
             type="button"
-            className={`player-btn player-btn--lg${isLiked ? " player-btn--active" : ""}`}
-            onClick={toggleLike}
-            disabled={!isAuthenticated}
-            aria-pressed={isLiked}
-            aria-label={isLiked ? "Remove from favorites" : "Add to favorites"}
+            className={`player-btn player-btn--ghost player-btn--lyrics${lyricsOpen ? " player-btn--on" : ""}`}
+            onClick={toggleLyrics}
+            aria-pressed={lyricsOpen}
+            aria-label="Lyrics"
           >
-            <Glyph name="heart" />
+            <Glyph name="lyrics" />
           </button>
+
           <button
             type="button"
-            className={`player-btn player-btn--lg${shuffle ? " player-btn--active" : ""}`}
+            className={`player-btn player-btn--ghost player-btn--queue${queueOpen ? " player-btn--on" : ""}`}
+            onClick={toggleQueue}
+            aria-pressed={queueOpen}
+            aria-label="Up next"
+          >
+            <Glyph name="headphones" />
+          </button>
+
+          <div className="player-volume">
+            <button
+              type="button"
+              className={`player-btn player-btn--ghost player-btn--volume${muted ? " player-btn--on" : ""}`}
+              onClick={toggleMute}
+              aria-pressed={muted}
+              aria-label={muted ? "Unmute" : "Mute"}
+            >
+              <Glyph name={muted ? "muted" : "volume"} />
+            </button>
+            <label className="player-volume__slider">
+              <span className="player-volume__label">Volume</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={muted ? 0 : volume}
+                onChange={(event) => setVolume(Number(event.target.value))}
+              />
+            </label>
+          </div>
+
+          <button
+            type="button"
+            className={`player-btn player-btn--ghost player-btn--shuffle${shuffle ? " player-btn--on" : ""}`}
             onClick={toggleShuffle}
             aria-pressed={shuffle}
             aria-label="Shuffle"
           >
             <Glyph name="shuffle" />
           </button>
+
           <button
             type="button"
-            className={`player-btn player-btn--lg${repeat !== "off" ? " player-btn--active" : ""}`}
+            className={`player-btn player-btn--ghost player-btn--repeat${repeat !== "off" ? " player-btn--on" : ""}`}
             onClick={cycleRepeat}
             aria-label={`Repeat: ${repeat}`}
           >
-            <Glyph name="repeat" />
+            <Glyph name={repeat === "one" ? "repeat-one" : "repeat"} />
           </button>
+
           <button
             type="button"
-            className={`player-btn player-btn--lg${muted ? " player-btn--active" : ""}`}
-            onClick={toggleMute}
-            aria-pressed={muted}
-            aria-label={muted ? "Unmute" : "Mute"}
+            className={`player-btn player-btn--ghost player-btn--fullscreen${immersive ? " player-btn--on" : ""}`}
+            onClick={immersive ? collapsePlayer : toggleFullscreen}
+            aria-pressed={immersive}
+            aria-label={immersive ? "Exit full screen" : "Full screen"}
           >
-            <Glyph name={muted ? "muted" : "volume"} />
-          </button>
-          <button
-            type="button"
-            className={`player-btn player-btn--lg${viewMode === "lyrics" ? " player-btn--active" : ""}`}
-            onClick={toggleLyrics}
-            aria-pressed={viewMode === "lyrics"}
-            aria-label="Lyrics"
-          >
-            <Glyph name="lyrics" />
-          </button>
-          <button
-            type="button"
-            className={`player-btn player-btn--lg${queueOpen ? " player-btn--active" : ""}`}
-            onClick={toggleQueue}
-            aria-pressed={queueOpen}
-            aria-label="Up next"
-          >
-            <Glyph name="queue" />
+            <Glyph name={immersive ? "collapse" : "expand"} />
           </button>
         </div>
       </div>

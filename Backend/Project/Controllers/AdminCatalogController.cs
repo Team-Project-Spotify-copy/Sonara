@@ -31,6 +31,47 @@ public class AdminCatalogController : ControllerBase
         return Ok(trackId);
     }
 
+    /// <summary>
+    /// Get-or-create an artist by name. Bulk imports are re-run over overlapping
+    /// data, so this returns the existing row rather than duplicating it.
+    /// </summary>
+    [HttpPost("artists/resolve")]
+    [ProducesResponseType(typeof(ResolvedEntityDto), 200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<ResolvedEntityDto>> ResolveArtist([FromForm] ResolveArtistDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            return Ok(await _adminMusicService.ResolveArtistAsync(dto));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    /// <summary>Get-or-create an album by artist + title.</summary>
+    [HttpPost("albums/resolve")]
+    [ProducesResponseType(typeof(ResolvedEntityDto), 200)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<ResolvedEntityDto>> ResolveAlbum([FromForm] ResolveAlbumDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            return Ok(await _adminMusicService.ResolveAlbumAsync(dto));
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPost("albums")]
     [ProducesResponseType(typeof(Guid), 201)]
     [ProducesResponseType(400)]

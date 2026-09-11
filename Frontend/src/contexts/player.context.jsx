@@ -34,6 +34,7 @@ export function PlayerProvider({ children }) {
 
   const [viewMode, setViewMode] = useState("normal");
   const [queueOpen, setQueueOpen] = useState(false);
+  const [lyricsOpen, setLyricsOpen] = useState(false);
 
   const currentTrack = queue[index] ?? null;
   const currentTrackId = currentTrack?.id ?? null;
@@ -332,7 +333,10 @@ export function PlayerProvider({ children }) {
     [index, queue],
   );
 
-  const toggleQueue = useCallback(() => setQueueOpen((open) => !open), []);
+  const toggleQueue = useCallback(() => {
+    setQueueOpen((open) => !open);
+    setLyricsOpen(false);
+  }, []);
   const closeQueue = useCallback(() => setQueueOpen(false), []);
 
   const toggleFullscreen = useCallback(
@@ -340,10 +344,15 @@ export function PlayerProvider({ children }) {
     [],
   );
 
-  const toggleLyrics = useCallback(
-    () => setViewMode((mode) => (mode === "lyrics" ? "fullscreen" : "lyrics")),
-    [],
-  );
+  // Figma 661:2827 shows the lyrics rail beside the normal page and 661:3243
+  // shows it inside the expanded view, so it is its own panel rather than a
+  // third view mode.
+  const toggleLyrics = useCallback(() => {
+    setLyricsOpen((open) => !open);
+    setQueueOpen(false);
+  }, []);
+
+  const closeLyrics = useCallback(() => setLyricsOpen(false), []);
 
   const collapsePlayer = useCallback(() => setViewMode("normal"), []);
 
@@ -609,6 +618,7 @@ export function PlayerProvider({ children }) {
       isAuthenticated,
       viewMode,
       queueOpen,
+      lyricsOpen,
       setQueueAndPlay,
       play,
       pause,
@@ -629,6 +639,7 @@ export function PlayerProvider({ children }) {
       setViewMode,
       toggleFullscreen,
       toggleLyrics,
+      closeLyrics,
       collapsePlayer,
     }),
     [
@@ -649,6 +660,7 @@ export function PlayerProvider({ children }) {
       isAuthenticated,
       viewMode,
       queueOpen,
+      lyricsOpen,
       setQueueAndPlay,
       play,
       pause,
@@ -668,6 +680,7 @@ export function PlayerProvider({ children }) {
       closeQueue,
       toggleFullscreen,
       toggleLyrics,
+      closeLyrics,
       collapsePlayer,
     ],
   );

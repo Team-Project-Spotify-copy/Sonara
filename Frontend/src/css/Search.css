@@ -64,17 +64,223 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-.search-results {
+/* ------------------------------------------------------- the dropdown panel */
+
+/* Figma 686:1212 - 424 wide, hung 14px under the 56px pill, dark at the top
+   washing into copper at the foot. It clips its list rather than growing. */
+.search-panel {
+  position: absolute;
+  top: calc(100% + var(--space-3));
+  left: 0;
+  right: 0;
+  z-index: 50;
   display: flex;
   flex-direction: column;
-  gap: var(--space-13);
+  gap: var(--space-4);
+  box-sizing: border-box;
+  max-height: min(505px, 60vh);
+  padding: var(--space-4);
+  border-radius: var(--radius-sm);
+  background-image: linear-gradient(
+    180deg,
+    var(--color-panel) 0%,
+    rgba(51, 22, 9, 0.97) 71.6%,
+    rgba(117, 37, 0, 0.92) 100%
+  );
+  box-shadow: -4px 4px 24px 0 rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #ffc661 transparent;
+  animation: search-panel-enter var(--transition-fast) both;
 }
 
-.search-results__status,
-.search-results__error {
+.search-panel::-webkit-scrollbar { width: 16px; }
+.search-panel::-webkit-scrollbar-track { background: transparent; }
+
+.search-panel::-webkit-scrollbar-thumb {
+  background-color: #ffc661;
+  border-radius: var(--radius-sm);
+  border: 4px solid transparent;
+  background-clip: content-box;
+}
+
+@keyframes search-panel-enter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-panel { animation: none; }
+}
+
+.search-panel__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.search-panel__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* Figma 686:1213 - Helvetica Neue Medium 16. */
+.search-panel__label {
   margin: 0;
   font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
 }
 
-.search-results__status { color: var(--color-text-muted); }
-.search-results__error { color: var(--color-text); }
+.search-panel__clear {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: color var(--transition-base);
+}
+
+.search-panel__clear:hover { color: var(--color-text); }
+
+.search-panel__status {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+}
+
+.search-panel__status--error { color: var(--color-amber); }
+
+.search-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.search-row { min-width: 0; }
+
+.search-row__button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast);
+}
+
+.search-row__button:hover { transform: translateX(2px); }
+.search-row__button:active { transform: scale(var(--press-scale)); }
+
+.search-row__button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-golden);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Figma 686:1215 - a 93px thumbnail, round for artists. */
+.search-row__art {
+  flex: 0 0 auto;
+  width: clamp(56px, 5vw, 93px);
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
+  background-size: cover;
+  background-position: center;
+  box-shadow: var(--shadow-card);
+}
+
+.search-row__art--round { border-radius: var(--radius-round); }
+
+.search-row__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* Figma 686:1217 / 686:1218 - Medium 20 over Regular 16. */
+.search-row__title {
+  font-size: 20px;
+  line-height: 1.4;
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.search-row__subtitle {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--color-text-dim);
+}
+
+.search-row__title,
+.search-row__subtitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-row--skeleton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.search-row--skeleton .search-row__art,
+.search-row--skeleton .search-row__title,
+.search-row--skeleton .search-row__subtitle {
+  background-color: var(--color-surface-raised);
+  animation: media-pulse 1.4s ease-in-out infinite;
+}
+
+.search-row--skeleton .search-row__title {
+  width: 140px;
+  height: 1em;
+  border-radius: var(--radius-sm);
+}
+
+.search-row--skeleton .search-row__subtitle {
+  width: 90px;
+  height: 1em;
+  border-radius: var(--radius-sm);
+}
+
+/* Same shimmer the media cards use; declared here so the panel does not depend
+   on Media.css being in the bundle. */
+@keyframes media-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-row--skeleton .search-row__art,
+  .search-row--skeleton .search-row__title,
+  .search-row--skeleton .search-row__subtitle { animation: none; }
+}
+
+@media (max-width: 600px) {
+  .search-panel {
+    position: fixed;
+    top: calc(var(--topbar-height) - var(--space-2));
+    left: var(--space-4);
+    right: var(--space-4);
+    max-height: 65vh;
+  }
+
+  .search-row__title { font-size: var(--text-body); }
+}

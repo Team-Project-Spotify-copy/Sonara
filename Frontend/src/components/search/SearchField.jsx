@@ -1,6 +1,14 @@
 import "../../css/Search.css";
 
-export default function SearchField({ value, onChange, placeholder = "Search..." }) {
+export default function SearchField({
+  value,
+  onChange,
+  placeholder = "Search...",
+  onFocus,
+  onKeyDown,
+  expanded,
+  controls,
+}) {
   return (
     <div className="search-field">
       <input
@@ -9,7 +17,14 @@ export default function SearchField({ value, onChange, placeholder = "Search..."
         value={value}
         placeholder={placeholder}
         aria-label="Search"
+        role="combobox"
+        aria-expanded={expanded ?? false}
+        aria-controls={controls}
+        aria-autocomplete="list"
+        autoComplete="off"
         onChange={(event) => onChange(event.target.value)}
+        onFocus={onFocus}
+        onKeyDown={onKeyDown}
       />
       {value && (
         <button
