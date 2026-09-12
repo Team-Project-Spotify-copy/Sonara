@@ -1,125 +1,71 @@
-
-.queue {
-  position: fixed;
-  top: 99px;
-  right: 100px;
-  bottom: 134px;
-  z-index: 43;
-  display: flex;
-  flex-direction: column;
-  width: 616px;
-  box-sizing: border-box;
-  padding: 32px;
-  border-radius: 8px;
-  background-color: rgba(27, 27, 27, 0.96);
-  backdrop-filter: blur(24px);
-  font-family: 'Helvetica Neue', sans-serif;
-}
-
-.queue-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.queue-title {
-  margin: 0;
-  font-size: 28px;
-  font-weight: 400;
-  color: #ffffff;
-}
-
-.queue-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
-  border-radius: 53px;
-  background-color: #504f4f;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.queue-close svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-}
+/* Queue rows. The panel chrome lives in PlayerPanels.css - only the list is
+   queue-specific. Row metrics follow the 93px song row of Figma 845:4323. */
 
 .queue-empty {
   margin: 0;
-  font-size: 16px;
-  color: #b0b0b0;
+  font-size: var(--text-body);
+  color: var(--color-text-dim);
 }
 
 .queue-list {
   margin: 0;
   padding: 0;
   list-style: none;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .queue-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px;
-  border-radius: 8px;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
   border-top: 2px solid transparent;
+  transition: background-color var(--transition-base);
 }
 
-.queue-item:hover {
-  background-color: rgba(80, 79, 79, 0.35);
-}
+.queue-item:hover { background-color: rgba(80, 79, 79, 0.35); }
+.queue-item--current { background-color: rgba(186, 61, 3, 0.28); }
+.queue-item--dragging { opacity: 0.4; }
+.queue-item--dropzone { border-top-color: var(--color-golden); }
 
-.queue-item--current {
-  background-color: rgba(80, 79, 79, 0.55);
-}
-
-.queue-item--dragging {
-  opacity: 0.4;
-}
-
-.queue-item--dropzone {
-  border-top-color: #d9d9d9;
-}
-
+/* The handle keeps its slot so rows do not shift, but only shows on hover. */
 .queue-handle {
   display: flex;
   align-items: center;
-  color: #b0b0b0;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 16px;
+  color: var(--color-text-muted);
   cursor: grab;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
 }
 
-.queue-handle svg {
-  width: 20px;
-  height: 20px;
-  fill: currentColor;
-}
+.queue-item:hover .queue-handle { opacity: 1; }
 
 .queue-play {
   display: flex;
-  flex: 1;
+  flex: 1 1 auto;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-2);
   min-width: 0;
   padding: 0;
   border: none;
   background: none;
+  color: inherit;
   text-align: left;
   cursor: pointer;
 }
 
 .queue-cover {
   flex-shrink: 0;
-  width: 93px;
-  height: 93px;
-  border-radius: 8px;
-  background-color: #504f4f;
+  width: clamp(44px, 3.4vw, 56px);
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
   background-size: cover;
   background-position: center;
 }
@@ -127,30 +73,34 @@
 .queue-meta {
   display: flex;
   flex-direction: column;
-  gap: 4px;
   min-width: 0;
 }
 
 .queue-name {
-  font-size: 20px;
-  font-weight: 500;
-  color: #ffffff;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
 }
 
 .queue-artist {
-  font-size: 16px;
-  color: #b0b0b0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+  color: var(--color-text-muted);
+}
+
+.queue-name,
+.queue-artist {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .queue-duration {
-  font-size: 16px;
-  color: #b0b0b0;
+  flex: 0 0 auto;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -158,24 +108,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: none;
-  border-radius: 53px;
+  border-radius: var(--radius-round);
   background-color: transparent;
-  color: #b0b0b0;
+  color: var(--color-text-muted);
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 .queue-remove:hover {
-  background-color: #504f4f;
-  color: #ffffff;
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
 }
 
-.queue-remove svg {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
+@media (max-width: 600px) {
+  .queue-duration { display: none; }
 }

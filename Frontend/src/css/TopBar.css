@@ -56,6 +56,17 @@
   background-position: center;
 }
 
+/* Figma 686:1212 anchors the results dropdown to the pill, so the pill and the
+   panel share a positioned wrapper. */
+.topbar__searchbox {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-width: 0;
+  max-width: var(--search-max-width);
+}
+
 /* Search pill: 432px wide, radius 53, warm glass, magnifier on the right. */
 .topbar__search {
   position: relative;

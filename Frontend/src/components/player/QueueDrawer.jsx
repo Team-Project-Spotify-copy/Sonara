@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 import { usePlayer } from "../../contexts/player.store";
 import Glyph from "./Glyph.jsx";
 import { formatTime } from "../../utils/time";
+import "../../css/PlayerPanels.css";
 import "../../css/QueueDrawer.css";
 
 export default function QueueDrawer() {
@@ -51,12 +52,12 @@ export default function QueueDrawer() {
   if (!queueOpen) return null;
 
   return (
-    <aside className="queue" aria-label="Up next">
-      <header className="queue-head">
-        <h2 className="queue-title">Up next</h2>
+    <aside className="side-panel side-panel--queue" aria-label="Up next">
+      <header className="side-panel__head">
+        <h2 className="side-panel__title">Up next</h2>
         <button
           type="button"
-          className="queue-close"
+          className="side-panel__close"
           onClick={closeQueue}
           aria-label="Close queue"
         >
@@ -67,7 +68,7 @@ export default function QueueDrawer() {
       {queue.length === 0 ? (
         <p className="queue-empty">The queue is empty.</p>
       ) : (
-        <ol className="queue-list">
+        <ol className="side-panel__body queue-list">
           {queue.map((track, position) => {
             const isCurrent = position === index;
 

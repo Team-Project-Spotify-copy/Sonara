@@ -6,8 +6,12 @@
   --color-text: #ffffff;            /* White */
   --color-text-muted: #808080;      /* Black 50% */
   --color-accent: #ba3d03;          /* Copper */
+  --color-accent-soft: rgba(186, 61, 3, 0.5);
   --color-golden: #ffd04e;          /* Golden */
+  --color-golden-track: rgba(255, 198, 97, 0.3);
   --color-amber: #ff8c19;           /* Amber */
+  --color-panel: #1b1b1b;
+  --color-text-dim: #b0b0b0;
 
   /* Warm glass used by the top-bar controls. */
   --chrome-tint-strong: rgba(229, 132, 35, 0.3);
@@ -68,8 +72,12 @@
   --rail-width-expanded: clamp(260px, 21.6vw, 415px);
 
   --topbar-height: 100px;
-  --player-height: 134px;
+  /* Figma 845:4302 - the bar is 134 tall; it shrinks with the viewport. */
+  --player-height: clamp(96px, 12.4vh, 134px);
   --player-height-compact: 112px;
+  /* Set by RootLayout while a track is loaded so the shell can give the bar
+     its own row instead of scrolling the page behind it. */
+  --player-offset: 0px;
 
   --control-size: 60px;
   --control-size-sm: 44px;
@@ -78,6 +86,17 @@
   --rail-item-size: clamp(56px, 4.9vw, 93px);
   --search-max-width: 432px;
   --rail-toggle-size: 56px;
+
+  /* Figma 661:2827 - the lyrics rail is 415 wide and the main panel gives up
+     exactly that much. The queue drawer docks into the same column. */
+  --side-panel-width: clamp(280px, 24vw, 415px);
+  --side-panel: 0px;
+
+  /* Player bar - Figma 845:4302. */
+  --player-cover-size: clamp(56px, 6vw, 93px);
+  --player-btn-size: 56px;
+  --player-btn-size-sm: 40px;
+  --player-progress-max: 564px;
 
   --transition-fast: 0.15s ease;
   --transition-base: 0.2s ease;

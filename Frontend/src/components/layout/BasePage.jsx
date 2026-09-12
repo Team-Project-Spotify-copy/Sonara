@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import AppShell from "./AppShell.jsx";
 import TopBar from "./TopBar.jsx";
 import LibraryRail from "./LibraryRail.jsx";
-import SearchResults from "../search/SearchResults.jsx";
 import useSearch from "../../hooks/useSearch.js";
 import useLibrary from "../../hooks/useLibrary.js";
+import useRecentSearches from "../../hooks/useRecentSearches.js";
 import { usePlayer } from "../../contexts/player.store";
 import { useNavigate } from "react-router-dom";
 
@@ -15,8 +15,8 @@ export default function BasePage({
   showRail = true,
   initialFilter = "all",
   customOnSelect,
-  showBackdrop, 
-  showMain, 
+  showBackdrop,
+  showMain,
   customStyle = {},
 }) {
   const [query, setQuery] = useState("");
@@ -39,35 +39,60 @@ export default function BasePage({
     refetch: refetchLibrary,
   } = useLibrary();
 
+  const {
+    items: recentSearches,
+    remember: rememberSearch,
+    clear: clearRecentSearches,
+  } = useRecentSearches();
+
   const { setQueueAndPlay } = usePlayer();
 
   const searching = query.trim().length >= MIN_QUERY_LENGTH;
 
-const defaultHandleSelect = (item) => {
-  console.log(item)
-
-  if (item.kind === "track") {
-    setQueueAndPlay([item], 0, { autoplay: true });
-    navigate(`/song/${item.id}`);
-  }
-  if (item.kind === "playlist") navigate(`/playlist/${item.title}`);
-  if (item.kind === "podcast") navigate(`/podcast/${item.title}`);
-  if (item.kind === "album") navigate(`/album/${item.title}`);
-  if (item.kind === "artist") navigate(`/account/${item.title}`);
-};
+  const defaultHandleSelect = useCallback(
+    (item) => {
+      if (item.kind === "track") {
+        setQueueAndPlay([item], 0, { autoplay: true });
+        navigate(`/song/${item.id}`);
+      }
+      if (item.kind === "playlist") navigate(`/playlist/${item.title}`);
+      if (item.kind === "podcast") navigate(`/podcast/${item.title}`);
+      if (item.kind === "album") navigate(`/album/${item.title}`);
+      if (item.kind === "artist") navigate(`/account/${item.title}`);
+    },
+    [navigate, setQueueAndPlay],
+  );
 
   const handleSelect = customOnSelect || defaultHandleSelect;
+
+  // Picking from the dropdown both opens the item and feeds the recent list
+  // the panel shows before a query is typed (Figma 686:1212).
+  const handleSearchSelect = useCallback(
+    (item) => {
+      rememberSearch(item);
+      handleSelect(item);
+    },
+    [handleSelect, rememberSearch],
+  );
 
   return (
     <AppShell
       railExpanded={railExpanded}
-      topBar={<TopBar query={query} onQueryChange={setQuery} />}
-      showBackdrop={
-        showBackdrop !== undefined ? showBackdrop : searching ? true : undefined
+      topBar={
+        <TopBar
+          query={query}
+          onQueryChange={setQuery}
+          searching={searching}
+          searchResults={results}
+          searchStatus={searchStatus}
+          searchError={searchError}
+          recentSearches={recentSearches}
+          onClearRecent={clearRecentSearches}
+          onSearchSelect={handleSearchSelect}
+        />
       }
-      showMain={
-        showMain !== undefined ? showMain : searching ? true : undefined
-      }
+      showBackdrop={showBackdrop}
+      showMain={showMain}
       showRail={showRail}
       rail={
         showRail && (
@@ -83,25 +108,12 @@ const defaultHandleSelect = (item) => {
           />
         )
       }
-      style={{
-        "--panel-padding": searching ? "24px" : "0px",
-        ...customStyle,
-      }}
+      style={{ "--panel-padding": "0px", ...customStyle }}
     >
-      {searching ? (
-        <SearchResults
-          query={query}
-          results={results}
-          status={searchStatus}
-          error={searchError}
-          onSelect={handleSelect}
-        />
-      ) : (
-        React.Children.map(children, (child) =>
-          React.isValidElement(child)
-            ? React.cloneElement(child, { onLibraryChange: refetchLibrary })
-            : child,
-        )
+      {React.Children.map(children, (child) =>
+        React.isValidElement(child)
+          ? React.cloneElement(child, { onLibraryChange: refetchLibrary })
+          : child,
       )}
     </AppShell>
   );

@@ -105,6 +105,63 @@ public class CreateTrackDto
     public Guid? AlbumId { get; set; }
 
     public List<Guid> GenreIds { get; set; } = new();
+
+    /// <summary>
+    /// Genre names to attach, resolved (or created) by name. Bulk sources such
+    /// as Jamendo report genres as tags rather than catalog ids; GenreIds still
+    /// takes precedence for callers that already know them.
+    /// </summary>
+    public List<string> GenreNames { get; set; } = new();
+}
+
+/// <summary>
+/// Idempotent get-or-create for an artist, keyed on the name. Bulk imports run
+/// repeatedly over overlapping data, so the importer needs a call that returns
+/// the existing row instead of creating a duplicate.
+/// </summary>
+public class ResolveArtistDto
+{
+    [Required]
+    [StringLength(200, MinimumLength = 1)]
+    public string Name { get; set; } = string.Empty;
+
+    [StringLength(2000)]
+    public string? Bio { get; set; }
+
+    /// <summary>Uploaded through the existing BlobService into images/avatars.</summary>
+    public IFormFile? AvatarImage { get; set; }
+
+    /// <summary>Used when the source already hosts the image.</summary>
+    [StringLength(1000)]
+    public string? AvatarUrl { get; set; }
+}
+
+/// <summary>Idempotent get-or-create for an album, keyed on artist + title.</summary>
+public class ResolveAlbumDto
+{
+    [Required]
+    [StringLength(200, MinimumLength = 1)]
+    public string Title { get; set; } = string.Empty;
+
+    [Required]
+    public Guid ArtistId { get; set; }
+
+    public DateTime? ReleaseDate { get; set; }
+
+    /// <summary>Uploaded through the existing BlobService into images/albums.</summary>
+    public IFormFile? CoverImage { get; set; }
+
+    [StringLength(1000)]
+    public string? CoverUrl { get; set; }
+}
+
+public class ResolvedEntityDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>False when an existing row was returned.</summary>
+    public bool Created { get; set; }
 }
 
 public class CreateAlbumDto

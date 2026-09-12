@@ -1,23 +1,17 @@
-
 .app-root {
   position: relative;
-  min-height: 100vh;
-  background-color: #121212;
+  min-height: 100dvh;
+  background-color: var(--color-bg);
 }
 
 .app-root__content {
   display: block;
 }
 
-.app-root--with-player .app-root__content {
-  padding-bottom: 134px;
-}
-
-.app-root--immersive .app-root__content {
-  visibility: hidden;
-}
-
+/* The player bar takes a row out of the viewport rather than floating over the
+   scroll area, so nothing is hidden behind it. Pages that lay themselves out
+   (the song page) read --player-offset directly. */
 .app-root--immersive {
   overflow: hidden;
-  height: 100vh;
+  height: 100dvh;
 }

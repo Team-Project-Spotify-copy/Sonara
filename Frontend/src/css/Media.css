@@ -32,13 +32,6 @@
   font-size: var(--text-body);
 }
 
-.media-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(var(--card-size), 1fr));
-  gap: var(--space-8);
-  justify-items: start;
-}
-
 .media-card {
   display: flex;
   flex-direction: column;

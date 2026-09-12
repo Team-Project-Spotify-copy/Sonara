@@ -4,7 +4,7 @@ export const PlayerContext = createContext(null);
 
 export const REPEAT_MODES = ["off", "all", "one"];
 
-export const VIEW_MODES = ["normal", "fullscreen", "lyrics"];
+export const VIEW_MODES = ["normal", "fullscreen"];
 
 export function usePlayer() {
   const context = useContext(PlayerContext);
