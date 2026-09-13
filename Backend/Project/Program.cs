@@ -149,9 +149,12 @@ if (app.Environment.IsDevelopment())
     app.MapGet("/", () => Results.Redirect("/scalar/v1"));
 }
 
-app.UseHttpsRedirection();
-
+// CORS runs before HTTPS redirection: the frontend talks to the plain-HTTP
+// endpoint, and a 307 to https:// would abort the OPTIONS preflight before the
+// Access-Control-Allow-* headers are ever written.
 app.UseCors("Frontend");
+
+app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
