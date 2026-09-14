@@ -7,9 +7,15 @@ export default function AccountPage() {
   const { setQueueAndPlay } = usePlayer();
   const navigate = useNavigate();
 
-  const handleSelect = (item) => {
+  const handleSelect = (item, shelfItems = []) => {
     if (item.kind === "track") {
-      setQueueAndPlay([item.track || item], 0, { autoplay: true });
+      const tracks = shelfItems
+        .filter((entry) => entry.kind === "track")
+        .map((entry) => entry.track || entry);
+      const picked = item.track || item;
+      const startIndex = tracks.indexOf(picked);
+
+      setQueueAndPlay(tracks.length ? tracks : [picked], Math.max(0, startIndex), { autoplay: true });
       navigate(`/song/${item.id}`);
     }
     if (item.kind === "playlist") navigate(`/playlist/${item.title}`);

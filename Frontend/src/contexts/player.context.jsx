@@ -280,13 +280,18 @@ export function PlayerProvider({ children }) {
 
   const setQueueAndPlay = useCallback(
     (tracks, startIndex = 0, { autoplay = false } = {}) => {
+      // A track switch like next/previous: report the outgoing play before
+      // selectTrack() zeroes the counters.
+      stopTicking();
+      reportListen(currentTrackId);
+
       setQueue(tracks);
       setIndex(startIndex);
       selectTrack(tracks[startIndex] ?? null);
 
       if (autoplay && tracks[startIndex]) void playTrack(tracks[startIndex]);
     },
-    [playTrack, selectTrack],
+    [currentTrackId, playTrack, reportListen, selectTrack, stopTicking],
   );
 
   const removeFromQueue = useCallback(

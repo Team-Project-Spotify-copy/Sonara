@@ -23,7 +23,7 @@ ignored. Refresh uses the `refreshToken` HttpOnly cookie, so send `credentials: 
 | Access level | Routes |
 |---|---|
 | Anonymous OK | `GET /api/tracks`, `GET /api/tracks/{id}`, `POST /api/tracks/batch`, `GET /api/albums/{id}`, `GET /api/artists/{id}`, `GET /api/search`, `GET /api/playlists/{id}`, `GET /api/playlists/{id}/tracks` |
-| Token required | everything under `/api/tracks/{id}/stream`, `/like`, `/listen`, `/api/tracks/liked`, `/api/history`, all playlist writes and `GET /api/playlists` |
+| Token required | everything under `/api/tracks/{id}/stream`, `/like`, `/listen`, `/api/tracks/liked`, `/api/history`, `/api/recommendations`, all playlist writes and `GET /api/playlists` |
 
 On anonymous catalog calls `isLiked` is always `false`.
 
@@ -405,6 +405,40 @@ locally, and rehydrate with `POST /api/tracks/batch`, which preserves your order
 build a realtime client against this API. The domain contains dormant `ListeningRoom` /
 `RoomMember` entities, but no hub, endpoint, or event contract exists for them — shared listening
 is a separate future feature.
+
+## 13. Recommendations
+
+### `GET /api/recommendations?count={n}` — token required
+
+Tracks the caller has neither liked nor played, ranked by genre overlap with their own
+likes and listening history. `count` defaults to 20 and is clamped to 1…50.
+
+```json
+{
+  "strategy": "Personalized",
+  "topGenres": ["Shoegaze", "Ambient"],
+  "items": [
+    {
+      "track": { /* full Track object */ },
+      "score": 4,
+      "matchedGenres": ["Shoegaze", "Ambient"]
+    }
+  ]
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `strategy` | `"Personalized"` — ranked from the caller's own activity · `"Popular"` — the caller has no genre activity yet, so the most played tracks are returned |
+| `topGenres` | The genres that drove the ranking, strongest first. Empty for `"Popular"` |
+| `score` | Genre affinity: a like weighs 3, a play weighs 1, summed over the genres a track shares with the profile. Comparable only inside one response; `0` for entries added purely on popularity |
+| `matchedGenres` | The caller's genres this track matched, strongest first. Empty for popularity-only entries |
+
+Items are already ordered — render them as returned. The list is never padded with tracks
+the user has already liked or played, and a thin profile is topped up with popular tracks
+so a request for `n` returns `n` whenever the catalog has that many unseen tracks.
+
+**Errors:** `401`.
 
 ## Integration checklist
 

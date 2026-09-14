@@ -51,7 +51,10 @@ export default function Song() {
   } = usePlayer();
 
   const activeTrackRef = useRef(null);
-  activeTrackRef.current = hasStarted ? currentTrack : null;
+  // Whether the queue holds this track, not whether it has begun sounding:
+  // hasStarted only flips once play() resolves, and hydrating over a track that
+  // is already loading interrupts it.
+  activeTrackRef.current = currentTrack;
 
   const [details, setDetails] = useState(null);
   const [artist, setArtist] = useState(null);

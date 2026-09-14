@@ -4,6 +4,7 @@ import image from "../../assets/images/profile-bg.png";
 import { AccountContext } from "../../contexts/account.store";
 import Shelf from "../media/Shelf";
 import EditProfileForm from "./EditProfileForm";
+import useRecommendations from "../../hooks/useRecommendations";
 import axios from "axios";
 import "../../css/Account.css";
 
@@ -16,6 +17,10 @@ export default function Account({ onSelect, onLibraryChange }) {
 
   const api = import.meta.env.VITE_API;
   const isOwnProfile = !username;
+
+  const { items: recommendedItems, status: recommendedStatus } = useRecommendations({
+    enabled: isOwnProfile,
+  });
 
   useEffect(() => {
     GetAccountUser();
@@ -153,6 +158,16 @@ export default function Account({ onSelect, onLibraryChange }) {
       </div>
 
       <div className="profile-media profile-media-container">
+        {isOwnProfile && (
+          <Shelf
+            title="Recommended for you"
+            items={recommendedItems}
+            shape="square"
+            loading={recommendedStatus === "loading"}
+            onSelect={onSelect}
+          />
+        )}
+
         <Shelf
           title="Recent"
           items={historyItems}
