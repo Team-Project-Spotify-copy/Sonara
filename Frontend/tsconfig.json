@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "ignoreDeprecations": "6.0",
+        "baseUrl": "src",
+        "paths": {
+            "@components/*": ["components/*"],
+            "@assets/*": ["assets/*"],
+            "@layouts/*": ["layouts/*"],
+            "@api/*": ["api/*"],
+            "@pages/*": ["pages/*"],
+            "@css/*": ["css/*"],
+            "@contexts/*": ["contexts/*"],
+            "@hooks/*": ["hooks/*"],
+            "@utils/*": ["utils/*"]
+        }
+    }
+}

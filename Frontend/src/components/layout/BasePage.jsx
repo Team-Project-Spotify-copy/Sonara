@@ -1,11 +1,11 @@
 import React, { useCallback, useState } from "react";
-import AppShell from "./AppShell.jsx";
-import TopBar from "./TopBar.jsx";
-import LibraryRail from "./LibraryRail.jsx";
-import useSearch from "../../hooks/useSearch.js";
-import useLibrary from "../../hooks/useLibrary.js";
-import useRecentSearches from "../../hooks/useRecentSearches.js";
-import { usePlayer } from "../../contexts/player.store";
+import AppShell from "@components/layout/AppShell.jsx";
+import TopBar from "@components/layout/TopBar.jsx";
+import LibraryRail from "@components/layout/LibraryRail.jsx";
+import useSearch from "@hooks/useSearch.js";
+import useLibrary from "@hooks/useLibrary.js";
+import useRecentSearches from "@hooks/useRecentSearches.js";
+import { usePlayer } from "@contexts/player.store";
 import { useNavigate } from "react-router-dom";
 
 const MIN_QUERY_LENGTH = 2;

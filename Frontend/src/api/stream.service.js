@@ -1,4 +1,4 @@
-import { ENDPOINTS } from "./endpoints.js";
+import { ENDPOINTS } from "@api/endpoints.js";
 
 export function resolveStreamUrl(track) {
   if (!track) return null;

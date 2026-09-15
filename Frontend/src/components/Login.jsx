@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { resolveCaptchaToken } from "../utils/recaptcha";
-import { useAccount } from "../contexts/account.store";
-import image from "../assets/images/auth-gradient-bg.png";
-import logo from "../assets/icons/sonara-mark.svg";
-import "../css/Login.css";
-import "../css/auth.css";
+import { resolveCaptchaToken } from "@utils/recaptcha";
+import { useAccount } from "@contexts/account.store";
+import image from "@assets/images/auth-gradient-bg.png";
+import logo from "@assets/icons/sonara-mark.svg";
+import "@css/Login.css";
+import "@css/auth.css";
 
 function Login() {
   const { login } = useAccount();

@@ -1,20 +1,20 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage.jsx";
-import Login from "./components/Login.jsx";
-import Register from "./components/Register.jsx";
-import ForgotPassword from "./components/ForgotPassword.jsx";
-import CreateNewPassword from "./components/CreateNewPassword.jsx";
-import SubscriptionPage from "./components/SubscriptionPage.jsx";
-import ResetPassword from "./components/ResetPassword.jsx";
-import Account from "./components/AccountPage.jsx";
-import PlaylistPage from "./components/PlaylistPage.jsx";
-import PodcastPage from "./components/PodcastPage.jsx";
-import AlbumPage from "./components/AlbumPage.jsx";
-import Library from "./components/LibraryPage.jsx";
-import Song from "./components/Song.jsx";
-import RootLayout from "./layouts/RootLayout.jsx";
-import RequireAuth from "./components/auth/RequireAuth.jsx";
-import { PlayerProvider } from "./contexts/player.context.jsx";
+import HomePage from "@pages/HomePage.jsx";
+import Login from "@components/Login.jsx";
+import Register from "@components/Register.jsx";
+import ForgotPassword from "@components/ForgotPassword.jsx";
+import CreateNewPassword from "@components/CreateNewPassword.jsx";
+import SubscriptionPage from "@pages/SubscriptionPage.jsx";
+import ResetPassword from "@components/ResetPassword.jsx";
+import Account from "@pages/AccountPage.jsx";
+import PlaylistPage from "@pages/PlaylistPage.jsx";
+import PodcastPage from "@pages/PodcastPage.jsx";
+import AlbumPage from "@pages/AlbumPage.jsx";
+import Library from "@pages/LibraryPage.jsx";
+import Song from "@components/Song.jsx";
+import RootLayout from "@layouts/RootLayout.jsx";
+import RequireAuth from "@components/auth/RequireAuth.jsx";
+import { PlayerProvider } from "@contexts/player.context.jsx";
 import "./index.css";
 
 function App() {

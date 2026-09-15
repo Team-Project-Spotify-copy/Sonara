@@ -1,4 +1,4 @@
-import "../../css/Media.css";
+import "@css/Media.css";
 
 export default function MediaCard({ item, shape = "square", onSelect }) {
   const round = shape === "round" || item?.kind === "artist";

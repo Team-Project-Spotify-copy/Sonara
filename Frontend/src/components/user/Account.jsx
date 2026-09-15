@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { AccountContext } from "@contexts/account.store";
 import { useParams } from "react-router-dom";
-import image from "../../assets/images/profile-bg.png";
-import { AccountContext } from "../../contexts/account.store";
-import Shelf from "../media/Shelf";
-import EditProfileForm from "./EditProfileForm";
-import useRecommendations from "../../hooks/useRecommendations";
 import axios from "axios";
-import "../../css/Account.css";
+import image from "@assets/images/profile-bg.png";
+import Shelf from "@components/media/Shelf";
+import EditProfileForm from "@components/user/EditProfileForm";
+import useRecommendations from "@hooks/useRecommendations";
+import "@css/Account.css";
 
 export default function Account({ onSelect, onLibraryChange }) {
   const { accessToken } = React.useContext(AccountContext);

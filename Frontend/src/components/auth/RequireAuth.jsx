@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAccount } from "../../contexts/account.store";
-import "../../css/auth.css";
+import { useAccount } from "@contexts/account.store";
+import "@css/auth.css";
+// import "@css/auth.css"
 
 /**
  * Route guard. While the stored session is still being validated we must not

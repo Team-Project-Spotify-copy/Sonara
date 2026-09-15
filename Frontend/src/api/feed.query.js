@@ -1,7 +1,7 @@
-import api from "./client.js";
-import { getAccessToken } from "./client.js";
-import { USE_MOCKS } from "./endpoints.js";
-import { normalizeMediaItem, unwrap, pick } from "./media.adapter.js";
+import api from "@api/client.js";
+import { getAccessToken } from "@api/client.js";
+import { USE_MOCKS } from "@api/endpoints.js";
+import { normalizeMediaItem, unwrap, pick } from "@api/media.adapter.js";
 
 export const SHELF_DEFINITIONS = [
   { key: "weekly", title: "Weekly selections", shape: "square" },

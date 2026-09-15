@@ -1,6 +1,6 @@
-import bookIcon from "../../assets/icons/book.svg";
-import plusIcon from "../../assets/icons/plus.svg";
-import "../../css/LibraryRail.css";
+import bookIcon from "@assets/icons/book.svg";
+import plusIcon from "@assets/icons/plus.svg";
+import "@css/LibraryRail.css";
 
 const SKELETON_ROWS = Array.from({ length: 7 }, (_, i) => i);
 

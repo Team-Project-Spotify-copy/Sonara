@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import { searchQuery, EMPTY_RESULTS } from "../api/search.query.js";
-import useDebouncedValue from "./useDebouncedValue.js";
+import { searchQuery, EMPTY_RESULTS } from "@api/search.query.js";
+import useDebouncedValue from "@hooks/useDebouncedValue.js";
 
 export default function useSearch(query, options = {}) {
   const { types, pageSize = 20, minLength = 2, delay = 300 } = options;

@@ -1,5 +1,4 @@
-import React from "react";
-import EntityDetailView from "../common/EntityDetailView";
+import EntityDetailView from "@components/common/EntityDetailView";
 
 export default function PlaylistPage() {
   const config = {

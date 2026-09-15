@@ -1,5 +1,5 @@
-import BasePage from "../components/layout/BasePage.jsx";
-import Subscription from "./subscription/Subsccription.jsx";
+import BasePage from "@components/layout/BasePage.jsx";
+import Subscription from "@components/subscription/Subsccription.jsx";
 
 export default function PodcastPage() {
   return (

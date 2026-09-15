@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { resetPassword } from "../api/auth.service.js";
-import image from "../assets/images/create-new-ps-bg.png";
-import "../css/CreateNewPassword.css";
-import "../css/auth.css";
+import { resetPassword } from "@api/auth.service.js";
+import image from "@assets/images/create-new-ps-bg.png";
+import "@css/CreateNewPassword.css";
+import "@css/auth.css";
 
 const MIN_PASSWORD_LENGTH = 8;
 

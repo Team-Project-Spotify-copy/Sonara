@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import OtpInput from "react-otp-input";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { forgotPassword, verifyResetCode } from "../api/auth.service.js";
-import image from "../assets/images/auth-gradient-bg.png";
-import logo from "../assets/icons/sonara-mark.svg";
-import "../css/ResetPassword.css";
-import "../css/auth.css";
+import { forgotPassword, verifyResetCode } from "@api/auth.service.js";
+import image from "@assets/images/auth-gradient-bg.png";
+import logo from "@assets/icons/sonara-mark.svg";
+import "@css/ResetPassword.css";
+import "@css/auth.css";
 
 const CODE_LENGTH = 4;
 

@@ -1,7 +1,7 @@
-import BasePage from "../components/layout/BasePage.jsx";
-import Shelf from "../components/media/Shelf.jsx";
-import useHomeFeed from "../hooks/useHomeFeed.js";
-import { usePlayer } from "../contexts/player.store.js";
+import BasePage from "@components/layout/BasePage.jsx";
+import Shelf from "@components/media/Shelf.jsx";
+import useHomeFeed from "@hooks/useHomeFeed.js";
+import { usePlayer } from "@contexts/player.store.js";
 import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {

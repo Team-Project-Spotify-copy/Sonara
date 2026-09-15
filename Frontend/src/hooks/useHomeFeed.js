@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { feedQuery, SHELF_DEFINITIONS } from "../api/feed.query.js";
+import { feedQuery, SHELF_DEFINITIONS } from "@api/feed.query.js";
 
 const EMPTY_SHELVES = SHELF_DEFINITIONS.map((shelf) => ({ ...shelf, items: [] }));
 

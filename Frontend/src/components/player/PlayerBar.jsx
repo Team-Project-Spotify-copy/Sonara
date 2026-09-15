@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { usePlayer } from "../../contexts/player.store";
-import Glyph from "./Glyph.jsx";
-import PlayerStage from "./PlayerStage.jsx";
-import { formatTime } from "../../utils/time";
-import "../../css/PlayerBar.css";
+import { usePlayer } from "@contexts/player.store";
+import Glyph from "@components/player/Glyph.jsx";
+import PlayerStage from "@components/player/PlayerStage.jsx";
+import { formatTime } from "@utils/time";
+import "@css/PlayerBar.css";
 
 /** Time before the immersive view drops its chrome (Figma 661:3134). */
 const IDLE_DELAY = 2600;

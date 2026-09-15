@@ -1,7 +1,6 @@
-import React from "react";
-import Glyph from "./Glyph.jsx";
-import ambientBackdrop from "../../assets/player/rectangle-94.png";
-import grainOverlay from "../../assets/player/rectangle-50-tile.png";
+import Glyph from "@components/player/Glyph.jsx";
+import ambientBackdrop from "@assets/player/rectangle-94.png";
+import grainOverlay from "@assets/player/rectangle-50-tile.png";
 
 /**
  * Figma 661:3134 / 661:3167 - the immersive stage. It fills the shell's main

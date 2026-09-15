@@ -1,7 +1,6 @@
-import React from "react";
-import { usePlayer } from "../../contexts/player.store";
-import Glyph from "./Glyph.jsx";
-import "../../css/PlayerPanels.css";
+import { usePlayer } from "@contexts/player.store";
+import Glyph from "@components/player/Glyph.jsx";
+import "@css/PlayerPanels.css";
 
 /**
  * Figma 661:2827 - the lyrics rail docks beside the main panel and the panel

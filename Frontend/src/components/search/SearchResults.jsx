@@ -1,4 +1,4 @@
-import "../../css/Search.css";
+import "@css/Search.css";
 
 const GROUPS = [
   { key: "tracks", title: "Songs" },

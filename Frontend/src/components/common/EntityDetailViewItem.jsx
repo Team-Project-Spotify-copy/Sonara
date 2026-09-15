@@ -1,4 +1,4 @@
-import "../../css/EntityDetailViewItem.css";
+import "@css/EntityDetailViewItem.css";
 
 export default function EntityDetailViewItem({
   countPosition,

@@ -1,9 +1,9 @@
 import { useState, useContext, useEffect, useCallback } from "react";
 import axios from "axios";
-import image from "../../assets/images/subscription-hd-bg.png";
-import { buySubscription } from "../../utilites/blockchainUtils";
-import { AccountContext } from "../../contexts/account.store";
-import "../../css/SubscriptionPage.css";
+import image from "@assets/images/subscription-hd-bg.png";
+import { buySubscription } from "@utils/blockchainUtils";
+import { AccountContext } from "@contexts/account.store";
+import "@css/SubscriptionPage.css";
 
 export const PLAN_TYPE = Object.freeze({
   INDIVIDUAL: 0,
@@ -25,6 +25,7 @@ const STATUS = {
   CONFIRMED: "confirmed",
   ERROR: "error",
   TIMEOUT: "timeout",
+  YOUCANTBUYFREESUBSCRIPTION: "You cant buy free subscription",
 };
 
 const api = import.meta.env.VITE_API;
@@ -61,6 +62,18 @@ const waitForExpectedPlan = async (
   return null;
 };
 
+const getButtonLabel = (planType, isThisPlanBusy, isLoading, isCurrent) => {
+  if (isThisPlanBusy) return "Processing...";
+  if (isLoading) return "Loading...";
+  if (isCurrent) return "Your current plan";
+
+  if (planType === PLAN_TYPE.Free) {
+    return "Free Plan"; 
+  }
+
+  return `Get Premium ${PLAN_NAME_BY_TYPE[planType]}`;
+};
+
 export default function Subscription() {
   const { userId, accessToken } = useContext(AccountContext);
 
@@ -83,6 +96,15 @@ export default function Subscription() {
     }
     loadCurrentSubscription();
   }, [userId, accessToken, loadCurrentSubscription]);
+
+  useEffect(() => {
+    if (status === STATUS.YOUCANTBUYFREESUBSCRIPTION) {
+      const timer = setTimeout(() => {
+        setStatus(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
 
   const handleBuySubscription = async (planType) => {
     if (!userId) {
@@ -115,6 +137,8 @@ export default function Subscription() {
   };
 
   const statusMessage = {
+    [STATUS.YOUCANTBUYFREESUBSCRIPTION]:
+      "Ви не можете придбати підписку free...",
     [STATUS.PENDING]: "Підтвердіть транзакцію в MetaMask...",
     [STATUS.CONFIRMING]: "Транзакція підтверджена, активуємо підписку...",
     [STATUS.CONFIRMED]: "Підписку активовано! 🎉",
@@ -201,24 +225,12 @@ export default function Subscription() {
           {subscriptionPlans.map((card, index) => {
             const isThisPlanBusy = isBusy && activePlan === card.planType;
             const isCurrentPlan = currentSubscription?.plan?.name === card.Name;
-            const planNames = {
-              0: "Individual",
-              1: "Duo",
-              2: "Family",
-              3: "Free",
-            };
-
-            let buttonLabel = `Get Premium ${planNames[card.planType]}`;
-            if (isThisPlanBusy) buttonLabel = "Processing...";
-            else if (isLoadingSubscription) buttonLabel = "Loading...";
-            else if (isCurrentPlan) buttonLabel = "Your current plan";
-
             const isDisabled = isBusy || isLoadingSubscription || isCurrentPlan;
 
             return (
               <div
                 key={index}
-                className={`plan-card ${planNames[card.planType]}`}
+                className={`plan-card ${PLAN_NAME_BY_TYPE[card.planType]}`}
               >
                 <div>
                   <p className="plan-name">{card.Name}</p>
@@ -243,11 +255,22 @@ export default function Subscription() {
                 </div>
 
                 <button
-                  className={"plan-button"}
+                  className="plan-button"
                   disabled={isDisabled}
-                  onClick={() => handleBuySubscription(card.planType)}
+                  onClick={() => {
+                    if (card.planType === PLAN_TYPE.Free) {
+                      setStatus(STATUS.YOUCANTBUYFREESUBSCRIPTION);
+                      return;
+                    }
+                    handleBuySubscription(card.planType);
+                  }}
                 >
-                  {buttonLabel}
+                  {getButtonLabel(
+                    card.planType,
+                    isThisPlanBusy,
+                    isLoadingSubscription,
+                    isCurrentPlan,
+                  )}
                 </button>
 
                 <p className="plan-description">

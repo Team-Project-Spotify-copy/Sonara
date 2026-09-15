@@ -1,6 +1,6 @@
-import api from "./client.js";
-import { ENDPOINTS } from "./endpoints.js";
-import { normalizeBuckets, EMPTY_RESULTS } from "./media.adapter.js";
+import api from "@api/client.js";
+import { ENDPOINTS } from "@api/endpoints.js";
+import { normalizeBuckets, EMPTY_RESULTS } from "@api/media.adapter.js";
 
 export { EMPTY_RESULTS };
 

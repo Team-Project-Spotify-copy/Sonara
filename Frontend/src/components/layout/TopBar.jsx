@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SearchField from "../search/SearchField.jsx";
-import SearchResults from "../search/SearchResults.jsx";
-import { useAccount } from "../../contexts/account.store";
-import settingsIcon from "../../assets/icons/settings.svg";
-import homeIcon from "../../assets/icons/home.svg";
-import searchIcon from "../../assets/icons/search.svg";
-import accountIcon from "../../assets/icons/account.svg";
-import "../../css/TopBar.css";
-import "../../css/auth.css";
+import SearchField from "@components/search/SearchField.jsx";
+import SearchResults from "@components/search/SearchResults.jsx";
+import { useAccount } from "@contexts/account.store";
+import settingsIcon from "@assets/icons/settings.svg";
+import homeIcon from "@assets/icons/home.svg";
+import searchIcon from "@assets/icons/search.svg";
+import accountIcon from "@assets/icons/account.svg";
+import "@css/TopBar.css";
+import "@css/auth.css";
 
 const PANEL_ID = "topbar-search-panel";
 

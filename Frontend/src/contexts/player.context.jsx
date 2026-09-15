@@ -5,9 +5,9 @@ import {
   registerListen,
   sendListenBeacon,
   setLiked as setLikedRequest,
-} from "../api/music";
-import { errorCode, getAccessToken } from "../api/client";
-import { PlayerContext, REPEAT_MODES } from "./player.store";
+} from "@api/music";
+import { errorCode, getAccessToken } from "@api/client";
+import { PlayerContext, REPEAT_MODES } from "@contexts/player.store";
 
 const SAS_REFRESH_MARGIN_MS = 30_000;
 

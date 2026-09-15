@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Aprila';
-  src: url('../src/assets/fonts/Aprila-Bold.otf') format('opentype');
+  src: url('@assets/fonts/Aprila-Bold.otf') format('opentype');
   font-weight: normal;
   font-style: normal;
 }

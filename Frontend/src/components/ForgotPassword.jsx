@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { forgotPassword } from "../api/auth.service.js";
-import image from "../assets/images/reset-ps-bg.png";
-import "../css/ResetPassword.css";
-import "../css/auth.css";
+import { forgotPassword } from "@api/auth.service.js";
+import image from "@assets/images/reset-ps-bg.png";
+import "@css/ResetPassword.css";
+import "@css/auth.css";
 
 function ForgotPassword() {
   const navigate = useNavigate();

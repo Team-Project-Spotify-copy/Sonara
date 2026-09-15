@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { libraryQuery } from "../api/library.query.js";
-import { AccountContext } from "../contexts/account.store";
+import { libraryQuery } from "@api/library.query.js";
+import { AccountContext } from "@contexts/account.store";
 
 export default function useLibrary() {
   const [items, setItems] = useState([]);

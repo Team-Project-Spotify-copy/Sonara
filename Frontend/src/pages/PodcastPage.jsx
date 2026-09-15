@@ -1,5 +1,5 @@
-import BasePage from "../components/layout/BasePage.jsx";
-import Podcast from "./playlist/Podcst.jsx";
+import BasePage from "@components/layout/BasePage.jsx";
+import Podcast from "@components/playlist/Podcst.jsx";
 
 export default function PodcastPage() {
   return (

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import styles from "../../css/EditProfile.module.css"; 
+import styles from "@css/EditProfile.module.css"; 
 
 export default function EditProfileForm({
   profile,

@@ -1,6 +1,6 @@
-import backdropUrl from "../../assets/images/login-bg.png";
-import "../../css/tokens.css";
-import "../../css/AppShell.css";
+import backdropUrl from "@assets/images/login-bg.png";
+import "@css/tokens.css";
+import "@css/AppShell.css";
 
 export default function AppShell({
   topBar,
