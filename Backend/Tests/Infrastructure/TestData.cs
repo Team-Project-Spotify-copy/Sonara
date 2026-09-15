@@ -6,8 +6,8 @@ namespace Sonara.Tests.Infrastructure;
 
 public static class TestData
 {
-    public static readonly Guid SeededUserRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-    public static readonly Guid SeededFreeSubscriptionId = Guid.Parse("22222222-2222-2222-2222-111111111111");
+    public static readonly Guid UserRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+    public static readonly Guid FreePlanId = Guid.Parse("22222222-2222-2222-2222-111111111111");
 
     public static User NewUser(string username)
     {
@@ -17,8 +17,9 @@ public static class TestData
             Username = username,
             Email = $"{username}@tests.local",
             PasswordHash = "not-a-real-hash",
-            RoleId = SeededUserRoleId,
-            ActiveSubscriptionId = SeededFreeSubscriptionId,
+            RoleId = UserRoleId,
+            // References a UserSubscription, not a plan: a fixture user has none.
+            ActiveSubscriptionId = null,
             CreatedAt = DateTime.UtcNow
         };
     }

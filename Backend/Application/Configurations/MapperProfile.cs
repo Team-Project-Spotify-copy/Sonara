@@ -90,7 +90,8 @@ namespace BusinessLogic.Configurations
                 .ForMember(dest => dest.CountFollowers, opt => opt.MapFrom(src => src.Followers.Count))
                 .ForMember(dest => dest.IsFollowing, opt => opt.Ignore())
                 .ForMember(dest => dest.Playlists, opt => opt.MapFrom(src => src.Playlists))
-                .ForMember(dest => dest.History, opt => opt.MapFrom(src => src.ListeningHistories));
+                .ForMember(dest => dest.History, opt => opt.MapFrom(src =>
+                    src.ListeningHistories.OrderByDescending(h => h.ListenedAt)));
 
             CreateMap<UpdateProfileDto, User>().ReverseMap();
         }

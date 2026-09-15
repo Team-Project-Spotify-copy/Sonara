@@ -9,9 +9,12 @@ export default function HomePage() {
   const { setQueueAndPlay } = usePlayer();
   const navigate = useNavigate();
 
-  const handleSelect = (item) => {
+  const handleSelect = (item, shelfItems = []) => {
     if (item.kind === "track") {
-      setQueueAndPlay([item], 0, { autoplay: true });
+      const tracks = shelfItems.filter((entry) => entry.kind === "track");
+      const startIndex = tracks.indexOf(item);
+
+      setQueueAndPlay(tracks.length ? tracks : [item], Math.max(0, startIndex), { autoplay: true });
       navigate(`/song/${item.id}`);
     }
     if (item.kind === "playlist") navigate(`/playlist/${item.title}`);

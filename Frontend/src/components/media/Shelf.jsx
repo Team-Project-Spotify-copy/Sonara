@@ -12,8 +12,13 @@ export default function Shelf({ title, items = [], shape, loading = false, onSel
       <div className="shelf__row">
         {showSkeletons
           ? SKELETONS.map((i) => <MediaCard key={i} item={null} shape={shape} />)
-          : items.map((item) => (
-              <MediaCard key={item.id} item={item} shape={shape} onSelect={onSelect} />
+          : items.map((item, index) => (
+              <MediaCard
+                key={item.id}
+                item={item}
+                shape={shape}
+                onSelect={() => onSelect?.(item, items, index)}
+              />
             ))}
       </div>
       {!loading && items.length === 0 && <p className="shelf__empty">Nothing here yet.</p>}

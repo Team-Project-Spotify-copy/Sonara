@@ -2,6 +2,7 @@ export const ENDPOINTS = {
   search: "/search",
   feed: "/feed",
   library: "/library",
+  recommendations: "/recommendations",
   stream: (trackId) => `/tracks/${trackId}/stream`,
 };
 

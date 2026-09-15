@@ -83,6 +83,7 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 builder.Services.AddScoped<ILibraryServices, LibraryServices>();
 builder.Services.AddScoped<ITrackInteractionService, TrackInteractionService>();
+builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddStackExchangeRedisCache(options =>
 {

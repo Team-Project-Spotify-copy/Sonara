@@ -50,9 +50,12 @@ export default function BasePage({
   const searching = query.trim().length >= MIN_QUERY_LENGTH;
 
   const defaultHandleSelect = useCallback(
-    (item) => {
+    (item, shelfItems = []) => {
       if (item.kind === "track") {
-        setQueueAndPlay([item], 0, { autoplay: true });
+        const tracks = shelfItems.filter((entry) => entry.kind === "track");
+        const startIndex = tracks.indexOf(item);
+
+        setQueueAndPlay(tracks.length ? tracks : [item], Math.max(0, startIndex), { autoplay: true });
         navigate(`/song/${item.id}`);
       }
       if (item.kind === "playlist") navigate(`/playlist/${item.title}`);
