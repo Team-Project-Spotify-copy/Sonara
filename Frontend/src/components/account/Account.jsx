@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import image from "@assets/images/profile-bg.png";
 import Shelf from "@components/media/Shelf";
-import EditProfileForm from "@components/user/EditProfileForm";
+import EditProfileForm from "@components/account/EditProfileForm";
 import useRecommendations from "@hooks/useRecommendations";
 import "@css/Account.css";
 
