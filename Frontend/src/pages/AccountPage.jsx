@@ -1,5 +1,5 @@
 import BasePage from "@components/layout/BasePage.jsx";
-import Account from "@components/user/Account.jsx";
+import Account from "@components/account/Account.jsx";
 import { usePlayer } from "@contexts/player.store.js";
 import { useNavigate } from "react-router-dom";
 
