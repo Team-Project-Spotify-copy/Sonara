@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../../css/AddEntityModal.css";
+import "@css/AddEntityModal.css";
 
 export default function AddEntityModal({ type, onClose, onSuccess }) {
   const [formData, setFormData] = useState({

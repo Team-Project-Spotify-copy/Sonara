@@ -225,3 +225,37 @@
 }
 
 .rail:not(.rail--expanded) .rail__empty { display: none; }
+
+.rail__create-wrapper {
+  position: relative;
+}
+
+.rail__create-menu {
+  position: absolute;
+  top: 100%;
+  right: 0px;
+  left: -22px;
+  margin-top: 12px;
+  background: #504f4f;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+  z-index: 20;
+  overflow: hidden;
+}
+
+.rail__create-menu button {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.rail__create-menu button:hover {
+  background: rgba(255, 255, 255, 0.08);
+}

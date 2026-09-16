@@ -10,7 +10,6 @@
     overflow-y: auto;
     margin-bottom: 75px;
     box-sizing: border-box;
-    /* scrollbar-width: none; */
 }
 
 .library-container::-webkit-scrollbar {
@@ -32,7 +31,7 @@
     width: 170px;
     height: 52px;
     background-color: #504F4F;
-    color: #FFFFFF;
+    color: white;
     border: none;
     margin-right: 20px;
     padding: 16px 36px 16px 36px;
@@ -47,7 +46,7 @@
 }
 
 .btn-create-library:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.8 );
 }
 
 .create-plus-icon {

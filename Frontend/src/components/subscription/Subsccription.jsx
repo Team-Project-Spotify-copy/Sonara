@@ -3,7 +3,7 @@ import axios from "axios";
 import image from "@assets/images/subscription-hd-bg.png";
 import { buySubscription } from "@utils/blockchainUtils";
 import { AccountContext } from "@contexts/account.store";
-import "@css/SubscriptionPage.css";
+import "@css/Subscription.css";
 
 export const PLAN_TYPE = Object.freeze({
   INDIVIDUAL: 0,
