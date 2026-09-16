@@ -2,7 +2,7 @@ import { useState } from "react";
 import OtpInput from "react-otp-input";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { forgotPassword, verifyResetCode } from "@api/auth.service.js";
-import image from "@assets/images/auth-gradient-bg.png";
+import image from "@assets/images/forgot-ps-bg.png";
 import logo from "@assets/icons/sonara-mark.svg";
 import "@css/ResetPassword.css";
 import "@css/auth.css";
@@ -71,7 +71,12 @@ function ResetPassword() {
   return (
     <div className="reset-password-page reset-password-page--fluid">
       <div className="reset-password-container">
-        <button type="button" className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+        <button
+          type="button"
+          className="back-btn"
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+        >
           <svg
             width="32"
             height="32"
@@ -97,7 +102,11 @@ function ResetPassword() {
           </p>
 
           <div className="reset-password-form-wrapper">
-            <form className="reset-password-form" onSubmit={onSubmit} noValidate>
+            <form
+              className="reset-password-form"
+              onSubmit={onSubmit}
+              noValidate
+            >
               {error && (
                 <p className="auth-message auth-message--error" role="alert">
                   {error}
@@ -115,14 +124,35 @@ function ResetPassword() {
                   onChange={handleChange}
                   numInputs={CODE_LENGTH}
                   renderSeparator={<span className="otp-separator"> </span>}
-                  renderInput={(props) => <input {...props} disabled={submitting} />}
+                  renderInput={(props) => (
+                    <input
+                      {...props}
+                      disabled={submitting}
+                      style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
+                    />
+                  )}
                   inputStyle="otp-field"
                   shouldAutoFocus
                 />
               </div>
 
-              <button type="submit" className="reset-password-btn" disabled={submitting}>
-                {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
+              <button
+                type="submit"
+                className="reset-password-btn"
+                disabled={submitting}
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                {submitting && (
+                  <span
+                    className="auth-spinner auth-spinner--inline"
+                    aria-hidden="true"
+                  />
+                )}
                 {submitting ? "Verifying…" : "Continue"}
               </button>
             </form>

@@ -3,7 +3,7 @@ import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useNavigate, Link } from "react-router-dom";
 import { resolveCaptchaToken } from "@utils/recaptcha";
 import { useAccount } from "@contexts/account.store";
-import image from "@assets/images/auth-gradient-bg.png";
+import image from "@assets/images/register-bg.png";
 import logo from "@assets/icons/sonara-mark.svg";
 import "@css/Register.css";
 import "@css/auth.css";
@@ -96,6 +96,7 @@ function Register() {
                   autoComplete="email"
                   disabled={submitting}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
@@ -112,6 +113,7 @@ function Register() {
                   autoComplete="new-password"
                   disabled={submitting}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
@@ -128,25 +130,15 @@ function Register() {
                   autoComplete="new-password"
                   disabled={submitting}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
-              <button type="submit" className="btn-primary" disabled={submitting}>
+              <button type="submit" className="btn-primary" disabled={submitting} style={{ backgroundColor: "white", color: "black",  fontSize: "18px", fontWeight: 500, }}>
                 {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
                 {submitting ? "Creating account…" : "Continue"}
               </button>
             </form>
-
-            <p className="register-divider">or</p>
-
-            <div className="register-social-group">
-              <button type="button" className="btn-social" disabled title="Not available yet">
-                Google
-              </button>
-              <button type="button" className="btn-social" disabled title="Not available yet">
-                Facebook
-              </button>
-            </div>
 
             <p className="register-footer-text">
               Already have an account?{" "}
