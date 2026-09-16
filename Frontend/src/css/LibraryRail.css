@@ -13,6 +13,8 @@
   overflow: hidden;
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
+  /* height: 728px; */
+  /* margin-bottom: var(--space-4); */
 }
 
 /* Fade over the rail's right edge so clipped labels dissolve rather than cut.

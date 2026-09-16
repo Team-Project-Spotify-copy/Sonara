@@ -1,4 +1,4 @@
-import image from "@assets/images/register-bg.png";
+import image from "@assets/images/login-bg.png";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
