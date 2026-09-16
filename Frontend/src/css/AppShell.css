@@ -115,7 +115,6 @@
   overflow-x: hidden;
   /* Figma 707:3857 - main panel pt-32 px-32, sections 52 apart. */
   /* padding: var(--panel-padding) var(--panel-padding) var(--space-8); */
-  padding: var(--panel-padding) var(--panel-padding) var(--panel-padding-bottom, var(--space-8));
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
