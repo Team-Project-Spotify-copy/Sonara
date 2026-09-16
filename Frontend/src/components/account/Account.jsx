@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { AccountContext } from "@contexts/account.store";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import image from "@assets/images/profile-bg.png";
+import image from "@assets/images/subscription-hd-bg.png";
+import avatar from "@assets/images/standart-avatar.png";
 import Shelf from "@components/media/Shelf";
 import EditProfileForm from "@components/account/EditProfileForm";
 import useRecommendations from "@hooks/useRecommendations";
@@ -123,7 +124,7 @@ export default function Account({ onSelect, onLibraryChange }) {
         }}
       >
         <img
-          src={profile.avatarUrl || image}
+          src={profile.avatarUrl || avatar}
           alt="userAvatar"
           className="profile-avatar"
         />

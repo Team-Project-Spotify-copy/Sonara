@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { AccountContext } from "@contexts/account.store";
 import EntityDetailViewItem from "@components/common/EntityDetailViewItem";
-import image from "@assets/images/playlist-header-bg.png";
+import image from "@assets/images/subscription-hd-bg.png";
 import axios from "axios";
 import { usePlayer } from "@contexts/player.store";
 import AddEntityModal from "@components/common/AddEntityModal";

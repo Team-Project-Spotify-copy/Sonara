@@ -71,7 +71,7 @@ export default function EditProfileForm({
         <form onSubmit={handleSubmit}>
           <div className={styles.avatarUploadSection}>
             <img
-              src={avatarPreview || "../../assets/images/profile.png"}
+              src={avatarPreview || "@assets/images/profile.png"}
               alt="Avatar Preview"
               className={styles.avatarPreview}
             />
