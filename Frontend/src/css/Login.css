@@ -47,6 +47,7 @@
     margin-top: 16px;
     margin-bottom: 0;
     width: 425px;
+    margin-bottom: 75px;
 }
 
 .login-form-wrapper {
@@ -59,7 +60,7 @@
 .login-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .login-divider {
@@ -84,6 +85,11 @@
     font-size: 14px;
     line-height: 1.4;
     margin-top: 8px;
+}
+
+.form-input {
+    background-color: #1b1b1b;
+    color: white;
 }
 
 /* Design gutters: 100px around, 20px between card and panel. At 1920x1080 this

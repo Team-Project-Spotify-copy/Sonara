@@ -1,17 +1,10 @@
-import bookIcon from "../../assets/icons/book.svg";
-import plusIcon from "../../assets/icons/plus.svg";
-import "../../css/LibraryRail.css";
+import { useState } from "react";
+import bookIcon from "@assets/icons/book.svg";
+import plusIcon from "@assets/icons/plus.svg";
+import AddEntityModal from "@components/library/AddEntityModal.jsx";
+import "@css/LibraryRail.css";
 
 const SKELETON_ROWS = Array.from({ length: 7 }, (_, i) => i);
-
-/**
- * Figma 707:3845 (collapsed, 125px) and 707:4772 (expanded, 415px).
- *
- * Both states render the same rows; collapsing narrows the rail so the label
- * column is clipped and only the 93px artwork stays visible. The Copper button
- * is the toggle in both states — in the collapsed rail the two buttons stack
- * vertically, in the expanded rail they sit beside the "Library" heading.
- */
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -20,18 +13,32 @@ const FILTERS = [
   { key: "artists", label: "Artist" },
 ];
 
+const ADD_OPTIONS = [
+  { key: "podcast", label: "New Podcast" },
+  { key: "playlist", label: "New Playlist" },
+  { key: "album", label: "New Album" },
+  { key: "artist", label: "Follow Artist" },
+];
+
 export default function LibraryRail({
   items = [],
   loading = false,
   error = null,
   onSelect,
-  onCreate,
   expanded = false,
   onToggleExpanded,
   filter = "all",
   onFilterChange,
 }) {
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState(null);
+
   const showSkeletons = loading && items.length === 0;
+
+  const handleAddOptionSelect = (type) => {
+    setIsAddMenuOpen(false);
+    setActiveModal(type);
+  };
 
   const toggleButton = (
     <button
@@ -46,18 +53,45 @@ export default function LibraryRail({
   );
 
   const createButton = (
-    <button type="button" className="rail__action" aria-label="Create playlist" onClick={onCreate}>
-      <img src={plusIcon} alt="" aria-hidden="true" width="24" height="24" />
-    </button>
+    <div className="rail__create-wrapper">
+      <button
+        type="button"
+        className="rail__action"
+        aria-label="Create"
+        aria-expanded={isAddMenuOpen}
+        onClick={() => setIsAddMenuOpen((prev) => !prev)}
+      >
+        <img src={plusIcon} alt="" aria-hidden="true" width="24" height="24" />
+      </button>
+
+      {isAddMenuOpen && (
+        <div className="rail__create-menu">
+          {ADD_OPTIONS.map((opt) => (
+            <button
+              key={opt.key}
+              type="button"
+              onClick={() => handleAddOptionSelect(opt.key)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 
   const visibleItems =
     filter === "all"
       ? items
-      : items.filter((item) => `${item.kind}s` === filter || item.kind === filter);
+      : items.filter(
+          (item) => `${item.kind}s` === filter || item.kind === filter,
+        );
 
   return (
-    <nav className={`rail${expanded ? " rail--expanded" : ""}`} aria-label="Library">
+    <nav
+      className={`rail${expanded ? " rail--expanded" : ""}`}
+      aria-label="Library"
+    >
       {expanded ? (
         <div className="rail__header">
           <div className="rail__header-top">
@@ -67,7 +101,11 @@ export default function LibraryRail({
               {toggleButton}
             </div>
           </div>
-          <div className="rail__filters" role="tablist" aria-label="Filter library">
+          <div
+            className="rail__filters"
+            role="tablist"
+            aria-label="Filter library"
+          >
             {FILTERS.map((f) => (
               <button
                 key={f.key}
@@ -110,13 +148,17 @@ export default function LibraryRail({
                   <button
                     type="button"
                     className="rail__item"
-                    title={expanded ? undefined : `${item.title} — ${item.subtitle}`}
+                    title={
+                      expanded ? undefined : `${item.title} — ${item.subtitle}`
+                    }
                     onClick={() => onSelect?.(item)}
                   >
                     <span
                       className={`rail__art${item.kind === "artist" ? " rail__art--round" : ""}`}
                       style={
-                        item.imageUrl ? { backgroundImage: `url(${item.imageUrl})` } : undefined
+                        item.imageUrl
+                          ? { backgroundImage: `url(${item.imageUrl})` }
+                          : undefined
                       }
                     />
                     <span className="rail__meta">
@@ -131,6 +173,18 @@ export default function LibraryRail({
 
       {!loading && !error && visibleItems.length === 0 && (
         <p className="rail__empty">Your library is empty.</p>
+      )}
+
+      {activeModal && (
+        <AddEntityModal
+          type={activeModal}
+          onClose={() => setActiveModal(null)}
+          onSuccess={(newItem) => {
+            console.log("Успішно створено/додано:", newItem);
+            setActiveModal(null);
+            window.location.reload();
+          }}
+        />
       )}
     </nav>
   );

@@ -1,6 +1,6 @@
-import BasePage from "../components/layout/BasePage.jsx";
-import Account from "./user/Account.jsx";
-import { usePlayer } from "../contexts/player.store.js";
+import BasePage from "@components/layout/BasePage.jsx";
+import Account from "@components/account/Account.jsx";
+import { usePlayer } from "@contexts/player.store.js";
 import { useNavigate } from "react-router-dom";
 
 export default function AccountPage() {
@@ -15,7 +15,11 @@ export default function AccountPage() {
       const picked = item.track || item;
       const startIndex = tracks.indexOf(picked);
 
-      setQueueAndPlay(tracks.length ? tracks : [picked], Math.max(0, startIndex), { autoplay: true });
+      setQueueAndPlay(
+        tracks.length ? tracks : [picked],
+        Math.max(0, startIndex),
+        { autoplay: true },
+      );
       navigate(`/song/${item.id}`);
     }
     if (item.kind === "playlist") navigate(`/playlist/${item.title}`);

@@ -1,10 +1,9 @@
-import React from "react";
 import { Outlet } from "react-router-dom";
-import PlayerBar from "../components/player/PlayerBar.jsx";
-import QueueDrawer from "../components/player/QueueDrawer.jsx";
-import LyricsPanel from "../components/player/LyricsPanel.jsx";
-import { usePlayer } from "../contexts/player.store";
-import "../css/RootLayout.css";
+import PlayerBar from "@components/player/PlayerBar.jsx";
+import QueueDrawer from "@components/player/QueueDrawer.jsx";
+import LyricsPanel from "@components/player/LyricsPanel.jsx";
+import { usePlayer } from "@contexts/player.store";
+import "@css/RootLayout.css";
 
 export default function RootLayout() {
   const { hasStarted, currentTrack, viewMode, queueOpen, lyricsOpen } = usePlayer();

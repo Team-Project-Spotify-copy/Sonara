@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { AccountContext } from "../../contexts/account.store";
-import "../../css/AddEntityModal.css";
+import { AccountContext } from "@contexts/account.store";
+import "@css/AddEntityModal.css";
 
 export default function AddEntityModal({
   entityId,

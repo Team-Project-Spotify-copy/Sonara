@@ -1,5 +1,5 @@
-import MediaCard from "./MediaCard.jsx";
-import "../../css/Media.css";
+import MediaCard from "@components/media/MediaCard.jsx";
+import "@css/Media.css";
 
 const SKELETONS = Array.from({ length: 7 }, (_, i) => i);
 

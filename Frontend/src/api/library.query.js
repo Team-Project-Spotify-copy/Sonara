@@ -1,6 +1,6 @@
-import api from "./client.js";
-import { ENDPOINTS, USE_MOCKS } from "./endpoints.js";
-import { normalizeMediaItem, unwrap, pick } from "./media.adapter.js";
+import api from "@api/client.js";
+import { ENDPOINTS, USE_MOCKS } from "@api/endpoints.js";
+import { normalizeMediaItem, unwrap, pick } from "@api/media.adapter.js";
 
 const MOCK_LIBRARY = [
   { id: "lib-1", type: "playlist", title: "Liked Songs", artistName: "247 songs", shape: "square", audioUrl: null, },

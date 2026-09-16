@@ -1,5 +1,5 @@
-import BasePage from "../components/layout/BasePage.jsx";
-import Playlist from "./playlist/Playlist.jsx";
+import BasePage from "@components/layout/BasePage.jsx";
+import Playlist from "@components/playlist/Playlist.jsx";
 
 export default function PlaylistPage() {
   return (

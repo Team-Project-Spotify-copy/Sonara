@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
-import styles from "../../css/EditProfile.module.css"; 
+import styles from "@css/EditProfile.module.css"; 
 
 export default function EditProfileForm({
   profile,
@@ -71,7 +71,7 @@ export default function EditProfileForm({
         <form onSubmit={handleSubmit}>
           <div className={styles.avatarUploadSection}>
             <img
-              src={avatarPreview || "../../assets/images/profile.png"}
+              src={avatarPreview || "@assets/images/profile.png"}
               alt="Avatar Preview"
               className={styles.avatarPreview}
             />

@@ -6,8 +6,8 @@
 .song-page {
   box-sizing: border-box;
   min-height: 100dvh;
-  padding: var(--space-6) var(--shell-gutter)
-    calc(var(--player-offset, 0px) + var(--space-13));
+  /* padding: var(--space-6) var(--shell-gutter)
+    calc(var(--player-offset, 0px) + var(--space-13)); */
   background-color: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);

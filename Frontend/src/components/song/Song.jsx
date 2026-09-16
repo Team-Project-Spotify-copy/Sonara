@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { usePlayer } from "../contexts/player.store";
-import { getArtist, getTrack, getTracks } from "../api/music";
-import Glyph from "./player/Glyph.jsx";
-import ambientGradient from "../assets/player/song-ambient.svg";
-import grainOverlay from "../assets/player/rectangle-50-tile.png";
-import "../css/Song.css";
+import { usePlayer } from "@contexts/player.store";
+import { getArtist, getTrack, getTracks } from "@api/music";
+import Glyph from "@components/player/Glyph.jsx";
+import ambientGradient from "@assets/player/song-ambient.svg";
+import grainOverlay from "@assets/player/rectangle-50-tile.png";
+import "@css/Song.css";
 
 function formatPlays(count) {
   if (!Number.isFinite(count)) return null;

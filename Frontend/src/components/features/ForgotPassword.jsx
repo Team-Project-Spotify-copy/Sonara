@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { forgotPassword } from "../api/auth.service.js";
-import image from "../assets/images/reset-ps-bg.png";
-import "../css/ResetPassword.css";
-import "../css/auth.css";
+import { forgotPassword } from "@api/auth.service.js";
+import image from "@assets/images/forgot-ps-bg.png";
+import logo from "@assets/icons/sonara-mark.svg";
+import "@css/ResetPassword.css";
+import "@css/auth.css";
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -39,7 +40,12 @@ function ForgotPassword() {
   return (
     <div className="reset-password-page">
       <div className="reset-password-container">
-        <button type="button" className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+        <button
+          type="button"
+          className="back-btn"
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+        >
           <svg
             width="32"
             height="32"
@@ -57,15 +63,20 @@ function ForgotPassword() {
         </button>
 
         <div className="reset-password-intro">
-          <div className="reset-password-avatar"></div>
+          <img src={logo} alt="Sonara" className="login-logo" />
 
           <h1 className="reset-password-title">Forgot Your Password?</h1>
           <p className="reset-password-text-under-title">
-            Enter your email and we&apos;ll send you a <br /> code to reset your password.
+            Enter your email and we&apos;ll send you a <br /> code to reset your
+            password.
           </p>
 
           <div className="reset-password-form-wrapper">
-            <form className="reset-password-form" onSubmit={onSubmit} noValidate>
+            <form
+              className="reset-password-form"
+              onSubmit={onSubmit}
+              noValidate
+            >
               {error && (
                 <p className="auth-message auth-message--error" role="alert">
                   {error}
@@ -84,16 +95,32 @@ function ForgotPassword() {
                   autoComplete="email"
                   disabled={submitting}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
-              <button type="submit" className="reset-password-btn" disabled={submitting}>
-                {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
+              <button
+                type="submit"
+                className="reset-password-btn"
+                disabled={submitting}
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                {submitting && (
+                  <span
+                    className="auth-spinner auth-spinner--inline"
+                    aria-hidden="true"
+                  />
+                )}
                 {submitting ? "Sending…" : "Continue"}
               </button>
             </form>
 
-            <p className="reset-password-footer-text">
+            <p className="reset-password-footer-text" style={{marginTop: "-70px"}}>
               Remembered it?{" "}
               <Link to="/login" className="app-link">
                 Log in

@@ -1,11 +1,11 @@
-import image from "../../assets/images/library-bg.png";
-import "../../css/LibraryPage.css";
+import image from "@assets/images/login-bg.png";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import useLibrary from "../../hooks/useLibrary.js";
-import Shelf from "../media/Shelf.jsx";
-import AddEntityModal from "./AddEntityModal.jsx";
+import useLibrary from "@hooks/useLibrary.js";
+import Shelf from "@components/media/Shelf.jsx";
+import AddEntityModal from "@components/library/AddEntityModal.jsx";
+import "@css/Library.css";
 
 export default function Library() {
   const navigate = useNavigate();

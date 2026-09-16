@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { resetPassword } from "../api/auth.service.js";
-import image from "../assets/images/create-new-ps-bg.png";
-import "../css/CreateNewPassword.css";
-import "../css/auth.css";
+import { resetPassword } from "@api/auth.service.js";
+import image from "@assets/images/create-new-ps-bg.png";
+import logo from "@assets/icons/sonara-mark.svg";
+import "@css/CreateNewPassword.css";
+import "@css/auth.css";
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -58,7 +59,12 @@ function CreateNewPassword() {
   return (
     <div className="create-new-password-page">
       <div className="create-new-password-container">
-        <button type="button" className="back-btn" onClick={() => navigate(-1)} aria-label="Go back">
+        <button
+          type="button"
+          className="back-btn"
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
+        >
           <svg
             width="32"
             height="32"
@@ -76,12 +82,12 @@ function CreateNewPassword() {
         </button>
 
         <div className="create-new-password-intro">
-          <div className="create-new-password-avatar"></div>
+          <img src={logo} alt="Sonara" className="login-logo" />
 
           <h1 className="create-new-password-title">Create New Password</h1>
 
-          <div className="regsiter-form-wrapper">
-            <form className="regsiter-form" onSubmit={onSubmit} noValidate>
+          <div className="create-new-password-form-wrapper">
+            <form className="create-new-password-form" onSubmit={onSubmit} noValidate>
               {error && (
                 <p className="auth-message auth-message--error" role="alert">
                   {error}
@@ -106,6 +112,7 @@ function CreateNewPassword() {
                   autoComplete="new-password"
                   disabled={submitting || done}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
@@ -122,11 +129,27 @@ function CreateNewPassword() {
                   autoComplete="new-password"
                   disabled={submitting || done}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
-              <button type="submit" className="btn-primary" disabled={submitting || done}>
-                {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={submitting || done}
+                style={{
+                  backgroundColor: "white",
+                  color: "black",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                }}
+              >
+                {submitting && (
+                  <span
+                    className="auth-spinner auth-spinner--inline"
+                    aria-hidden="true"
+                  />
+                )}
                 {submitting ? "Saving…" : "Continue"}
               </button>
             </form>

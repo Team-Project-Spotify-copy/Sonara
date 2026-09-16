@@ -1,4 +1,4 @@
-import api, { API_BASE, setAccessToken } from "./client.js";
+import api, { API_BASE, setAccessToken } from "@api/client.js";
 import axios from "axios";
 
 /**

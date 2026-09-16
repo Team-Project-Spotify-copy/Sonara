@@ -1,4 +1,4 @@
-import { api, API_BASE, getAccessToken } from "./client";
+import { api, API_BASE, getAccessToken } from "@api/client";
 
 export async function getTracks({ page = 1, pageSize = 20, sort, artistId } = {}) {
   const { data } = await api.get("/tracks", {

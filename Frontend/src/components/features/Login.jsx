@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { useLocation, useNavigate, Link } from "react-router-dom";
-import { resolveCaptchaToken } from "../utils/recaptcha";
-import { useAccount } from "../contexts/account.store";
-import image from "../assets/images/auth-gradient-bg.png";
-import logo from "../assets/icons/sonara-mark.svg";
-import "../css/Login.css";
-import "../css/auth.css";
+import { resolveCaptchaToken } from "@utils/recaptcha";
+import { useAccount } from "@contexts/account.store";
+import image from "@assets/images/login-bg.png";
+import logo from "@assets/icons/sonara-mark.svg";
+import "@css/Login.css";
+import "@css/auth.css";
 
 function Login() {
   const { login } = useAccount();
@@ -81,6 +81,7 @@ function Login() {
                   autoComplete="email"
                   disabled={submitting}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
@@ -96,25 +97,26 @@ function Login() {
                   autoComplete="current-password"
                   disabled={submitting}
                   className="form-input"
+                  style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
                 />
               </div>
 
-              <button type="submit" className="btn-primary" disabled={submitting}>
-                {submitting && <span className="auth-spinner auth-spinner--inline" aria-hidden="true" />}
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={submitting}
+                style={{ backgroundColor: "white", color: "black",  fontSize: "18px", fontWeight: 500, }}
+              >
+                {submitting && (
+                  <span
+                    className="auth-spinner auth-spinner--inline"
+                    aria-hidden="true"
+                    
+                  />
+                )}
                 {submitting ? "Signing in…" : "Continue"}
               </button>
             </form>
-
-            <p className="login-divider">or</p>
-
-            <div className="login-social-group">
-              <button type="button" className="btn-social" disabled title="Not available yet">
-                Google
-              </button>
-              <button type="button" className="btn-social" disabled title="Not available yet">
-                Facebook
-              </button>
-            </div>
 
             <p className="login-footer-text">
               Don't have an account?{" "}

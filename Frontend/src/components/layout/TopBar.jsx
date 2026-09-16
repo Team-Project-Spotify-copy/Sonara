@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SearchField from "../search/SearchField.jsx";
-import SearchResults from "../search/SearchResults.jsx";
-import { useAccount } from "../../contexts/account.store";
-import settingsIcon from "../../assets/icons/settings.svg";
-import homeIcon from "../../assets/icons/home.svg";
-import searchIcon from "../../assets/icons/search.svg";
-import accountIcon from "../../assets/icons/account.svg";
-import "../../css/TopBar.css";
-import "../../css/auth.css";
+import SearchField from "@components/search/SearchField.jsx";
+import SearchResults from "@components/search/SearchResults.jsx";
+import { useAccount } from "@contexts/account.store";
+import settingsIcon from "@assets/icons/settings.svg";
+import homeIcon from "@assets/icons/home.svg";
+import searchIcon from "@assets/icons/search.svg";
+import accountIcon from "@assets/icons/account.svg";
+import "@css/TopBar.css";
+import "@css/auth.css";
 
 const PANEL_ID = "topbar-search-panel";
 
@@ -37,16 +37,19 @@ export default function TopBar({
   const { isAuthenticated, isLoading, username, email, logout } = useAccount();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
   const menuRef = useRef(null);
+  const settingsRef = useRef(null);
   const searchRef = useRef(null);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
 
     const onPointerDown = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) setMenuOpen(false);
+      if (menuRef.current && !menuRef.current.contains(event.target))
+        setMenuOpen(false);
     };
     const onKeyDown = (event) => {
       if (event.key === "Escape") setMenuOpen(false);
@@ -59,6 +62,26 @@ export default function TopBar({
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!settingsOpen) return undefined;
+
+    const onPointerDown = (event) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        setSettingsOpen(false);
+      }
+    };
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") setSettingsOpen(false);
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [settingsOpen]);
 
   useEffect(() => {
     if (!searchOpen) return undefined;
@@ -97,6 +120,14 @@ export default function TopBar({
     [onSearchSelect],
   );
 
+  const handleSettingsClick = () => {
+    if (onMenuClick) {
+      onMenuClick();
+      return;
+    }
+    setSettingsOpen((open) => !open);
+  };
+
   const handleAccountClick = () => {
     if (onProfileClick) {
       onProfileClick();
@@ -119,20 +150,51 @@ export default function TopBar({
 
   return (
     <div className="topbar">
-      <button
-        type="button"
-        className="topbar__control topbar__control--settings"
-        aria-label="Settings"
-        onClick={onMenuClick}
-      >
-        <img
-          src={settingsIcon}
-          alt=""
-          aria-hidden="true"
-          width="24"
-          height="24"
-        />
-      </button>
+      <div className="topbar__settings" ref={settingsRef}>
+        <button
+          type="button"
+          className="topbar__control topbar__control--settings"
+          aria-label="Settings"
+          aria-haspopup="menu"
+          aria-expanded={settingsOpen}
+          onClick={handleSettingsClick}
+        >
+          <img
+            src={settingsIcon}
+            alt=""
+            aria-hidden="true"
+            width="24"
+            height="24"
+          />
+        </button>
+
+        {settingsOpen && (
+          <div className="topbar__menu topbar__menu--settings" role="menu">
+            <button
+              type="button"
+              role="menuitem"
+              className="topbar__menu-item"
+              onClick={() => {
+                setSettingsOpen(false);
+                navigate("/subscriptions");
+              }}
+            >
+              Subscription
+            </button>
+            <button
+              type="button"
+              role="menuitem"
+              className="topbar__menu-item"
+              onClick={() => {
+                setSettingsOpen(false);
+                navigate("/library");
+              }}
+            >
+              Library
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="topbar__center">
         <button
@@ -171,7 +233,12 @@ export default function TopBar({
           </div>
 
           {searchOpen && (
-            <div className="search-panel" id={PANEL_ID} role="listbox" aria-label="Search results">
+            <div
+              className="search-panel"
+              id={PANEL_ID}
+              role="listbox"
+              aria-label="Search results"
+            >
               <SearchResults
                 query={query}
                 results={searchResults}
@@ -218,28 +285,6 @@ export default function TopBar({
             <p className="topbar__menu-identity">
               {username || email || "Signed in"}
             </p>
-            <button
-              type="button"
-              role="menuitem"
-              className="topbar__menu-item"
-              onClick={() => {
-                setMenuOpen(false);
-                navigate("/subscriptions");
-              }}
-            >
-              Subscription
-            </button>
-            <button
-              type="button"
-              role="menuitem"
-              className="topbar__menu-item"
-              onClick={() => {
-                setMenuOpen(false);
-                navigate("/library");
-              }}
-            >
-              Library
-            </button>
             <button
               type="button"
               role="menuitem"

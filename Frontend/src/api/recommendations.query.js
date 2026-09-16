@@ -1,6 +1,6 @@
-import api from "./client.js";
-import { ENDPOINTS } from "./endpoints.js";
-import { normalizeMediaItem, unwrap, pick } from "./media.adapter.js";
+import api from "@api/client.js";
+import { ENDPOINTS } from "@api/endpoints.js";
+import { normalizeMediaItem, unwrap, pick } from "@api/media.adapter.js";
 
 const DEFAULT_COUNT = 12;
 

@@ -131,7 +131,20 @@
 }
 
 .topbar__control--settings{
-  margin-left: 34px; /* replace */
+  margin-left: 25px; 
+}
+
+.topbar__settings {
+  position: relative;
+}
+
+.topbar__menu--settings {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  margin-left: 25px;
+  width: 100px;
 }
 
 @media (max-width: 900px) {
@@ -143,7 +156,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  margin-right: 30px; /* replace */
+  margin-right: 25px; /* replace */
 }
 
 .topbar__menu {

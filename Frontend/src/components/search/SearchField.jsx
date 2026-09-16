@@ -1,4 +1,4 @@
-import "../../css/Search.css";
+import "@css/Search.css";
 
 export default function SearchField({
   value,

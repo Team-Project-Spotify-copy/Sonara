@@ -1,13 +1,11 @@
-import backdropUrl from "../../assets/images/login-bg.png";
-import "../../css/tokens.css";
-import "../../css/AppShell.css";
+import "@css/tokens.css";
+import "@css/AppShell.css";
 
 export default function AppShell({
   topBar,
   rail,
   player,
   children,
-  showBackdrop = true,
   showMain = true,
   showRail = true,
   railExpanded = false,
@@ -25,28 +23,12 @@ export default function AppShell({
 
       {showMain ? (
         <main className="app-shell__main">
-          {showBackdrop && (
-            <img
-              className="app-shell__backdrop"
-              src={backdropUrl}
-              alt=""
-              aria-hidden="true"
-            />
-          )}
           <div style={style} className="app-shell__scroll">
             {children}
           </div>
         </main>
       ) : (
         <>
-          {showBackdrop && (
-            <img
-              className="app-shell__backdrop"
-              src={backdropUrl}
-              alt=""
-              aria-hidden="true"
-            />
-          )}
           <div style={style} className="app-shell__scroll">
             {children}
           </div>

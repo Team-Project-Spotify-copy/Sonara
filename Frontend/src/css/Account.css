@@ -54,11 +54,11 @@
     width: 152px;
     height: 40px;
     border-radius: 53px;
-    padding: 12px 36px;
-    background-color: #504F4F;
+    background-color: transparent;
     cursor: pointer;
     color: white;
-    border: none;
+    border: 2px solid white;
+    font-size: 16px;
 }
 
 .follow-btn {

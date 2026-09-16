@@ -1,5 +1,5 @@
-import BasePage from "../components/layout/BasePage.jsx";
-import Album from "./playlist/Album.jsx";
+import BasePage from "@components/layout/BasePage.jsx";
+import Album from "@components/playlist/Album.jsx";
 
 export default function AlbumPage() {
   return (

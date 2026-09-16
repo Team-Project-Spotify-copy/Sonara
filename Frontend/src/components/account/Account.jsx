@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { AccountContext } from "@contexts/account.store";
 import { useParams } from "react-router-dom";
-import image from "../../assets/images/profile-bg.png";
-import { AccountContext } from "../../contexts/account.store";
-import Shelf from "../media/Shelf";
-import EditProfileForm from "./EditProfileForm";
-import useRecommendations from "../../hooks/useRecommendations";
 import axios from "axios";
-import "../../css/Account.css";
+import image from "@assets/images/subscription-hd-bg.png";
+import avatar from "@assets/images/standart-avatar.png";
+import Shelf from "@components/media/Shelf";
+import EditProfileForm from "@components/account/EditProfileForm";
+import useRecommendations from "@hooks/useRecommendations";
+import "@css/Account.css";
 
 export default function Account({ onSelect, onLibraryChange }) {
   const { accessToken } = React.useContext(AccountContext);
@@ -123,7 +124,7 @@ export default function Account({ onSelect, onLibraryChange }) {
         }}
       >
         <img
-          src={profile.avatarUrl || image}
+          src={profile.avatarUrl || avatar}
           alt="userAvatar"
           className="profile-avatar"
         />

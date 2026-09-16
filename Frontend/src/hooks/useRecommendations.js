@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { recommendationsQuery } from "../api/recommendations.query.js";
-import { AccountContext } from "../contexts/account.store";
+import { recommendationsQuery } from "@api/recommendations.query.js";
+import { AccountContext } from "@contexts/account.store";
 
 export default function useRecommendations({ count, enabled = true } = {}) {
   const { accessToken } = useContext(AccountContext);

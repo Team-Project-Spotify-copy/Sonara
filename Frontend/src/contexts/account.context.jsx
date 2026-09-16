@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { AccountContext, AUTH_STATUS } from "./account.store";
-import { AUTH_EXPIRED_EVENT, getAccessToken, setAccessToken } from "../api/client.js";
-import * as authService from "../api/auth.service.js";
+import { AccountContext, AUTH_STATUS } from "@contexts/account.store";
+import { AUTH_EXPIRED_EVENT, getAccessToken, setAccessToken } from "@api/client.js";
+import * as authService from "@api/auth.service.js";
 
 export const AccountProvider = ({ children }) => {
   // The access token in localStorage is the single source of truth for "is there

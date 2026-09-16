@@ -1,4 +1,4 @@
-import "../../css/Search.css";
+import "@css/Search.css";
 
 const GROUPS = [
   { key: "tracks", title: "Songs" },
@@ -13,6 +13,7 @@ const SKELETONS = Array.from({ length: 4 }, (_, i) => i);
 
 function Row({ item, onSelect }) {
   const round = item.kind === "artist";
+  const image = item.imageUrl || item.raw?.avatarUrl;
 
   return (
     <li className="search-row">
@@ -23,11 +24,17 @@ function Row({ item, onSelect }) {
       >
         <span
           className={`search-row__art${round ? " search-row__art--round" : ""}`}
-          style={item.imageUrl ? { backgroundImage: `url(${item.imageUrl})` } : undefined}
+          style={
+            image
+              ? { backgroundImage: `url(${image})` }
+              : undefined
+          }
         />
         <span className="search-row__meta">
           <span className="search-row__title">{item.title}</span>
-          {item.subtitle && <span className="search-row__subtitle">{item.subtitle}</span>}
+          {item.subtitle && (
+            <span className="search-row__subtitle">{item.subtitle}</span>
+          )}
         </span>
       </button>
     </li>

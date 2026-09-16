@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from "react";
-import { usePlayer } from "../../contexts/player.store";
-import Glyph from "./Glyph.jsx";
-import { formatTime } from "../../utils/time";
-import "../../css/PlayerPanels.css";
-import "../../css/QueueDrawer.css";
+import { usePlayer } from "@contexts/player.store";
+import Glyph from "@components/player/Glyph.jsx";
+import { formatTime } from "@utils/time";
+import "@css/PlayerPanels.css";
+import "@css/QueueDrawer.css";
 
 export default function QueueDrawer() {
   const {
