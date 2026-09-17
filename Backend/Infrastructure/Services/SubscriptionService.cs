@@ -91,7 +91,9 @@ public class SubscriptionService : ISubscriptionService
 
     public async Task<UserSubscriptionDto> ProcessBlockchainPurchaseAsync(Guid userId, byte planTypeByte, CancellationToken ct = default)
     {
-        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId, ct)
+        var user = await _db.Users
+            .Include(u => u.ActiveSubscription)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct)
             ?? throw new InvalidOperationException("User not found");
 
         string planName = planTypeByte switch
@@ -105,7 +107,16 @@ public class SubscriptionService : ISubscriptionService
         var plan = await _db.SubscriptionPlans.FirstOrDefaultAsync(p => p.Name == planName, ct)
             ?? throw new InvalidOperationException($"Plan {planName} not found");
 
-        var oldSubscription = await _db.UserSubscriptions.FirstOrDefaultAsync(s => s.OwnerId == user.Id, ct);
+        var oldSubscription = await _db.UserSubscriptions
+            .Include(s => s.Members)
+            .FirstOrDefaultAsync(s => s.OwnerId == user.Id, ct);
+
+        if (oldSubscription != null)
+        {
+            oldSubscription.Members.Clear();
+            _db.UserSubscriptions.Remove(oldSubscription);
+            await _db.SaveChangesAsync(ct);
+        }
 
         var newSubscription = new UserSubscription
         {
@@ -116,14 +127,9 @@ public class SubscriptionService : ISubscriptionService
         };
 
         newSubscription.Members.Add(user);
-
         user.ActiveSubscriptionId = newSubscription.Id;
 
         await _db.UserSubscriptions.AddAsync(newSubscription, ct);
-
-        if (oldSubscription != null)
-            _db.UserSubscriptions.Remove(oldSubscription);
-
         await _db.SaveChangesAsync(ct);
 
         return _mapper.Map<UserSubscriptionDto>(newSubscription);

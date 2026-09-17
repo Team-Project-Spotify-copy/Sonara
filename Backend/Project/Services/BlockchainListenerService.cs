@@ -14,6 +14,10 @@ public class BlockchainListenerService : BackgroundService
     private readonly Web3 _web3;
     private readonly string _contractAddress;
 
+    // скільки разів підряд опитування ноди може провалитись, перш ніж
+    // ми почнемо чекати довше (backoff), а не молотити раз на 10с у нікуди
+    private int _consecutiveErrors = 0;
+
     public BlockchainListenerService(
         ILogger<BlockchainListenerService> logger,
         IConfiguration configuration,
@@ -38,7 +42,16 @@ public class BlockchainListenerService : BackgroundService
 
         try
         {
-            lastProcessedBlock = await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
+            var startBlock = await _web3.Eth.Blocks.GetBlockNumber.SendRequestAsync();
+
+            // ВИПРАВЛЕННЯ гонки: починаємо на один блок РАНІШЕ поточного,
+            // а не рівно на поточному. Інакше, якщо покупка стається в тому
+            // самому блоці, де ми щойно ініціалізувались (типово для
+            // instant-mining Hardhat-ноди), lastProcessedBlock == latestBlock
+            // на першій ітерації і подія з цього блоку НІКОЛИ не буде
+            // прочитана, бо цикл чекає на latestBlock.Value > lastProcessedBlock.Value.
+            var safeStart = startBlock.Value > 0 ? startBlock.Value - 1 : startBlock.Value;
+            lastProcessedBlock = new HexBigInteger(safeStart);
         }
         catch (Exception ex)
         {
@@ -53,9 +66,13 @@ public class BlockchainListenerService : BackgroundService
 
                 if (lastProcessedBlock == null)
                 {
-                    lastProcessedBlock = latestBlock;
+                    // навіть тут краще відступити на 1 блок назад, а не
+                    // "проковтнути" поточний блок мовчки
+                    var safe = latestBlock.Value > 0 ? latestBlock.Value - 1 : latestBlock.Value;
+                    lastProcessedBlock = new HexBigInteger(safe);
                 }
-                else if (latestBlock.Value > lastProcessedBlock.Value)
+
+                if (latestBlock.Value > lastProcessedBlock.Value)
                 {
                     var nextBlockHex = new HexBigInteger(lastProcessedBlock.Value + 1);
 
@@ -69,13 +86,17 @@ public class BlockchainListenerService : BackgroundService
                     foreach (var change in changes)
                     {
                         var log = change.Event;
-                        _logger.LogInformation("Отримано івент! UserId (string): {UserId}, Plan: {Plan}", log.UserId, log.PlanType);
+                        _logger.LogInformation(
+                            "Отримано івент! UserId (string): {UserId}, Plan: {Plan}, Buyer: {Buyer}",
+                            log.UserId, log.PlanType, log.Buyer);
 
                         await ProcessSubscriptionAsync(log, stoppingToken);
                     }
 
                     lastProcessedBlock = latestBlock;
                 }
+
+                _consecutiveErrors = 0;
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
@@ -83,12 +104,21 @@ public class BlockchainListenerService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Помилка при зчитуванні івентів через HTTP.");
+                _consecutiveErrors++;
+                _logger.LogError(ex,
+                    "Помилка при зчитуванні івентів через HTTP (спроба {Attempt} поспіль).",
+                    _consecutiveErrors);
             }
+
+            // Backoff: якщо нода недоступна кілька разів підряд, не молотимо
+            // запити щосекунди — чекаємо довше, максимум 60с.
+            var delayMs = _consecutiveErrors == 0
+                ? 10000
+                : Math.Min(10000 * (_consecutiveErrors + 1), 60000);
 
             try
             {
-                await Task.Delay(10000, stoppingToken);
+                await Task.Delay(delayMs, stoppingToken);
             }
             catch (OperationCanceledException)
             {

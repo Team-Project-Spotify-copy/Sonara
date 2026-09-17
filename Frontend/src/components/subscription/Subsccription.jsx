@@ -45,10 +45,17 @@ const fetchMySubscription = async (accessToken) => {
   }
 };
 
+// ПРИМІТКА: звіряємо за назвою плану, як і раніше, ЩО КРИТИЧНО ЛАМАЄТЬСЯ,
+// якщо `plan.name` у БД не дорівнює буквально "Individual"/"Duo"/"Family".
+// Якщо після виправлення бекенда TIMEOUT все ще з'являється — перше, що
+// перевірити: значення Name у таблиці планів має збігатися 1:1 з цими
+// рядками (регістр і пробіли теж важливі). Найнадійніше рішення — додати
+// на бекенді в UserSubscriptionDto числове поле planType і звіряти по ньому
+// замість рядка.
 const waitForExpectedPlan = async (
   accessToken,
   expectedPlanName,
-  timeoutMs = 20000,
+  timeoutMs = 30000,
   intervalMs = 1500,
 ) => {
   const start = Date.now();
@@ -68,7 +75,7 @@ const getButtonLabel = (planType, isThisPlanBusy, isLoading, isCurrent) => {
   if (isCurrent) return "Your current plan";
 
   if (planType === PLAN_TYPE.Free) {
-    return "Free Plan"; 
+    return "Free Plan";
   }
 
   return `Get Premium ${PLAN_NAME_BY_TYPE[planType]}`;
@@ -109,6 +116,7 @@ export default function Subscription() {
   const handleBuySubscription = async (planType) => {
     if (!userId) {
       console.error("User is not authenticated");
+      setStatus(STATUS.ERROR);
       return;
     }
     if (status === STATUS.PENDING || status === STATUS.CONFIRMING) return;
@@ -188,7 +196,7 @@ export default function Subscription() {
     <div className="subscription-container">
       <div
         className="subscription-header"
-        style={{ backgroundImage: `url(${image})`}}
+        style={{ backgroundImage: `url(${image})` }}
       >
         <h1 className="subscription-header-text">
           Listen to music without limits.

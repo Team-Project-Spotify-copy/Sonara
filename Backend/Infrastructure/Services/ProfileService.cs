@@ -74,16 +74,16 @@ public class ProfileService : IProfileService
     {
         var mapUser = await _context.Users
             .AsNoTracking()
-            .Where(u => u.Username == username || u.ArtistProfile.Name == username) 
+            .Where(u => u.Username == username || (u.ArtistProfile != null && u.ArtistProfile.Name == username))
             .Select(u => new ProfileDto
             {
                 Email = u.Email,
-                ArtistName = u.ArtistProfile.Name,
+                ArtistName = u.ArtistProfile != null ? u.ArtistProfile.Name : string.Empty,
                 Username = u.Username,
                 AvatarUrl = u.AvatarUrl,
                 CreatedAt = u.CreatedAt,
                 CountPlaylist = u.Playlists.Count,
-                CountAlbum = u.ArtistProfile.Albums.Count,
+                CountAlbum = u.ArtistProfile != null ? u.ArtistProfile.Albums.Count : 0,
                 CountFollowers = u.Followers.Count,
                 IsFollowing = u.Followers.Any(f => f.FollowerId == userId),
 
@@ -145,7 +145,7 @@ public class ProfileService : IProfileService
             .Select(u => new ProfileDto
             {
                 Email = u.Email,
-                ArtistName = u.ArtistProfile != null ? u.ArtistProfile.Name : null,
+                ArtistName = u.ArtistProfile != null ? u.ArtistProfile.Name : string.Empty,
                 Username = u.Username,
                 AvatarUrl = u.AvatarUrl,
                 CreatedAt = u.CreatedAt,
