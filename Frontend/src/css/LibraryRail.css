@@ -175,6 +175,16 @@
 
 .rail__art--round { border-radius: var(--radius-round); }
 
+/* Collapsed rail: the panel is narrower than --rail-item-size, and the art
+   never shrinks, so cap it to the row width — otherwise the row's overflow
+   slices the right edge off every cover and avatar. The 2px matches the hover
+   nudge below, so the art stays whole while the row slides. */
+.rail:not(.rail--expanded) .rail__art {
+  width: min(var(--rail-item-size), 100% - 2px);
+  height: auto;
+  aspect-ratio: 1;
+}
+
 .rail__meta {
   display: flex;
   flex-direction: column;
