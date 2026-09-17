@@ -10,7 +10,7 @@ function slim(item) {
     kind: item.kind,
     title: item.title,
     subtitle: item.subtitle ?? "",
-    imageUrl: item.imageUrl ?? null,
+    imageUrl: item.imageUrl ?? item.raw?.avatarUrl ?? null,
     // Picking a track queues this entry straight into the player, which reads
     // the cover off artworkUrl - without it the player renders its placeholder.
     artworkUrl: item.artworkUrl ?? item.imageUrl ?? null,

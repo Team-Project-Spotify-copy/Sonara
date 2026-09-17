@@ -2,21 +2,56 @@ using Application.DTOs.Music;
 using Domain.Entities.Playlists;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 namespace Application.DTOs.Playlists;
 
-public record PlaylistDto(
-    Guid Id,
-    Guid UserId,
-    string OwnerUsername,
-    string Name,
-    string? Description,
-    bool IsPrivate,
-    string? CoverUrl,
-    DateTime CreatedAt,
-    int TracksCount,
-    int TotalDurationMs,
-    bool IsOwner);
+public record PlaylistDto
+{
+    public Guid Id { get; init; }
+    public Guid UserId { get; init; }
+    public string OwnerUsername { get; init; }
+    public string Name { get; init; }
+    public string? Description { get; init; }
+    public bool IsPrivate { get; init; }
+    public string? CoverUrl { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public int TracksCount { get; init; }
+    public int TotalDurationMs { get; init; }
+    public bool IsOwner { get; init; }
+
+    public PlaylistDto()
+    {
+        OwnerUsername = string.Empty;
+        Name = string.Empty;
+    }
+
+    public PlaylistDto(
+        Guid id,
+        Guid userId,
+        string ownerUsername,
+        string name,
+        string? description,
+        bool isPrivate,
+        string? coverUrl,
+        DateTime createdAt,
+        int tracksCount,
+        int totalDurationMs,
+        bool isOwner)
+    {
+        Id = id;
+        UserId = userId;
+        OwnerUsername = ownerUsername;
+        Name = name;
+        Description = description;
+        IsPrivate = isPrivate;
+        CoverUrl = coverUrl;
+        CreatedAt = createdAt;
+        TracksCount = tracksCount;
+        TotalDurationMs = totalDurationMs;
+        IsOwner = isOwner;
+    }
+}
 
 public record PlaylistTrackDto(
     int Position,

@@ -24,7 +24,7 @@ internal static class CatalogProjections
             DurationMs = t.DurationMs,
             Genres = t.TrackGenres.Select(tg => tg.Genre.Name).ToList(),
             PlaysCount = t.PlaysCount,
-            HasStream = t.AudioUrl != null && t.AudioUrl != "",
+            HasStream = !string.IsNullOrEmpty(t.AudioUrl),
             IsLiked = isAuthenticated && t.LikedByUsers.Any(l => l.UserId == userId),
             CreatedAt = t.CreatedAt
         };
@@ -50,7 +50,7 @@ internal static class CatalogProjections
                 DurationMs = h.Track.DurationMs,
                 Genres = h.Track.TrackGenres.Select(tg => tg.Genre.Name).ToList(),
                 PlaysCount = h.Track.PlaysCount,
-                HasStream = h.Track.AudioUrl != null && h.Track.AudioUrl != "",
+                HasStream = !string.IsNullOrEmpty(h.Track.AudioUrl),
                 IsLiked = h.Track.LikedByUsers.Any(l => l.UserId == userId),
                 CreatedAt = h.Track.CreatedAt
             }
@@ -78,7 +78,7 @@ internal static class CatalogProjections
                 DurationMs = pt.Track.DurationMs,
                 Genres = pt.Track.TrackGenres.Select(tg => tg.Genre.Name).ToList(),
                 PlaysCount = pt.Track.PlaysCount,
-                HasStream = pt.Track.AudioUrl != null && pt.Track.AudioUrl != "",
+                HasStream = !string.IsNullOrEmpty(pt.Track.AudioUrl),
                 IsLiked = isAuthenticated && pt.Track.LikedByUsers.Any(l => l.UserId == userId),
                 CreatedAt = pt.Track.CreatedAt
             }

@@ -219,7 +219,7 @@ public class PlaylistService : IPlaylistService
 
     private async Task<Playlist> FindOrThrowAsync(string playlistName, CancellationToken ct)
     {
-        var playlist = await _db.Playlists     
+        var playlist = await _db.Playlists
             .FirstOrDefaultAsync(p => p.Name == playlistName, ct);
 
         if (playlist is null)

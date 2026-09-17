@@ -4,5 +4,5 @@ namespace Application.Interfaces.Services;
 
 public interface ILibraryServices
 {
-    Task<List<LibraryItemDto>> GetLibraryAsync(Guid userId);
+    Task<List<LibraryItemDto>> GetLibraryAsync(Guid userId, CancellationToken ct = default);
 }

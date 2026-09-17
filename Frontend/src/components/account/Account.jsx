@@ -19,9 +19,10 @@ export default function Account({ onSelect, onLibraryChange }) {
   const api = import.meta.env.VITE_API;
   const isOwnProfile = !username;
 
-  const { items: recommendedItems, status: recommendedStatus } = useRecommendations({
-    enabled: isOwnProfile,
-  });
+  const { items: recommendedItems, status: recommendedStatus } =
+    useRecommendations({
+      enabled: isOwnProfile,
+    });
 
   useEffect(() => {
     GetAccountUser();
@@ -86,7 +87,6 @@ export default function Account({ onSelect, onLibraryChange }) {
       if (onLibraryChange) {
         onLibraryChange();
       }
-
     } catch (error) {
       console.error("Error toggling follow state:", error);
       GetAccountUser();
@@ -115,6 +115,18 @@ export default function Account({ onSelect, onLibraryChange }) {
       kind: "playlist",
     })) || [];
 
+  // Додано мапінг для альбомів (аналогічно до плейлистів)
+  const albumItems =
+    profile?.albums?.map((album) => ({
+      id: album.id,
+      title: album.title,
+      name: album.title,
+      imageUrl: album.coverUrl,
+      coverUrl: album.coverUrl,
+      subtitle: album.artistName,
+      kind: "album",
+    })) || [];
+
   return (
     <div className="account-wrapper">
       <div
@@ -130,8 +142,12 @@ export default function Account({ onSelect, onLibraryChange }) {
         />
 
         <div className="profile-info-container">
-          <p className="profile-username">{profile.username ?? "Username"}</p>
+          <p className="profile-username">
+            {profile.artistName ?? profile.username ?? "Username"}
+          </p>
           <p className="profile-stats">
+            {profile?.countAlbum ?? profile?.countAlbum ?? 0} album
+            <span className="profile-dot">•</span>{" "}
             {profile?.countPlaylist ?? profile?.CountPlaylist ?? 0} playlist{" "}
             <span className="profile-dot">•</span>{" "}
             {profile?.countFollowers ?? profile?.CountFollowers ?? 0} followers
@@ -170,8 +186,8 @@ export default function Account({ onSelect, onLibraryChange }) {
         )}
 
         <Shelf
-          title="Recent"
-          items={historyItems}
+          title="Albums"
+          items={albumItems}
           shape="square"
           loading={loading}
           onSelect={onSelect}
@@ -180,6 +196,14 @@ export default function Account({ onSelect, onLibraryChange }) {
         <Shelf
           title="Playlists"
           items={playlistItems}
+          shape="square"
+          loading={loading}
+          onSelect={onSelect}
+        />
+
+        <Shelf
+          title="Recent"
+          items={historyItems}
           shape="square"
           loading={loading}
           onSelect={onSelect}

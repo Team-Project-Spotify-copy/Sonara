@@ -89,48 +89,20 @@ public class SonaraDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
         });
 
-        // 6. Конфігурація для Підписок (UserSubscription)
         modelBuilder.Entity<UserSubscription>(entity =>
         {
             entity.HasKey(us => us.Id);
 
-            // Зв'язок із власником підписки
             entity.HasOne(us => us.Owner)
                   .WithMany()
                   .HasForeignKey(us => us.OwnerId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            // Зв'язок із тарифним планом
             entity.HasOne(us => us.Plan)
                   .WithMany()
                   .HasForeignKey(us => us.PlanId)
                   .OnDelete(DeleteBehavior.Restrict);
 
-            // Зв'язок "один до багатьох" для учасників підписки (Duo / Family)
-            entity.HasMany(us => us.Members)
-                  .WithOne(u => u.ActiveSubscription)
-                  .HasForeignKey(u => u.ActiveSubscriptionId)
-                  .OnDelete(DeleteBehavior.SetNull);
-        });
-
-        // 6. Конфігурація для Підписок (UserSubscription)
-        modelBuilder.Entity<UserSubscription>(entity =>
-        {
-            entity.HasKey(us => us.Id);
-
-            // Зв'язок із власником підписки
-            entity.HasOne(us => us.Owner)
-                  .WithMany()
-                  .HasForeignKey(us => us.OwnerId)
-                  .OnDelete(DeleteBehavior.Restrict);
-
-            // Зв'язок із тарифним планом
-            entity.HasOne(us => us.Plan)
-                  .WithMany()
-                  .HasForeignKey(us => us.PlanId)
-                  .OnDelete(DeleteBehavior.Restrict);
-
-            // Зв'язок "один до багатьох" для учасників підписки (Duo / Family)
             entity.HasMany(us => us.Members)
                   .WithOne(u => u.ActiveSubscription)
                   .HasForeignKey(u => u.ActiveSubscriptionId)
@@ -165,7 +137,7 @@ public class SonaraDbContext : DbContext
         modelBuilder.Entity<ListeningHistory>(entity =>
             entity.HasIndex(h => new { h.UserId, h.ListenedAt }).HasDatabaseName("IX_ListeningHistories_UserId_ListenedAt"));
 
-        SeedDataExtension.Seed(modelBuilder);
+        //SeedDataExtension.Seed(modelBuilder);
     }
 
     public DbSet<Album> Albums { get; set; }
