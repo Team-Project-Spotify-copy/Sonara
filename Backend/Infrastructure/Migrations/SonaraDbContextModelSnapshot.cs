@@ -50,10 +50,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.HasIndex("Title")
-                        .HasDatabaseName("IX_Albums_Title");
-
-                    b.ToTable("Albums");
+                    b.ToTable("Albums", (string)null);
 
                     b.HasData(
                         new
@@ -120,7 +117,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres");
+                    b.ToTable("Genres", (string)null);
 
                     b.HasData(
                         new
@@ -172,10 +169,9 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TrackId");
 
-                    b.HasIndex("UserId", "ListenedAt")
-                        .HasDatabaseName("IX_ListeningHistories_UserId_ListenedAt");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("ListeningHistories");
+                    b.ToTable("ListeningHistories", (string)null);
 
                     b.HasData(
                         new
@@ -255,16 +251,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("ArtistId");
 
-                    b.HasIndex("CreatedAt")
-                        .HasDatabaseName("IX_Tracks_CreatedAt");
-
-                    b.HasIndex("PlaysCount")
-                        .HasDatabaseName("IX_Tracks_PlaysCount");
-
-                    b.HasIndex("Title")
-                        .HasDatabaseName("IX_Tracks_Title");
-
-                    b.ToTable("Tracks");
+                    b.ToTable("Tracks", (string)null);
 
                     b.HasData(
                         new
@@ -336,7 +323,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("TrackGenres");
+                    b.ToTable("TrackGenres", (string)null);
 
                     b.HasData(
                         new
@@ -381,10 +368,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TrackId");
 
-                    b.HasIndex("UserId", "LikedAt")
-                        .HasDatabaseName("IX_LikedTracks_UserId_LikedAt");
-
-                    b.ToTable("LikedTracks");
+                    b.ToTable("LikedTracks", (string)null);
 
                     b.HasData(
                         new
@@ -446,13 +430,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .HasDatabaseName("IX_Playlists_Name");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "CreatedAt")
-                        .HasDatabaseName("IX_Playlists_UserId_CreatedAt");
-
-                    b.ToTable("Playlists");
+                    b.ToTable("Playlists", (string)null);
 
                     b.HasData(
                         new
@@ -522,10 +502,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("TrackId");
 
-                    b.HasIndex("PlaylistId", "AddedAt")
-                        .HasDatabaseName("IX_PlaylistTracks_PlaylistId_AddedAt");
-
-                    b.ToTable("PlaylistTracks");
+                    b.ToTable("PlaylistTracks", (string)null);
 
                     b.HasData(
                         new
@@ -583,7 +560,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Podcasts");
+                    b.ToTable("Podcasts", (string)null);
 
                     b.HasData(
                         new
@@ -658,7 +635,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PodcastId");
 
-                    b.ToTable("PodcastEpisodes");
+                    b.ToTable("PodcastEpisodes", (string)null);
 
                     b.HasData(
                         new
@@ -723,7 +700,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("FollowedId");
 
-                    b.ToTable("Followers");
+                    b.ToTable("Followers", (string)null);
 
                     b.HasData(
                         new
@@ -785,7 +762,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("HostId");
 
-                    b.ToTable("ListeningRooms");
+                    b.ToTable("ListeningRooms", (string)null);
 
                     b.HasData(
                         new
@@ -850,7 +827,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RoomMembers");
+                    b.ToTable("RoomMembers", (string)null);
 
                     b.HasData(
                         new
@@ -909,13 +886,10 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .HasDatabaseName("IX_Artists_Name");
-
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Artists");
+                    b.ToTable("Artists", (string)null);
 
                     b.HasData(
                         new
@@ -991,7 +965,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
 
                     b.HasData(
                         new
@@ -1016,7 +990,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
@@ -1058,7 +1032,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
 
                     b.HasData(
                         new
@@ -1094,7 +1068,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SubscriptionPlans");
+                    b.ToTable("SubscriptionPlans", (string)null);
 
                     b.HasData(
                         new
@@ -1170,7 +1144,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
 
                     b.HasData(
                         new
@@ -1247,7 +1221,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PlanId");
 
-                    b.ToTable("UserSubscriptions");
+                    b.ToTable("UserSubscriptions", (string)null);
 
                     b.HasData(
                         new

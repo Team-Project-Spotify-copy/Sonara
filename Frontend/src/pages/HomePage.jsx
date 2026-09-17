@@ -24,7 +24,7 @@ export default function HomePage() {
   };
 
   return (
-    <BasePage customOnSelect={handleSelect} customStyle={{ "--panel-padding": "24px"}}>
+    <BasePage customOnSelect={handleSelect} customStyle={{ "padding": "24px"}}>
       {shelves.map((shelf) => (
         <Shelf
           key={shelf.key}
