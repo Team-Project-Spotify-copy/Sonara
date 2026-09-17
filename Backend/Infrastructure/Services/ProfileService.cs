@@ -1,16 +1,15 @@
-﻿using Application.DTOs.Music;
+﻿namespace Infrastructure.Services;
+
+using Application.DTOs.Music;
 using Application.DTOs.Playlists;
 using Application.DTOs.Users;
 using Application.Enums;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Domain.Entities.Social;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-
-namespace Infrastructure.Services;
 
 public class ProfileService : IProfileService
 {
@@ -25,13 +24,12 @@ public class ProfileService : IProfileService
         _mapper = mapper;
     }
 
-    public async Task<bool> FollowOnUser(Guid userId, string username)
+    public async Task<bool> FollowOnUser(Guid userId, string username, CancellationToken ct = default)
     {
-        // Шукаємо користувача за Username або за іменем його ArtistProfile
         var targetUser = await _context.Users
             .Where(u => u.Username == username || (u.ArtistProfile != null && u.ArtistProfile.Name == username))
             .Select(u => new { u.Id, u.Username })
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(ct);
 
         if (targetUser == null)
             throw new KeyNotFoundException($"User or artist with identifier '{username}' was not found.");
@@ -40,7 +38,7 @@ public class ProfileService : IProfileService
             throw new InvalidOperationException("You cannot follow yourself.");
 
         var isAlreadyFollowing = await _context.Set<Follower>()
-            .AnyAsync(f => f.FollowerId == userId && f.FollowedId == targetUser.Id);
+            .AnyAsync(f => f.FollowerId == userId && f.FollowedId == targetUser.Id, ct);
 
         if (isAlreadyFollowing)
             return false;
@@ -53,38 +51,39 @@ public class ProfileService : IProfileService
         };
 
         _context.Set<Follower>().Add(followerEntry);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         return true;
     }
 
-    public async Task<bool> UnFollowOnUser(Guid userId, string username)
+    public async Task<bool> UnFollowOnUser(Guid userId, string username, CancellationToken ct = default)
     {
         var followEntry = await _context.Followers
             .FirstOrDefaultAsync(f => f.FollowerId == userId &&
-                (f.FollowedUser.Username == username || (f.FollowedUser.ArtistProfile != null && f.FollowedUser.ArtistProfile.Name == username)));
+                (f.FollowedUser.Username == username || (f.FollowedUser.ArtistProfile != null && f.FollowedUser.ArtistProfile.Name == username)), ct);
 
         if (followEntry == null)
             return false;
 
         _context.Set<Follower>().Remove(followEntry);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         return true;
     }
-
-    public async Task<ProfileDto> GetUserByUsernameAsync(Guid userId, string username)
+    public async Task<ProfileDto> GetUserByUsernameAsync(Guid userId, string username, CancellationToken ct = default)
     {
         var mapUser = await _context.Users
             .AsNoTracking()
-            .Where(u => u.Username == username || (u.ArtistProfile != null && u.ArtistProfile.Name == username))
+            .Where(u => u.Username == username || u.ArtistProfile.Name == username) 
             .Select(u => new ProfileDto
             {
                 Email = u.Email,
+                ArtistName = u.ArtistProfile.Name,
                 Username = u.Username,
                 AvatarUrl = u.AvatarUrl,
                 CreatedAt = u.CreatedAt,
                 CountPlaylist = u.Playlists.Count,
+                CountAlbum = u.ArtistProfile.Albums.Count,
                 CountFollowers = u.Followers.Count,
                 IsFollowing = u.Followers.Any(f => f.FollowerId == userId),
 
@@ -104,6 +103,20 @@ public class ProfileService : IProfileService
                         p.UserId == userId
                     )).ToList(),
 
+                Albums = u.ArtistProfile != null
+                    ? u.ArtistProfile.Albums.Select(album => new AlbumDto
+                    {
+                        Id = album.Id,
+                        Title = album.Title,
+                        CoverUrl = album.CoverUrl,
+                        ReleaseDate = album.ReleaseDate,
+                        Type = album.Type,
+                        ArtistName = album.Artist != null ? album.Artist.Name : u.Username,
+                        TracksCount = album.Tracks != null ? album.Tracks.Count : 0,
+                        TotalDurationMs = album.Tracks != null ? album.Tracks.Sum(t => t.DurationMs) : 0
+                    }).ToList()
+                    : null,
+
                 History = u.ListeningHistories
                     .OrderByDescending(h => h.ListenedAt)
                     .Select(h => new ListeningHistoryEntryDto
@@ -119,35 +132,88 @@ public class ProfileService : IProfileService
                         }
                     }).ToList()
             })
-            .FirstOrDefaultAsync()
+            .FirstOrDefaultAsync(ct)
                 ?? throw new KeyNotFoundException($"User or artist with identifier '{username}' was not found.");
 
         return mapUser;
     }
-
-    public async Task<ProfileDto> GetProfileAsync(Guid userId)
+    public async Task<ProfileDto> GetProfileAsync(Guid userId, CancellationToken ct = default)
     {
         var mapUser = await _context.Users
             .AsNoTracking()
             .Where(u => u.Id == userId)
-            .ProjectTo<ProfileDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync()
+            .Select(u => new ProfileDto
+            {
+                Email = u.Email,
+                ArtistName = u.ArtistProfile != null ? u.ArtistProfile.Name : null,
+                Username = u.Username,
+                AvatarUrl = u.AvatarUrl,
+                CreatedAt = u.CreatedAt,
+                CountPlaylist = u.Playlists.Count,
+                CountFollowers = u.Followers.Count,
+                IsFollowing = false,
+
+                Playlists = u.Playlists
+                    .Select(p => new PlaylistDto(
+                        p.Id,
+                        p.UserId,
+                        u.Username,
+                        p.Name,
+                        p.Description,
+                        p.IsPrivate,
+                        p.CoverUrl,
+                        p.CreatedAt,
+                        p.PlaylistTracks.Count,
+                        p.PlaylistTracks.Sum(pt => pt.Track.DurationMs),
+                        true
+                    )).ToList(),
+
+                Albums = u.ArtistProfile != null
+                    ? u.ArtistProfile.Albums.Select(album => new AlbumDto
+                    {
+                        Id = album.Id,
+                        Title = album.Title,
+                        CoverUrl = album.CoverUrl,
+                        ReleaseDate = album.ReleaseDate,
+                        Type = album.Type,
+                        ArtistName = u.ArtistProfile.Name,
+                        TracksCount = album.Tracks != null ? album.Tracks.Count : 0,
+                        TotalDurationMs = album.Tracks != null ? album.Tracks.Sum(t => t.DurationMs) : 0
+                    }).ToList()
+                    : null,
+
+                History = u.ListeningHistories
+                    .OrderByDescending(h => h.ListenedAt)
+                    .Select(h => new ListeningHistoryEntryDto
+                    {
+                        Id = h.Id,
+                        ListenedAt = h.ListenedAt,
+                        DurationListenedMs = h.DurationListenedMs,
+                        Track = new TrackDto
+                        {
+                            Id = h.Track.Id,
+                            Title = h.Track.Title,
+                            ArtworkUrl = h.Track.Album != null ? h.Track.Album.CoverUrl : null
+                        }
+                    }).ToList()
+            })
+            .FirstOrDefaultAsync(ct)
                 ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
 
         return mapUser;
     }
-    public async Task<bool> SetAvatarAsync(Guid userId, IFormFile avatarFile)
+
+    public async Task<bool> SetAvatarAsync(Guid userId, IFormFile avatarFile, CancellationToken ct = default)
     {
-        await UpdateAvatarAsync(userId, avatarFile);
+        await UpdateAvatarAsync(userId, avatarFile, ct);
         return true;
     }
 
-
-    public async Task<string> UpdateAvatarAsync(Guid userId, IFormFile avatarFile)
+    public async Task<string> UpdateAvatarAsync(Guid userId, IFormFile avatarFile, CancellationToken ct = default)
     {
         var user = await _context.Users
             .Include(u => u.ArtistProfile)
-            .FirstOrDefaultAsync(u => u.Id == userId)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct)
             ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
 
         string newUrl = await _blobService.ReplaceFileAsync(avatarFile, user.AvatarUrl, BlobFolder.Avatars);
@@ -164,16 +230,16 @@ public class ProfileService : IProfileService
 
         user.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         return newUrl;
     }
 
-    public async Task<ProfileDto> UpdateProfileAsync(Guid userId, UpdateProfileDto profileDto)
+    public async Task<ProfileDto> UpdateProfileAsync(Guid userId, UpdateProfileDto profileDto, CancellationToken ct = default)
     {
         var user = await _context.Users
             .Include(u => u.ArtistProfile)
-            .FirstOrDefaultAsync(u => u.Id == userId)
+            .FirstOrDefaultAsync(u => u.Id == userId, ct)
             ?? throw new KeyNotFoundException($"User with ID {userId} was not found.");
 
         _mapper.Map(profileDto, user);
@@ -195,8 +261,8 @@ public class ProfileService : IProfileService
 
         user.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        return await GetProfileAsync(userId);
+        return await GetProfileAsync(userId, ct);
     }
 }

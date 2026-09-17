@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Configurations\**" />
     <Compile Remove="Data\Migrations\**" />
+    <EmbeddedResource Remove="Configurations\**" />
     <EmbeddedResource Remove="Data\Migrations\**" />
+    <None Remove="Configurations\**" />
     <None Remove="Data\Migrations\**" />
   </ItemGroup>
 
@@ -25,10 +28,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
 	<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Configurations\" />
   </ItemGroup>
 
   <ItemGroup>

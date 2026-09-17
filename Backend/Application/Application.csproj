@@ -8,8 +8,11 @@
 
   <ItemGroup>
     <Compile Remove="Interfase\**" />
+    <Compile Remove="Services\**" />
     <EmbeddedResource Remove="Interfase\**" />
+    <EmbeddedResource Remove="Services\**" />
     <None Remove="Interfase\**" />
+    <None Remove="Services\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,10 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

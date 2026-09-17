@@ -26,6 +26,7 @@ export default function EntityDetailView({ type, apiConfig }) {
         },
       );
       if (response.status === 200 && response.data) {
+        console.log(response.data);
         setEntity(response.data);
 
         if (response.data.tracks) {
@@ -116,6 +117,10 @@ export default function EntityDetailView({ type, apiConfig }) {
           <button
             onClick={() => setIsModalOpen(true)}
             className="entity-add-track-btn"
+            style={{
+              visibility: entity.isOwner ? "visible" : "hidden",
+              pointerEvents: entity.isOwner ? "auto" : "none",
+            }}
           >
             <svg
               className="create-plus-icon"
@@ -129,8 +134,6 @@ export default function EntityDetailView({ type, apiConfig }) {
             </svg>
             {type !== "Podcast" ? "Add Track" : "Add Episode"}
           </button>
-
-          <div className="entity-action-circle"></div>
         </div>
 
         <div className="entity-list-header-wrapper">
@@ -179,7 +182,7 @@ export default function EntityDetailView({ type, apiConfig }) {
         </div>
       </div>
 
-      {isModalOpen && apiConfig.addEntityEndpoint && (
+      {isModalOpen && isOwner && apiConfig.addEntityEndpoint && (
         <AddEntityModal
           entityId={entity.id}
           entityType={type}

@@ -2,6 +2,7 @@ namespace Infrastructure.Services;
 
 using Application.DTOs.Music;
 using Application.Interfaces.Services;
+using AutoMapper;
 using Domain.Entities.Music;
 using Domain.Entities.Users;
 using Infrastructure.Data;
@@ -13,11 +14,13 @@ public class AdminMusicService : IAdminMusicService
 {
     private readonly SonaraDbContext _context;
     private readonly IBlobService _blobService;
+    private readonly IMapper _mapper;
 
-    public AdminMusicService(SonaraDbContext context, IBlobService blobService)
+    public AdminMusicService(SonaraDbContext context, IBlobService blobService, IMapper mapper)
     {
         _context = context;
         _blobService = blobService;
+        _mapper = mapper;
     }
 
     public async Task<Guid> CreateTrackAsync(CreateTrackDto dto)
@@ -29,16 +32,8 @@ public class AdminMusicService : IAdminMusicService
 
         string audioUrl = await _blobService.UploadFileAsync(dto.AudioFile, BlobFolder.MusicTracks);
 
-        var track = new Track
-        {
-            Id = Guid.NewGuid(),
-            Title = dto.Title,
-            DurationMs = (int)Math.Round(dto.DurationSeconds * 1000),
-            AudioUrl = audioUrl,
-            ArtistId = dto.ArtistId,
-            AlbumId = dto.AlbumId,
-            CreatedAt = DateTime.UtcNow
-        };
+        var track = _mapper.Map<Track>(dto);
+        track.AudioUrl = audioUrl;
 
         var genreIds = new List<Guid>(dto.GenreIds ?? new List<Guid>());
 
@@ -64,10 +59,6 @@ public class AdminMusicService : IAdminMusicService
         return track.Id;
     }
 
-    /// <summary>
-    /// Maps genre names onto catalog rows, adding the ones that do not exist yet
-    /// so a bulk source can supply tags without knowing catalog ids.
-    /// </summary>
     private async Task<List<Guid>> ResolveGenreIdsAsync(IEnumerable<string> names)
     {
         var wanted = names
@@ -127,9 +118,6 @@ public class AdminMusicService : IAdminMusicService
             avatarUrl = await _blobService.UploadFileAsync(dto.AvatarImage, BlobFolder.Avatars);
         }
 
-        // Artist.UserId is a required unique FK, so an artist cannot exist
-        // without a User row. Imported artists get a placeholder account with an
-        // unusable password hash - it carries the profile, it is not a login.
         var owner = new User
         {
             Id = Guid.NewGuid(),
@@ -141,15 +129,9 @@ public class AdminMusicService : IAdminMusicService
             CreatedAt = DateTime.UtcNow
         };
 
-        var artist = new Artist
-        {
-            Id = Guid.NewGuid(),
-            UserId = owner.Id,
-            Name = name,
-            Bio = dto.Bio,
-            AvatarUrl = avatarUrl,
-            Verified = false
-        };
+        var artist = _mapper.Map<Artist>(dto);
+        artist.UserId = owner.Id;
+        artist.AvatarUrl = avatarUrl;
 
         _context.Users.Add(owner);
         _context.Artists.Add(artist);
@@ -174,7 +156,6 @@ public class AdminMusicService : IAdminMusicService
 
         if (existing is not null)
         {
-            // Backfill artwork for an album that was created without one.
             if (string.IsNullOrWhiteSpace(existing.CoverUrl))
             {
                 if (dto.CoverImage is { Length: > 0 })
@@ -198,17 +179,8 @@ public class AdminMusicService : IAdminMusicService
             coverUrl = await _blobService.UploadFileAsync(dto.CoverImage, BlobFolder.AlbumsCovers);
         }
 
-        var album = new Album
-        {
-            Id = Guid.NewGuid(),
-            ArtistId = dto.ArtistId,
-            Title = title,
-            CoverUrl = coverUrl,
-            ReleaseDate = dto.ReleaseDate.HasValue
-                ? DateTime.SpecifyKind(dto.ReleaseDate.Value, DateTimeKind.Utc)
-                : null,
-            CreatedAt = DateTime.UtcNow
-        };
+        var album = _mapper.Map<Album>(dto);
+        album.CoverUrl = coverUrl;
 
         _context.Albums.Add(album);
         await _context.SaveChangesAsync();
@@ -216,7 +188,6 @@ public class AdminMusicService : IAdminMusicService
         return new ResolvedEntityDto { Id = album.Id, Name = album.Title, Created = true };
     }
 
-    /// <summary>Never matches a real hash, so the placeholder cannot be signed into.</summary>
     private const string ImportedAccountPasswordHash = "imported-account-no-login";
 
     private async Task<Guid> ResolveListenerRoleIdAsync()
@@ -240,8 +211,6 @@ public class AdminMusicService : IAdminMusicService
         if (slug.Length > 40) slug = slug[..40];
         if (string.IsNullOrEmpty(slug)) slug = "artist";
 
-        // Usernames are not unique-constrained, but a suffix keeps imported
-        // accounts distinguishable when two sources share a name.
         return $"{slug}_{Guid.NewGuid().ToString("N")[..6]}";
     }
 
@@ -254,15 +223,8 @@ public class AdminMusicService : IAdminMusicService
 
         string imageUrl = await _blobService.UploadFileAsync(dto.CoverImage, BlobFolder.AlbumsCovers);
 
-        var album = new Album
-        {
-            Id = Guid.NewGuid(),
-            Title = dto.Title,
-            CoverUrl = imageUrl,
-            ReleaseDate = DateTime.SpecifyKind(dto.ReleaseDate, DateTimeKind.Utc),
-            ArtistId = dto.ArtistId,
-            CreatedAt = DateTime.UtcNow
-        };
+        var album = _mapper.Map<Album>(dto);
+        album.CoverUrl = imageUrl;
 
         _context.Albums.Add(album);
         await _context.SaveChangesAsync();

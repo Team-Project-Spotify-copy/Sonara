@@ -8,15 +8,19 @@ public class LibraryServices : ILibraryServices
 {
     private readonly SonaraDbContext _db;
     private readonly IPlaylistService _playlistService;
+    private readonly IPodcastService _podcastService;
+    private readonly IAlbumService _albumService;
     private readonly IMapper _mapper;
-    public LibraryServices(SonaraDbContext db, IPlaylistService playlistService, IMapper mapper)
+    public LibraryServices(SonaraDbContext db, IPlaylistService playlistService, IPodcastService podcastService, IAlbumService albumService, IMapper mapper)
     {
         _db = db;
         _playlistService = playlistService;
+        _podcastService = podcastService;
+        _albumService = albumService;
         _mapper = mapper;
     }
 
-    public async Task<List<LibraryItemDto>> GetLibraryAsync(Guid userId)
+    public async Task<List<LibraryItemDto>> GetLibraryAsync(Guid userId, CancellationToken ct = default)
     {
         var playlists = await GetPlaylistsAsync(userId);
         var podcasts = await GetPodcastsAsync(userId);
@@ -30,41 +34,34 @@ public class LibraryServices : ILibraryServices
             .ToList();
     }
 
-    public async Task<List<LibraryItemDto>> GetPlaylistsAsync(Guid userId)
+    public async Task<List<LibraryItemDto>> GetPlaylistsAsync(Guid userId, CancellationToken ct = default)
     {
-        var playlists = await _playlistService.GetMyPlaylistsAsync(userId);
+        var playlists = await _playlistService.GetMyPlaylistsAsync(userId, ct);
         return _mapper.Map<List<LibraryItemDto>>(playlists);
     }
 
-    public async Task<List<LibraryItemDto>> GetAlbumsAsync(Guid userId)
+    public async Task<List<LibraryItemDto>> GetAlbumsAsync(Guid userId, CancellationToken ct = default)
     {
-        var albums = await _db.Albums
-            .AsNoTracking()
-            .Where(u => u.Artist.UserId == userId)
-            .ToListAsync();
+        var albums = await _albumService.GetMyAlbumsAsync(userId, ct);
 
         return _mapper.Map<List<LibraryItemDto>>(albums);
     }
 
-    public async Task<List<LibraryItemDto>> GetPodcastsAsync(Guid userId)
+    public async Task<List<LibraryItemDto>> GetPodcastsAsync(Guid userId, CancellationToken ct = default)
     {
-        var podcasts = await _db.Users
-            .AsNoTracking()
-            .Where(u => u.Id == userId)
-            .SelectMany(u => u.Podcasts)
-            .ToListAsync();
+        var podcasts = await _podcastService.GetMyPodcastsAsync(userId, ct);
 
         return _mapper.Map<List<LibraryItemDto>>(podcasts);
     }
 
-    public async Task<List<LibraryItemDto>> GetArtistsAsync(Guid userId)
+    public async Task<List<LibraryItemDto>> GetArtistsAsync(Guid userId, CancellationToken ct = default)
     {
         var artists = await _db.Artists
             .AsNoTracking()
             .Where(a => a.User.Followers.Any(f => f.FollowerId == userId))
             .Include(a => a.User)
                 .ThenInclude(u => u.Followers)
-            .ToListAsync();
+            .ToListAsync(ct);
 
         return _mapper.Map<List<LibraryItemDto>>(artists);
     }

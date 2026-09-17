@@ -1,7 +1,7 @@
 using Application.Commands.Auth;
 using Application.Interfaces;
 using Application.Interfaces.Services;
-using BusinessLogic.Configurations;
+using Application.Configurations;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
