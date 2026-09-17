@@ -109,32 +109,30 @@ export default function EntityDetailView({ type, apiConfig }) {
       </div>
 
       <div className="entity-detail-content">
-        <div className="entity-action-bar">
-          <div className="entity-action-circle"></div>
-          <div className="entity-action-circle"></div>
-          <div className="entity-action-circle"></div>
+        {entity.isOwner && (
+          <div className="entity-action-bar">
+            <div className="entity-action-circle"></div>
+            <div className="entity-action-circle"></div>
+            <div className="entity-action-circle"></div>
 
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="entity-add-track-btn"
-            style={{
-              visibility: entity.isOwner ? "visible" : "hidden",
-              pointerEvents: entity.isOwner ? "auto" : "none",
-            }}
-          >
-            <svg
-              className="create-plus-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="entity-add-track-btn"
             >
-              <path d="M12 4v16m-8-8h16" />
-            </svg>
-            {type !== "Podcast" ? "Add Track" : "Add Episode"}
-          </button>
-        </div>
+              <svg
+                className="create-plus-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <path d="M12 4v16m-8-8h16" />
+              </svg>
+              {type !== "Podcast" ? "Add Track" : "Add Episode"}
+            </button>
+          </div>
+        )}
 
         <div className="entity-list-header-wrapper">
           <div className="entity-list-header-row">
@@ -182,7 +180,7 @@ export default function EntityDetailView({ type, apiConfig }) {
         </div>
       </div>
 
-      {isModalOpen && isOwner && apiConfig.addEntityEndpoint && (
+      {isModalOpen && entity.isOwner && apiConfig.addEntityEndpoint && (
         <AddEntityModal
           entityId={entity.id}
           entityType={type}

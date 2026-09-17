@@ -143,7 +143,7 @@ export default function Account({ onSelect, onLibraryChange }) {
 
         <div className="profile-info-container">
           <p className="profile-username">
-            {profile.artistName ?? profile.username ?? "Username"}
+            {profile.username ?? "Username"}
           </p>
           <p className="profile-stats">
             {profile?.countAlbum ?? profile?.countAlbum ?? 0} album
