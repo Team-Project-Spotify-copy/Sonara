@@ -20,13 +20,19 @@ public class SubscriptionController : ControllerBase
         _currentUser = currentUser;
     }
 
-
+    // ВИПРАВЛЕННЯ: сторінка тарифів показується ще до логіну користувача.
+    // Якщо весь контролер має [Authorize], ці два GET впадуть у 401 ще до
+    // того, як людина взагалі спробує щось купити, і фронт покаже порожні
+    // плани / помилку завантаження. [AllowAnonymous] явно знімає авторизацію
+    // саме для перегляду планів, все інше лишається захищеним.
+    [AllowAnonymous]
     [HttpGet("plans")]
     public async Task<ActionResult<IReadOnlyList<SubscriptionPlanDto>>> GetAllPlans(CancellationToken ct)
     {
         return Ok(await _subscriptionService.GetAllPlansAsync(ct));
     }
 
+    [AllowAnonymous]
     [HttpGet("plans/{id:guid}")]
     public async Task<ActionResult<SubscriptionPlanDto>> GetPlanById(Guid id, CancellationToken ct)
     {

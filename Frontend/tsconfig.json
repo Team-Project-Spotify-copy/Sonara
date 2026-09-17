@@ -10,7 +10,7 @@
             "@pages/*": ["pages/*"],
             "@css/*": ["css/*"],
             "@contexts/*": ["contexts/*"],
-            "@hooks/*": ["hooks/*"],
+            "@hooks/*": ["src/hooks/*"],
             "@utils/*": ["utils/*"]
         }
     }
