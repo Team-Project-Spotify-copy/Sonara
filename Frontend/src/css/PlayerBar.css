@@ -379,7 +379,7 @@
   background-color: var(--color-bg);
 }
 
-.player-stage__surface {
+.accent-pattern.player-stage__surface {
   position: absolute;
   inset: 0;
   background-color: var(--color-panel);

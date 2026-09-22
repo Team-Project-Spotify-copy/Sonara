@@ -1,0 +1,33 @@
+.accent-pattern {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  filter: brightness(var(--accent-lift, 1));
+  transition: filter 700ms ease;
+}
+
+.accent-pattern__asset {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.accent-pattern__tint {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: color;
+  transition:
+    background-color 700ms ease,
+    opacity 700ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accent-pattern,
+  .accent-pattern__tint {
+    transition: none;
+  }
+}

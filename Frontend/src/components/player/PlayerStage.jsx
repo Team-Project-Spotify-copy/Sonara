@@ -1,4 +1,6 @@
 import Glyph from "@components/player/Glyph.jsx";
+import AccentPattern from "@components/common/AccentPattern";
+import useDominantColor from "@hooks/useDominantColor";
 import ambientBackdrop from "@assets/player/rectangle-94.png";
 import grainOverlay from "@assets/player/rectangle-50-tile.png";
 
@@ -18,16 +20,22 @@ export default function PlayerStage({
   showMeta,
   onCollapse,
 }) {
+  const accent = useDominantColor(artwork);
+
   return (
     <>
       <div className="player-stage">
-        <div className="player-stage__surface">
-          <img className="player-stage__ambient" src={ambientBackdrop} alt="" />
+        <AccentPattern
+          className="player-stage__surface"
+          imageClassName="player-stage__ambient"
+          image={ambientBackdrop}
+          accent={accent}
+        >
           <div
             className="player-stage__grain"
             style={{ backgroundImage: `url(${grainOverlay})` }}
           />
-        </div>
+        </AccentPattern>
 
         <button
           type="button"
