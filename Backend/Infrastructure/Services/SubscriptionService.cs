@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Subscription;
+using Application.Interfaces;
 using Application.Interfaces.Services;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
@@ -10,11 +11,14 @@ namespace Infrastructure.Services;
 public class SubscriptionService : ISubscriptionService
 {
     private readonly SonaraDbContext _db;
+    private readonly IEmailService _emailService;
     private readonly IMapper _mapper;
 
-    public SubscriptionService(SonaraDbContext db, IMapper mapper)
+
+    public SubscriptionService(SonaraDbContext db, IEmailService emailService, IMapper mapper)
     {
         _db = db;
+        _emailService = emailService;
         _mapper = mapper;
     }
 
@@ -132,6 +136,8 @@ public class SubscriptionService : ISubscriptionService
         await _db.UserSubscriptions.AddAsync(newSubscription, ct);
         await _db.SaveChangesAsync(ct);
 
+        await _emailService.SendSubscriptionSuccessEmailAsync(user.Email, user.Username, planName, newSubscription.ExpiresAt, ct);
+
         return _mapper.Map<UserSubscriptionDto>(newSubscription);
     }
 
@@ -238,4 +244,5 @@ public class SubscriptionService : ISubscriptionService
         await _db.SaveChangesAsync(ct);
         return true;
     }
+
 }
