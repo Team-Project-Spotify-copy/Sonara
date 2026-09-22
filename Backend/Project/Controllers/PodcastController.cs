@@ -25,9 +25,9 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PodcastDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<PodcastDto>>> GetAll(CancellationToken ct)
         {
-            var podcasts = await _podcastService.GetAllAsync();
+            var podcasts = await _podcastService.GetAllAsync(ct);
             return Ok(podcasts);
         }
 
@@ -43,52 +43,56 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<PodcastDetailsDto>> GetById(Guid id)
+        public async Task<ActionResult<PodcastDetailsDto>> GetById(Guid id, CancellationToken ct)
         {
-            var podcast = await _podcastService.GetByIdAsync(id);
+            var userId = _currentUser.UserId
+                ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
+            var podcast = await _podcastService.GetByIdAsync(id, userId, ct);
             if (podcast == null) return NotFound();
             return Ok(podcast);
         }
 
         [HttpGet("{podcastName}")]
-        public async Task<ActionResult<PodcastDetailsDto>> GetByName(string podcastName)
+        public async Task<ActionResult<PodcastDetailsDto>> GetByName(string podcastName, CancellationToken ct)
         {
-            var podcast = await _podcastService.GetByNameAsync(podcastName);
+            var userId = _currentUser.UserId
+                ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
+            var podcast = await _podcastService.GetByNameAsync(podcastName, userId, ct);
             if (podcast == null) return NotFound();
             return Ok(podcast);
         }
         
         [HttpPost("{id}/episodes")]
-        public async Task<ActionResult<PodcastDetailsDto>> AddPodcastEpisode(Guid id, [FromQuery] string episodeName)
+        public async Task<ActionResult<PodcastDetailsDto>> AddPodcastEpisode(Guid id, [FromQuery] string episodeName, CancellationToken ct)
         {
             var userId = _currentUser.UserId
                 ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
 
-            var podcast = await _podcastService.AddEpisodeAsync(id, episodeName, userId);
+            var podcast = await _podcastService.AddEpisodeAsync(id, episodeName, userId, ct);
             if (podcast == null) return NotFound();
             return Ok(podcast);
         }
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<PodcastDto>> Create([FromForm] CreatePodcastDto dto)
+        public async Task<ActionResult<PodcastDto>> Create([FromForm] CreatePodcastDto dto, CancellationToken ct)
         {
             var userId = _currentUser.UserId
                 ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
 
-            var createdPodcast = await _podcastService.CreateAsync(userId, dto);
+            var createdPodcast = await _podcastService.CreateAsync(userId, dto, ct);
             return CreatedAtAction(nameof(GetById), new { id = createdPodcast.Id }, createdPodcast);
         }
 
         [HttpPut("{id:guid}")]
         [Authorize]
-        public async Task<ActionResult<PodcastDto>> Update(Guid id, [FromForm] UpdatePodcastDto dto)
+        public async Task<ActionResult<PodcastDto>> Update(Guid id, [FromForm] UpdatePodcastDto dto, CancellationToken ct)
         {
             try
             {
                 var userId = _currentUser.UserId
                     ?? throw new UnauthorizedAccessException("The access token does not contain a valid user identifier.");
-                var updated = await _podcastService.UpdateAsync(id, userId, dto);
+                var updated = await _podcastService.UpdateAsync(id, userId, dto, ct);
                 if (updated == null) return NotFound();
                 return Ok(updated);
             }
@@ -100,7 +104,7 @@ namespace WebApp.Controllers
 
         [HttpDelete("{id:guid}")]
         [Authorize]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken ct)
         {
             try
             {

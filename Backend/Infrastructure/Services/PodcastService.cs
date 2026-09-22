@@ -33,29 +33,44 @@ public class PodcastService : IPodcastService
 
     public async Task<IReadOnlyList<PodcastDto>> GetMyPodcastsAsync(Guid currentUserId, CancellationToken ct = default)
     {
-        return await _db.Podcasts
-            .AsNoTracking()
-            .Where(p => p.AuthorId == currentUserId)
-            .ProjectTo<PodcastDto>(_mapper.ConfigurationProvider)
-            .ToListAsync(ct);
+        var podcasts = await _db.Podcasts
+                .AsNoTracking()
+                .Where(p => p.AuthorId == currentUserId)
+                .ProjectTo<PodcastDto>(_mapper.ConfigurationProvider)
+                .ToListAsync(ct);
+
+        foreach (var podcast in podcasts)
+            podcast.IsOwner = true;
+
+        return podcasts;
     }
 
-    public async Task<PodcastDetailsDto?> GetByIdAsync(Guid id, CancellationToken ct = default)
+    public async Task<PodcastDetailsDto?> GetByIdAsync(Guid id, Guid currentUserId, CancellationToken ct = default)
     {
-        return await _db.Podcasts
-            .AsNoTracking()
-            .Where(p => p.Id == id)
-            .ProjectTo<PodcastDetailsDto>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(ct);
+        var podcastDto = await _db.Podcasts
+                .AsNoTracking()
+                .Where(p => p.Id == id)
+                .ProjectTo<PodcastDetailsDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(ct);
+
+        if (podcastDto != null)
+            podcastDto.IsOwner = podcastDto.AuthorId == currentUserId;
+
+        return podcastDto;
     }
 
-    public async Task<PodcastDetailsDto?> GetByNameAsync(string podcastName, CancellationToken ct = default)
+    public async Task<PodcastDetailsDto?> GetByNameAsync(string podcastName, Guid currentUserId, CancellationToken ct = default)
     {
-        return await _db.Podcasts
+        var podcastDto = await _db.Podcasts
             .AsNoTracking()
             .Where(p => p.Title == podcastName)
             .ProjectTo<PodcastDetailsDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(ct);
+
+        if (podcastDto != null)
+            podcastDto.IsOwner = podcastDto.AuthorId == currentUserId;
+
+        return podcastDto;
     }
 
     public async Task<PodcastDto> CreateAsync(Guid authorId, CreatePodcastDto dto, CancellationToken ct = default)

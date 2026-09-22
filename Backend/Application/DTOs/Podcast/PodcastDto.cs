@@ -10,6 +10,7 @@ public class PodcastDto
     public string? Description { get; set; }
     public string? CoverUrl { get; set; }
     public string AuthorName { get; set; } = string.Empty;
+    public bool IsOwner { get; set; }
 }
 
 public class CreatePodcastDto
