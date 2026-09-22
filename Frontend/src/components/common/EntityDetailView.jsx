@@ -26,7 +26,6 @@ export default function EntityDetailView({ type, apiConfig }) {
         },
       );
       if (response.status === 200 && response.data) {
-        console.log(response.data);
         setEntity(response.data);
 
         if (response.data.tracks) {

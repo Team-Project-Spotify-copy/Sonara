@@ -32,15 +32,7 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
         var code = System.Security.Cryptography.RandomNumberGenerator.GetInt32(1000, 10000).ToString();
         await _cache.SetAsync($"password-reset:code:{user.Id}", code, CodeTtl, cancellationToken);
 
-        await _emailService.SendEmailAsync(
-            user.Email,
-            "Password Reset Code for Sonara",
-            $"""
-            <p>Hello, {user.Username}!</p>
-            <p>Your password reset code: <strong>{code}</strong></p>
-            <p>The code is valid for 10 minutes. If this wasn't you, please ignore this email.</p>
-            """,
-            cancellationToken);
+        await _emailService.SendPasswordResetEmailAsync(user.Username, user.Email, code, cancellationToken);
 
         return true;
     }

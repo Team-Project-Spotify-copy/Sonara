@@ -129,6 +129,14 @@ namespace Application.Configurations
                 .ForMember(dest => dest.AuthorAvatarUrl, opt => opt.MapFrom(src => src.Author != null ? src.Author.AvatarUrl : null))
                 .ForMember(dest => dest.TotalDurationMs, opt => opt.MapFrom(src => src.Episodes != null ? src.Episodes.Sum(e => e.DurationMs) : 0));
 
+            CreateMap<PodcastDto, LibraryItemDto>()
+                .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => $"{src.Description} episodes")) 
+                .ForMember(dest => dest.CoverUrl, opt => opt.MapFrom(src => src.CoverUrl))
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "podcast"));
+
             CreateMap<PodcastEpisode, PodcastEpisodeDto>();
 
             CreateMap<Podcast, LibraryItemDto>()
