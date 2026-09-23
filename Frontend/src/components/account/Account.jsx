@@ -5,8 +5,10 @@ import axios from "axios";
 import image from "@assets/images/subscription-hd-bg.png";
 import avatar from "@assets/images/standart-avatar.png";
 import Shelf from "@components/media/Shelf";
+import AccentPattern from "@components/common/AccentPattern";
 import EditProfileForm from "@components/account/EditProfileForm";
 import useRecommendations from "@hooks/useRecommendations";
+import useDominantColor from "@hooks/useDominantColor";
 import "@css/Account.css";
 
 export default function Account({ onSelect, onLibraryChange }) {
@@ -23,6 +25,9 @@ export default function Account({ onSelect, onLibraryChange }) {
     useRecommendations({
       enabled: isOwnProfile,
     });
+
+  const avatarSrc = profile.avatarUrl || avatar;
+  const accent = useDominantColor(avatarSrc);
 
   useEffect(() => {
     GetAccountUser();
@@ -129,17 +134,14 @@ export default function Account({ onSelect, onLibraryChange }) {
 
   return (
     <div className="account-wrapper">
-      <div
-        className="profile-header profile-header-bg"
-        style={{
-          backgroundImage: `url(${image})`,
-        }}
-      >
-        <img
-          src={profile.avatarUrl || avatar}
-          alt="userAvatar"
-          className="profile-avatar"
+      <div className="profile-header profile-header-bg">
+        <AccentPattern
+          className="profile-header__backdrop"
+          image={image}
+          accent={accent}
         />
+
+        <img src={avatarSrc} alt="userAvatar" className="profile-avatar" />
 
         <div className="profile-info-container">
           <p className="profile-username">
