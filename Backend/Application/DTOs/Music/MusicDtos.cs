@@ -53,6 +53,7 @@ public class AlbumSummaryDto
     public Guid ArtistId { get; set; }
     public string ArtistName { get; set; } = string.Empty;
     public int TracksCount { get; set; }
+    public bool IsOwner { get; set; }
 }
 
 public class AlbumDto : AlbumSummaryDto

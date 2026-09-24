@@ -62,34 +62,10 @@ public class MusicCatalogService : IMusicCatalogService
 
     public async Task<TrackDetailsDto> GetTrackByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default)
     {
-        var isAuthenticated = currentUserId.HasValue;
-        var userId = currentUserId ?? Guid.Empty;
-
         var track = await _context.Tracks
             .AsNoTracking()
             .Where(t => t.Id == id)
-            .Select(t => new TrackDetailsDto
-            {
-                Id = t.Id,
-                Title = t.Title,
-                ArtistId = t.ArtistId,
-                ArtistName = t.Artist.Name,
-                ArtistAvatarUrl = t.Artist.AvatarUrl,
-                ArtistVerified = t.Artist.Verified,
-                AlbumId = t.AlbumId,
-                AlbumTitle = t.Album != null ? t.Album.Title : null,
-                AlbumCoverUrl = t.Album != null ? t.Album.CoverUrl : null,
-                AlbumType = t.Album != null ? t.Album.Type : null,
-                AlbumReleaseDate = t.Album != null ? t.Album.ReleaseDate : null,
-                ArtworkUrl = t.Album != null && t.Album.CoverUrl != null ? t.Album.CoverUrl : t.Artist.AvatarUrl,
-                DurationMs = t.DurationMs,
-                Genres = t.TrackGenres.Select(tg => tg.Genre.Name).ToList(),
-                PlaysCount = t.PlaysCount,
-                LikesCount = t.LikedByUsers.Count(),
-                HasStream = t.AudioUrl != null && t.AudioUrl != "",
-                IsLiked = isAuthenticated && t.LikedByUsers.Any(l => l.UserId == userId),
-                CreatedAt = t.CreatedAt
-            })
+            .Select(CatalogProjections.TrackDetails(currentUserId))
             .FirstOrDefaultAsync(ct);
 
         return track ?? throw new NotFoundException(nameof(Track), id);
@@ -127,63 +103,13 @@ public class MusicCatalogService : IMusicCatalogService
 
     public async Task<AlbumDto> GetAlbumByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default)
     {
-        var album = await _context.Albums
-            .AsNoTracking()
-            .Where(a => a.Id == id)
-            .Select(a => new AlbumDto
-            {
-                Id = a.Id,
-                Title = a.Title,
-                CoverUrl = a.CoverUrl,
-                Type = a.Type,
-                ReleaseDate = a.ReleaseDate,
-                ArtistId = a.ArtistId,
-                ArtistName = a.Artist.Name,
-                TracksCount = a.Tracks.Count(),
-                TotalDurationMs = a.Tracks.Sum(t => t.DurationMs)
-            })
-            .FirstOrDefaultAsync(ct)
-            ?? throw new NotFoundException(nameof(Album), id);
-
-        album.Tracks = await _context.Tracks
-            .AsNoTracking()
-            .Where(t => t.AlbumId == id)
-            .OrderBy(t => t.CreatedAt)
-            .ThenBy(t => t.Title)
-            .Select(CatalogProjections.Track(currentUserId))
-            .ToListAsync(ct);
-
-        return album;
+        return await GetAlbumInternalAsync(a => a.Id == id, currentUserId, ct)
+               ?? throw new NotFoundException(nameof(Album), id);
     }
     public async Task<AlbumDto> GetAlbumByNameAsync(string albumName, Guid? currentUserId, CancellationToken ct = default)
     {
-        var album = await _context.Albums
-            .AsNoTracking()
-            .Where(a => a.Title == albumName)
-            .Select(a => new AlbumDto
-            {
-                Id = a.Id,
-                Title = a.Title,
-                CoverUrl = a.CoverUrl,
-                Type = a.Type,
-                ReleaseDate = a.ReleaseDate,
-                ArtistId = a.ArtistId,
-                ArtistName = a.Artist.Name,
-                TracksCount = a.Tracks.Count(),
-                TotalDurationMs = a.Tracks.Sum(t => t.DurationMs)
-            })
-            .FirstOrDefaultAsync(ct)
-            ?? throw new NotFoundException(nameof(Album), albumName);
-
-        album.Tracks = await _context.Tracks
-            .AsNoTracking()
-            .Where(t => t.AlbumId == album.Id)
-            .OrderBy(t => t.CreatedAt)
-            .ThenBy(t => t.Title)
-            .Select(CatalogProjections.Track(currentUserId))
-            .ToListAsync(ct);
-
-        return album;
+        return await GetAlbumInternalAsync(a => a.Title == albumName, currentUserId, ct)
+               ?? throw new NotFoundException(nameof(Album), albumName);
     }
 
     public async Task<ArtistDto> GetArtistByIdAsync(Guid id, Guid? currentUserId, CancellationToken ct = default)
@@ -305,10 +231,7 @@ public class MusicCatalogService : IMusicCatalogService
         return response;
     }
 
-    public async Task<IReadOnlyList<TrackDto>> GetPopularTracksAsync(
-        int count,
-        Guid? currentUserId,
-        CancellationToken ct = default)
+    public async Task<IReadOnlyList<TrackDto>> GetPopularTracksAsync(int count, Guid? currentUserId, CancellationToken ct = default)
     {
         return await _context.Tracks
             .AsNoTracking()
@@ -319,9 +242,7 @@ public class MusicCatalogService : IMusicCatalogService
             .ToListAsync(ct);
     }
 
-    public async Task<IReadOnlyList<AlbumSummaryDto>> GetPopularAlbumsAsync(
-        int count,
-        CancellationToken ct = default)
+    public async Task<IReadOnlyList<AlbumSummaryDto>> GetPopularAlbumsAsync(int count, CancellationToken ct = default)
     {
         return await _context.Albums
             .AsNoTracking()
@@ -331,7 +252,39 @@ public class MusicCatalogService : IMusicCatalogService
             .Select(AlbumSummaryProjection())
             .ToListAsync(ct);
     }
+    private async Task<AlbumDto?> GetAlbumInternalAsync(Expression<Func<Album, bool>> predicate, Guid? currentUserId, CancellationToken ct)
+    {
+        var baseAlbum = await _context.Albums
+            .AsNoTracking()
+            .Where(predicate)
+            .Select(a => new AlbumDto
+            {
+                Id = a.Id,
+                Title = a.Title,
+                CoverUrl = a.CoverUrl,
+                Type = a.Type,
+                ReleaseDate = a.ReleaseDate,
+                ArtistId = a.ArtistId,
+                ArtistName = a.Artist.Name,
+                TracksCount = a.Tracks.Count(),
+                IsOwner = a.Artist.UserId == currentUserId,
+            })
+            .FirstOrDefaultAsync(ct);
 
+        if (baseAlbum == null) return null;
+
+        baseAlbum.Tracks = await _context.Tracks
+            .AsNoTracking()
+            .Where(t => t.AlbumId == baseAlbum.Id)
+            .OrderBy(t => t.CreatedAt)
+            .ThenBy(t => t.Title)
+            .Select(CatalogProjections.Track(currentUserId))
+            .ToListAsync(ct);
+
+        baseAlbum.TotalDurationMs = baseAlbum.Tracks.Sum(t => t.DurationMs);
+
+        return baseAlbum;
+    }
     private static Expression<Func<Album, AlbumSummaryDto>> AlbumSummaryProjection() =>
         a => new AlbumSummaryDto
         {
@@ -342,6 +295,6 @@ public class MusicCatalogService : IMusicCatalogService
             ReleaseDate = a.ReleaseDate,
             ArtistId = a.ArtistId,
             ArtistName = a.Artist.Name,
-            TracksCount = a.Tracks.Count()
+            TracksCount = a.Tracks.Count(),
         };
 }

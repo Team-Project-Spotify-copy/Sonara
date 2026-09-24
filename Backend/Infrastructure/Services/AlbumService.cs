@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Music;
 using Application.Enums;
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.Interfaces.Services;
 using AutoMapper;
@@ -52,15 +53,7 @@ public class AlbumService : IAlbumService
             .FirstOrDefaultAsync(a => a.UserId == currentUserId, ct);
 
         if (artist == null)
-        {
-            artist = new Artist
-            {
-                Id = Guid.NewGuid(),
-                UserId = currentUserId,
-            };
-            _db.Artists.Add(artist);
-            await _db.SaveChangesAsync(ct);
-        }
+            throw new NotFoundException("artist profile", currentUserId);
 
         var album = new Album
         {
@@ -159,12 +152,13 @@ public class AlbumService : IAlbumService
             .FirstOrDefaultAsync(ct);
     }
 
-    public async Task<IReadOnlyList<AlbumSummaryDto?>> GetMyAlbumsAsync(Guid currentUserId, CancellationToken ct)
+    public async Task<IReadOnlyList<Album>> GetMyAlbumsAsync(Guid currentUserId, CancellationToken ct)
     {
         return await _db.Albums
                 .AsNoTracking()
+                .Include(a => a.Artist)
+                .Include(a => a.Tracks)
                 .Where(a => a.Artist.UserId == currentUserId)
-                .ProjectTo<AlbumSummaryDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(ct);
     }
 }

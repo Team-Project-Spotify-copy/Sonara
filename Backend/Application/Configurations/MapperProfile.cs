@@ -122,12 +122,20 @@ namespace Application.Configurations
 
             // Podcast
             CreateMap<Podcast, PodcastDto>()
-                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? src.Author.Username : string.Empty));
+                .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? src.Author.Username : string.Empty))
+                .ForMember(dest => dest.IsOwner, opt => opt.Ignore());
 
             CreateMap<Podcast, PodcastDetailsDto>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? src.Author.Username : string.Empty))
                 .ForMember(dest => dest.AuthorAvatarUrl, opt => opt.MapFrom(src => src.Author != null ? src.Author.AvatarUrl : null))
-                .ForMember(dest => dest.TotalDurationMs, opt => opt.MapFrom(src => src.Episodes != null ? src.Episodes.Sum(e => e.DurationMs) : 0));
+                .ForMember(dest => dest.TotalDurationMs, opt => opt.MapFrom(src => src.Episodes != null ? src.Episodes.Sum(e => e.DurationMs) : 0))
+                .ForMember(dest => dest.IsOwner, opt => opt.Ignore());
+
+            CreateMap<Podcast, LibraryItemDto>()
+                .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
+                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => $"{src.Episodes.Count} episodes"))
+                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "podcast"));
 
             CreateMap<PodcastDto, LibraryItemDto>()
                 .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
@@ -138,12 +146,6 @@ namespace Application.Configurations
                 .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "podcast"));
 
             CreateMap<PodcastEpisode, PodcastEpisodeDto>();
-
-            CreateMap<Podcast, LibraryItemDto>()
-                .ForMember(dest => dest.RouteKey, opt => opt.MapFrom(src => src.Id.ToString()))
-                .ForMember(dest => dest.Subtitle, opt => opt.MapFrom(src => $"{src.Episodes.Count} episodes"))
-                .ForMember(dest => dest.AudioUrl, opt => opt.Ignore())
-                .ForMember(dest => dest.Kind, opt => opt.MapFrom(_ => "podcast"));
 
             // Album -> LibraryItem
             CreateMap<Album, LibraryItemDto>()
