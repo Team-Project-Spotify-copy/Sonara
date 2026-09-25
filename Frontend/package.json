@@ -11,6 +11,7 @@
     "import-music": "node scripts/import-music.mjs"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.13.5",
     "axios": "^1.19.0",
     "dom": "^0.0.3",
     "ethers": "^6.17.0",
