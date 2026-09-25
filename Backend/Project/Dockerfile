@@ -9,9 +9,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Вказуємо повний шлях до .csproj з урахуванням структури папок
-COPY ["Backend/Project/WebApp.csproj", "Backend/Project/"]
-RUN dotnet restore "Backend/Project/WebApp.csproj"
 # Копіюємо файл рішення або всі проєкти з урахуванням структури папок Backend
 COPY ["Project/WebApp.csproj", "Project/"]
 COPY ["Application/Application.csproj", "Application/"]
@@ -20,7 +17,6 @@ COPY ["Domain/Domain.csproj", "Domain/"]
 
 RUN dotnet restore "Project/WebApp.csproj"
 
-# Копіюємо решту файлів і переходимо в папку з проєктом для збірки
 # Копіюємо решту файлів всього бекенду
 COPY . .
 WORKDIR "/src/Project"
@@ -31,8 +27,9 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Stage 4: Final runtime image
+# Stage 4: Final runtime
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN apt-get update && apt-get install -y libgssapi-krb5-2 && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["dotnet", "WebApp.dll"]
