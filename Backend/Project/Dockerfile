@@ -14,16 +14,16 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:10.0-nanoserver-ltsc2022 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Project/Project.csproj", "Project/"]
-RUN dotnet restore "./Project/Project.csproj"
+COPY ["Project/WebApp.csproj", "Project/"]
+RUN dotnet restore "./Project/WebApp.csproj"
 COPY . .
 WORKDIR "/src/Project"
-RUN dotnet build "./Project.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "./WebApp.csproj" -c %BUILD_CONFIGURATION% -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Project.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./WebApp.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
