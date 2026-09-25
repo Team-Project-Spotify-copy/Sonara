@@ -9,11 +9,11 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Вказуємо повний шлях до .csproj з урахуванням структури папок
-COPY ["Backend/Project/WebApp.csproj", "Backend/Project/"]
-RUN dotnet restore "Backend/Project/WebApp.csproj"
+# Копіюємо .csproj з урахуванням папки Backend/Project
+COPY ["WebApp.csproj", "./"]
+RUN dotnet restore "WebApp.csproj"
 
-# Копіюємо решту файлів і переходимо в папку з проєктом для збірки
+# Копіюємо решту файлів репозиторію
 COPY . .
 WORKDIR "/src/Backend/Project"
 RUN dotnet build "WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -23,7 +23,7 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Stage 4: Final runtime image
+# Stage 4: Final runtime
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
