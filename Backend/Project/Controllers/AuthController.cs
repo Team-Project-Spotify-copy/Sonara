@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MediatR;
-using Application.Commands.Auth;
-using Microsoft.EntityFrameworkCore;
+﻿using Application.Commands.Auth;
+using Application.DTOs.Auth;
 using Application.Interfaces;
+using Domain.Entities.Users;
+using Infrastructure.Services;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NBitcoin.Secp256k1;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Backend.Project.Controllers;
 
@@ -111,5 +116,13 @@ public class AuthController : ControllerBase
     {
         await _mediator.Send(command, cancellationToken);
         return Ok(new { Message = "Password changed successfully." });
+    }
+
+    [HttpPost("google")]
+    public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginCommand command, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(command, cancellationToken);
+        SetRefreshTokenCookie(result.RefreshToken, result.RefreshTokenExpiresAt);
+        return Ok(new { UserId = result.UserId, AccessToken = result.AccessToken });
     }
 }
