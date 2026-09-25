@@ -9,12 +9,17 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Копіюємо .csproj з поточного кореня (який зараз є Backend/Project)
-COPY ["WebApp.csproj", "./"]
-RUN dotnet restore "WebApp.csproj"
+# Копіюємо файл рішення або всі проєкти з урахуванням структури папок Backend
+COPY ["Project/WebApp.csproj", "Project/"]
+COPY ["Application/Application.csproj", "Application/"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
 
-# Копіюємо решту файлів і одразу збираємо проєкт (без зайвого WORKDIR)
+RUN dotnet restore "Project/WebApp.csproj"
+
+# Копіюємо решту файлів всього бекенду
 COPY . .
+WORKDIR "/src/Project"
 RUN dotnet build "WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Stage 3: Publish
