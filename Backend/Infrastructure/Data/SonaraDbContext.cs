@@ -3,7 +3,6 @@ using Domain.Entities.Playlists;
 using Domain.Entities.Podcasts;
 using Domain.Entities.Social;
 using Domain.Entities.Users;
-using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 public class SonaraDbContext : DbContext

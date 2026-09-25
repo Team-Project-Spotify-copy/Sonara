@@ -13,6 +13,6 @@ public interface ISubscriptionService
     Task<bool> InviteToSubscriptionAsync(Guid ownerId, string targetUsername, CancellationToken ct = default);
     Task<bool> LeaveOrRemoveFromSubscriptionAsync(Guid currentUserId, Guid activeSubId, Guid userIdToRemove, CancellationToken ct = default);
     Task<bool> CancelSubscriptionAsync(Guid currentUserId, Guid activeSubId, CancellationToken ct = default);
-
+    Task<int> ExpireOldSubscriptionsAsync(CancellationToken ct = default);
 }
 

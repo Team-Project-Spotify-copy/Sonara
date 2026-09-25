@@ -1,5 +1,4 @@
-﻿using System;
-using Domain.Entities.Music;
+﻿using Domain.Entities.Music;
 using Domain.Entities.Playlists;
 using Domain.Entities.Podcasts;
 using Domain.Entities.Social;

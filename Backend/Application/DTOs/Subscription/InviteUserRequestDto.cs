@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Application.DTOs.Subscription;
+﻿namespace Application.DTOs.Subscription;
 
 public class InviteUserRequestDto
 {

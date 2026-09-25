@@ -2,7 +2,6 @@ using Application.DTOs.Playlists;
 using Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Contracts;
 
 namespace WebApp.Controllers;
 

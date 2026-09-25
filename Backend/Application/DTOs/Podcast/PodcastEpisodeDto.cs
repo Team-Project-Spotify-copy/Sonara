@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Application.DTOs.Podcast;
+﻿namespace Application.DTOs.Podcast;
 
 public class PodcastEpisodeDto
 {

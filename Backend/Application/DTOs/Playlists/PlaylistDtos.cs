@@ -1,8 +1,6 @@
 using Application.DTOs.Music;
-using Domain.Entities.Playlists;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Xml.Linq;
 
 namespace Application.DTOs.Playlists;
 

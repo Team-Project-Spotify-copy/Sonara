@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Domain.Entities.Music;
 
 namespace Domain.Entities.Users;

@@ -5,7 +5,6 @@ using Application.Interfaces.Services;
 using AutoMapper;
 using Domain.Entities.Music;
 using Domain.Entities.Users;
-using Infrastructure.Data;
 using Application.Enums;
 using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;

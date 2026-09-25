@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MediatR;
 using Application.Commands.Auth;
-using Microsoft.EntityFrameworkCore;
 using Application.Interfaces;
 
 namespace Backend.Project.Controllers;

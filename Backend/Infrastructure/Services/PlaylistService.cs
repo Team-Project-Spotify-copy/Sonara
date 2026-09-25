@@ -6,7 +6,6 @@ using Application.Interfaces.Services;
 using Domain.Entities.Music;
 using Domain.Entities.Playlists;
 using Microsoft.EntityFrameworkCore;
-using NBitcoin.Secp256k1;
 
 namespace Infrastructure.Services;
 

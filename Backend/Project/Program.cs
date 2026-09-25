@@ -4,7 +4,6 @@ using Application.Interfaces.Services;
 using Application.Configurations;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

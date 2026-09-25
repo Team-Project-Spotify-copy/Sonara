@@ -1,4 +1,3 @@
-using Application.DTOs.Music;
 using Application.DTOs.Playlists;
 
 namespace Application.Interfaces.Services;

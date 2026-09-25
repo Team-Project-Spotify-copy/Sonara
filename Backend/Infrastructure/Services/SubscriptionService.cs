@@ -5,6 +5,7 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Services;
 
@@ -14,12 +15,14 @@ public class SubscriptionService : ISubscriptionService
     private readonly IEmailService _emailService;
     private readonly IMapper _mapper;
 
+    private readonly ILogger<SubscriptionService> _logger;
 
-    public SubscriptionService(SonaraDbContext db, IEmailService emailService, IMapper mapper)
+    public SubscriptionService(SonaraDbContext db, IEmailService emailService, IMapper mapper, ILogger<SubscriptionService> logger)
     {
         _db = db;
         _emailService = emailService;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<IReadOnlyList<SubscriptionPlanDto>> GetAllPlansAsync(CancellationToken ct = default)
@@ -245,4 +248,57 @@ public class SubscriptionService : ISubscriptionService
         return true;
     }
 
+    public async Task<int> ExpireOldSubscriptionsAsync(CancellationToken ct = default)
+    {
+        var now = DateTime.UtcNow;
+
+        var freePlan = await _db.SubscriptionPlans
+            .FirstOrDefaultAsync(p => p.Name == "Free", ct);
+
+        if (freePlan == null)
+            return 0;
+
+        var expiredSubscriptions = await _db.UserSubscriptions
+            .Include(s => s.Plan)
+            .Include(s => s.Members)
+            .Where(s => s.Plan.Price > 0 && s.ExpiresAt < now)
+            .ToListAsync(ct);
+
+        if (expiredSubscriptions.Count == 0)
+            return 0;
+
+        var processedUsersCount = 0;
+
+        foreach (var sub in expiredSubscriptions)
+        {
+            foreach (var member in sub.Members.ToList())
+            {
+                var personalFreeSub = new UserSubscription
+                {
+                    Id = Guid.NewGuid(),
+                    OwnerId = member.Id,
+                    PlanId = freePlan.Id,
+                    ExpiresAt = DateTime.MaxValue
+                };
+
+                _db.UserSubscriptions.Add(personalFreeSub);
+                member.ActiveSubscriptionId = personalFreeSub.Id;
+                processedUsersCount++;
+
+                try
+                {
+                    await _emailService.SendSubscriptionExpiredEmailAsync(member.Email, member.Username, ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to send subscription expiration email to {Email}", member.Email);
+                }
+            }
+
+            _db.UserSubscriptions.Remove(sub);
+        }
+
+        await _db.SaveChangesAsync(ct);
+        return processedUsersCount;
+    }
 }

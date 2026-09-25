@@ -1,5 +1,3 @@
-using System;
-
 namespace Domain.Entities.Music;
 
 public class TrackGenre : BaseEntity

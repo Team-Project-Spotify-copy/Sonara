@@ -1,5 +1,4 @@
 ﻿using Application.DTOs.Users;
-using Domain.Entities.Users;
 using Microsoft.AspNetCore.Http;
 
 namespace Application.Interfaces.Services;

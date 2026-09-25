@@ -1,6 +1,5 @@
 ﻿using Application.DTOs.Subscription;
 using Application.Interfaces.Services;
-using Domain.Entities.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

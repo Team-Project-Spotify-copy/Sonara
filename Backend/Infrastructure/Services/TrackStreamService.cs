@@ -4,7 +4,6 @@ using Application.DTOs.Music;
 using Application.Exceptions;
 using Application.Interfaces;
 using Application.Interfaces.Services;
-using Domain.Entities.Music;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

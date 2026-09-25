@@ -1,7 +1,5 @@
 ﻿namespace Application.DTOs.Library;
 
-using Application.Enums;    
-
 public class LibraryItemDto
 {
     public Guid Id { get; set; }

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Domain.Entities.Playlists;
 using Domain.Entities.Users;
 

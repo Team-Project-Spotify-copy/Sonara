@@ -1,5 +1,3 @@
-using System;
-
 namespace Domain.Entities.Users;
 
 public class Session : BaseEntity
