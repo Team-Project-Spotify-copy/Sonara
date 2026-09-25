@@ -104,8 +104,19 @@ export const AccountProvider = ({ children }) => {
       register,
       logout,
       reloadUser: loadCurrentUser,
+      applyCredentials,
     }),
-    [status, user, userId, accessToken, login, register, logout, loadCurrentUser],
+    [
+      status,
+      user,
+      userId,
+      accessToken,
+      login,
+      register,
+      logout,
+      loadCurrentUser,
+      applyCredentials,
+    ],
   );
 
   return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
