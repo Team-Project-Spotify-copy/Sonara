@@ -10,8 +10,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 # Копіюємо .csproj з урахуванням папки Backend/Project
-COPY ["Backend/Project/WebApp.csproj", "Backend/Project/"]
-RUN dotnet restore "Backend/Project/WebApp.csproj"
+COPY ["WebApp.csproj", "./"]
+RUN dotnet restore "WebApp.csproj"
 
 # Копіюємо решту файлів репозиторію
 COPY . .
