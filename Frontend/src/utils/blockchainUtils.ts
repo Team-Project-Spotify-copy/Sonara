@@ -2,7 +2,90 @@ import { BrowserProvider, Contract, ethers, Signer } from "ethers";
 import contractArtifact from "../../premium-subscription/artifacts/contracts/premiumSubscription.sol/premiumSubscription.json";
 
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const abi = contractArtifact.abi;
+const abi = [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "InsufficientETH",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidPlan",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TransferFailed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "userId",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum premiumSubscription.PlanType",
+          "name": "planType",
+          "type": "uint8"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "buyer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amountPaid",
+          "type": "uint256"
+        }
+      ],
+      "name": "SubscriptionPurchased",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_userId",
+          "type": "string"
+        },
+        {
+          "internalType": "enum premiumSubscription.PlanType",
+          "name": "_planType",
+          "type": "uint8"
+        }
+      ],
+      "name": "buySubscription",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address payable",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ];
 
 // ВАЖЛИВО: це має відповідати мережі, яку слухає бекенд (Ethereum:Url).
 // Для локальної Hardhat-ноди chain ID зазвичай 31337.
