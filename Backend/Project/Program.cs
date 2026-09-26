@@ -76,8 +76,7 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<BlockchainListenerService>();
-builder.Services.AddResend(builder.Configuration["Resend:ApiToken"]!);
-builder.Services.AddScoped<IEmailService, ResendEmailService>();
+builder.Services.AddTransient<IEmailService, BrevoEmailService>();
 builder.Services.AddScoped<ISubscriptionReminderService, SubscriptionReminderService>();
 builder.Services.AddHostedService<SubscriptionReminderBackgroundService>();
 builder.Services.AddHttpClient<IRecaptchaServices, RecaptchaServices>();
