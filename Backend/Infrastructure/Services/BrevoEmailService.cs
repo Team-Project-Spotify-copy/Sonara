@@ -1,34 +1,46 @@
-﻿using Application.Interfaces;
+﻿using System.Net;
+using System.Net.Mail;
+using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Resend;
 
 namespace Infrastructure.Services;
 
-public class ResendEmailService : IEmailService
+public class BrevoEmailService : IEmailService
 {
-    private readonly IResend _resend;
     private readonly IConfiguration _configuration;
 
-    public ResendEmailService(IResend resend, IConfiguration configuration)
+    public BrevoEmailService(IConfiguration configuration)
     {
-        _resend = resend;
         _configuration = configuration;
     }
 
     public async Task SendEmailAsync(string toEmail, string subject, string htmlBody, CancellationToken ct = default)
     {
-        var fromEmail = _configuration["Resend:FromEmail"] ?? "onboarding@resend.dev";
-        var fromName = _configuration["Resend:FromName"] ?? "Sonara";
+        var host = _configuration["Smtp:Host"] ?? "smtp-relay.brevo.com";
+        var port = int.Parse(_configuration["Smtp:Port"] ?? "587");
+        var username = _configuration["Smtp:Username"];
+        var password = _configuration["Smtp:Password"];
 
-        var message = new EmailMessage
+        var senderEmail = _configuration["Smtp:SenderEmail"] ?? "твоя_пошта@gmail.com";
+        var senderName = _configuration["Smtp:SenderName"] ?? "Sonara";
+
+        using var client = new SmtpClient(host, port)
         {
-            From = $"{fromName} <{fromEmail}>",
-            Subject = subject,
-            HtmlBody = htmlBody
+            Credentials = new NetworkCredential(username, password),
+            EnableSsl = true
         };
-        message.To.Add(toEmail);
 
-        await _resend.EmailSendAsync(message);
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(senderEmail, senderName),
+            Subject = subject,
+            Body = htmlBody,
+            IsBodyHtml = true
+        };
+
+        mailMessage.To.Add(toEmail);
+
+        await client.SendMailAsync(mailMessage);
     }
 
     public Task SendSubscriptionSuccessEmailAsync(string toEmail, string username, string planName, DateTime expiresAt, CancellationToken ct = default)
