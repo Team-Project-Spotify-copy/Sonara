@@ -47,7 +47,6 @@ export default function Account({ onSelect, onLibraryChange }) {
       const response = await axios.get(endpoint, { headers });
 
       if (response.status === 200 && response.data) {
-        console.log(response.data);
         setProfile(response.data);
       } else {
         console.error("Error fetching user data");
