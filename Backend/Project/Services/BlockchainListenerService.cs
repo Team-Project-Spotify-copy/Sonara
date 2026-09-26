@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Nethereum.Hex.HexTypes;
 using Nethereum.RPC.Eth.DTOs;
 using Nethereum.Web3;
+using Domain.Entities.Web3;
 
 namespace WebApp.Services;
 
@@ -86,11 +87,13 @@ public class BlockchainListenerService : BackgroundService
                     foreach (var change in changes)
                     {
                         var log = change.Event;
+                        var blockNumber = (long)change.Log.BlockNumber.Value;
+
                         _logger.LogInformation(
                             "Отримано івент! UserId (string): {UserId}, Plan: {Plan}, Buyer: {Buyer}",
                             log.UserId, log.PlanType, log.Buyer);
 
-                        await ProcessSubscriptionAsync(log, stoppingToken);
+                        await ProcessSubscriptionAsync(log, blockNumber, stoppingToken);
                     }
 
                     lastProcessedBlock = latestBlock;
@@ -127,28 +130,60 @@ public class BlockchainListenerService : BackgroundService
         }
     }
 
-    private async Task ProcessSubscriptionAsync(SubscriptionPurchasedEventDTO log, CancellationToken ct)
+    private async Task ProcessSubscriptionAsync(SubscriptionPurchasedEventDTO log, long blockNumber, CancellationToken ct)
     {
         using var scope = _serviceProvider.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<SonaraDbContext>();
         var subscriptionService = scope.ServiceProvider.GetRequiredService<ISubscriptionService>();
 
+        var entry = new BlockchainTransactionLog
+        {
+            RawUserId = log.UserId,
+            PlanType = log.PlanType,
+            Buyer = log.Buyer,
+            BlockNumber = blockNumber,
+            ProcessedAt = DateTime.UtcNow
+        };
+
         if (!Guid.TryParse(log.UserId, out var userId))
         {
             _logger.LogWarning("Не вдалося розпарсити UserId рядок у Guid: {UserId}", log.UserId);
+            entry.Status = BlockchainEventStatus.Failed;
+            entry.ErrorMessage = "Could not parse UserId as Guid.";
+            dbContext.BlockchainTransactionLogs.Add(entry);
+            await dbContext.SaveChangesAsync(ct);
             return;
         }
 
         var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, ct);
-        if (user != null)
+        if (user == null)
+        {
+            _logger.LogWarning("Користувача з ID {UserId} не знайдено в БД.", userId);
+            entry.ResolvedUserId = userId;
+            entry.Status = BlockchainEventStatus.UserNotFound;
+            dbContext.BlockchainTransactionLogs.Add(entry);
+            await dbContext.SaveChangesAsync(ct);
+            return;
+        }
+
+        try
         {
             await subscriptionService.ProcessBlockchainPurchaseAsync(user.Id, log.PlanType, ct);
             _logger.LogInformation("Користувача {UserId} успішно оновлено в БД!", userId);
+
+            entry.ResolvedUserId = user.Id;
+            entry.Status = BlockchainEventStatus.Processed;
         }
-        else
+        catch (Exception ex)
         {
-            _logger.LogWarning("Користувача з ID {UserId} не знайдено в БД.", userId);
+            _logger.LogError(ex, "Не вдалося застосувати підписку для {UserId}", userId);
+            entry.ResolvedUserId = user.Id;
+            entry.Status = BlockchainEventStatus.Failed;
+            entry.ErrorMessage = ex.Message;
         }
+
+        dbContext.BlockchainTransactionLogs.Add(entry);
+        await dbContext.SaveChangesAsync(ct);
     }
 }

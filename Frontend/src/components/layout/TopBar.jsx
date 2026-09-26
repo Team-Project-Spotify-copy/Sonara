@@ -34,7 +34,7 @@ export default function TopBar({
   onMenuClick,
   onProfileClick,
 }) {
-  const { isAuthenticated, isLoading, username, email, logout } = useAccount();
+  const { isAuthenticated, isLoading, username, email, logout, user } = useAccount();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -296,6 +296,19 @@ export default function TopBar({
             >
               Account
             </button>
+            {(user?.role === "Admin" || user?.role === "Moderator") && (
+              <button
+                type="button"
+                role="menuitem"
+                className="topbar__menu-item"
+                onClick={() => {
+                  setMenuOpen(false);
+                  navigate("/admin");
+                }}
+              >
+                Admin
+              </button>
+            )}
             <button
               type="button"
               role="menuitem"

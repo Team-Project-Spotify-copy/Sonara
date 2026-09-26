@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "@pages/HomePage.jsx";
 import Login from "@pages/LoginPage.jsx";
@@ -16,13 +16,16 @@ import Song from "@pages/SongPage.jsx";
 import RootLayout from "@layouts/RootLayout.jsx";
 import RequireAuth from "@components/auth/RequireAuth.jsx";
 import { PlayerProvider } from "@contexts/player.context.jsx";
+import AdminLayout from "@layouts/AdminLayout.jsx";
+import AdminCatalogPage from "@pages/admin/AdminCatalogPage.jsx";
+import RequireAdmin from "@components/auth/RequireAdmin.jsx";
+import AdminPodcastsPage from "@pages/admin/AdminPodcastsPage.jsx";
+import AdminUsersPage from "@pages/admin/AdminUsersPage.jsx";
+import AdminWeb3Page from "@pages/admin/AdminWeb3Page.jsx";
 import "./index.css";
 
-// const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientId = import.meta.env.VITE_CLIENT_ID;
-if (!clientId) {
-  console.error("Помилка: Не задано VITE_GOOGLE_CLIENT_ID у змінних середовища!");
-}
+
 function App() {
   return (
     <>
@@ -43,14 +46,24 @@ function App() {
                 <Route path="/playlist/:name" element={<Playlist />} />
                 <Route path="/podcast/:name" element={<Podcast />} />
                 <Route path="/album/:name" element={<Album />} />
-
-                {/* Signed-in only */}
-                <Route element={<RequireAuth />}>
-                  <Route path="/library" element={<Library />} />
-                  <Route path="/account" element={<Account />} />
-                  <Route path="/account/:username" element={<Account />} />
-                  <Route path="/subscriptions" element={<Subscription />} />
+              </Route>
+              {/* Admin only */}
+              <Route element={<RequireAdmin />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<Navigate to="catalog" replace />} />
+                  <Route path="catalog" element={<AdminCatalogPage />} />
+                  <Route path="podcasts" element={<AdminPodcastsPage />} />
+                  <Route path="users" element={<AdminUsersPage />} />
+                  <Route path="web3" element={<AdminWeb3Page />} />
                 </Route>
+              </Route>
+
+              {/* Signed-in only */}
+              <Route element={<RequireAuth />}>
+                <Route path="/library" element={<Library />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/account/:username" element={<Account />} />
+                <Route path="/subscriptions" element={<Subscription />} />
               </Route>
             </Routes>
           </PlayerProvider>

@@ -137,7 +137,7 @@ public class SonaraDbContext : DbContext
         modelBuilder.Entity<ListeningHistory>(entity =>
             entity.HasIndex(h => new { h.UserId, h.ListenedAt }).HasDatabaseName("IX_ListeningHistories_UserId_ListenedAt"));
 
-        //SeedDataExtension.Seed(modelBuilder);
+        SeedDataExtension.Seed(modelBuilder);
     }
 
     public DbSet<Album> Albums { get; set; }
@@ -164,4 +164,5 @@ public class SonaraDbContext : DbContext
     public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
     public DbSet<UserSubscription> UserSubscriptions { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Domain.Entities.Web3.BlockchainTransactionLog> BlockchainTransactionLogs { get; set; }
 }
