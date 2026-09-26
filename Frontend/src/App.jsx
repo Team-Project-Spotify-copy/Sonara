@@ -46,7 +46,7 @@ function App() {
                 <Route path="/playlist/:name" element={<Playlist />} />
                 <Route path="/podcast/:name" element={<Podcast />} />
                 <Route path="/album/:name" element={<Album />} />
-
+              </Route>
               {/* Admin only */}
               <Route element={<RequireAdmin />}>
                 <Route path="/admin" element={<AdminLayout />}>
