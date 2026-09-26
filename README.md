@@ -45,7 +45,7 @@
 * Redis
 * SignalR (Real-time features)
 * Hangfire (Background jobs)
-* Azure Blob Storage + CDN (Media delivery)
+* Azure Blob Storage
 
 ### Database
 * PostgreSQL
