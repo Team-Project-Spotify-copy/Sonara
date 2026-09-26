@@ -78,6 +78,7 @@ public class ProfileService : IProfileService
             .Select(u => new ProfileDto
             {
                 Email = u.Email,
+                Role = u.Role.Name,
                 ArtistName = u.ArtistProfile != null ? u.ArtistProfile.Name : string.Empty,
                 Username = u.Username,
                 AvatarUrl = u.AvatarUrl,
@@ -145,6 +146,7 @@ public class ProfileService : IProfileService
             .Select(u => new ProfileDto
             {
                 Email = u.Email,
+                Role = u.Role.Name,
                 ArtistName = u.ArtistProfile != null ? u.ArtistProfile.Name : string.Empty,
                 Username = u.Username,
                 AvatarUrl = u.AvatarUrl,

@@ -12,4 +12,11 @@ public interface IAdminMusicService
 
     /// <summary>Returns the album with this artist + title, creating it when absent.</summary>
     Task<ResolvedEntityDto> ResolveAlbumAsync(ResolveAlbumDto dto);
+
+
+    Task<TrackDto> UpdateTrackAsync(Guid id, UpdateTrackDto dto);
+    Task DeleteTrackAsync(Guid id);
+    Task<AlbumDto> UpdateAlbumAsync(Guid id, UpdateAlbumDto dto);
+    Task DeleteAlbumAsync(Guid id);
+
 }

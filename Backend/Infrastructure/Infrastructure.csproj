@@ -28,6 +28,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
 	<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
+	<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

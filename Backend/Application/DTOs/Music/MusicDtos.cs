@@ -189,3 +189,17 @@ public class UpdateAlbumDto
 
     public DateTime? ReleaseDate { get; set; }
 }
+
+public class UpdateTrackDto
+{
+    [StringLength(200, MinimumLength = 1)]
+    public string? Title { get; set; }
+
+    public Guid? ArtistId { get; set; }
+
+    public Guid? AlbumId { get; set; }
+
+    public IFormFile? AudioFile { get; set; }
+
+    public List<Guid>? GenreIds { get; set; }
+}

@@ -1,14 +1,16 @@
 using Application.Commands.Auth;
+using Application.Configurations;
 using Application.Interfaces;
 using Application.Interfaces.Services;
-using Application.Configurations;
+using Azure.Storage.Blobs;
+using Domain.Entities.Social;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Mvc;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Diagnostics;
@@ -18,7 +20,6 @@ using WebApp;
 using WebApp.Contracts;
 using WebApp.OpenApi;
 using WebApp.Services;
-using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,11 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<SonaraDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions => npgsqlOptions
+            .EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorCodesToAdd: null)
+            .CommandTimeout(30)));
 
 builder.Services.AddSingleton(x =>
     new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage")));
@@ -95,6 +100,9 @@ builder.Services.AddScoped<MusicCatalogService>();
 builder.Services.AddScoped<IMusicCatalogService, CachedMusicCatalogService>();
 builder.Services.AddScoped<ITrackStreamService, TrackStreamService>();
 builder.Services.AddScoped<IAdminMusicService, AdminMusicService>();
+builder.Services.AddScoped<IAdminPodcastService, AdminPodcastService>();
+builder.Services.AddScoped<IAdminUserService, AdminUserService>();
+builder.Services.AddScoped<IAdminWeb3Service, AdminWeb3Service>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IPodcastService, PodcastService>();

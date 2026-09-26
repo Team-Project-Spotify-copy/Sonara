@@ -18,6 +18,7 @@ public record ProfileDto
     public IList<AlbumDto>? Albums { get; set; }
     public IList<ListeningHistoryEntryDto>? History { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public string Role { get; set; } = string.Empty;
 }
 
 public record UpdateProfileDto

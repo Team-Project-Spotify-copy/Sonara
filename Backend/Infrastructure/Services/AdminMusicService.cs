@@ -231,4 +231,119 @@ public class AdminMusicService : IAdminMusicService
 
         return album.Id;
     }
+
+    public async Task<TrackDto> UpdateTrackAsync(Guid id, UpdateTrackDto dto)
+    {
+        var track = await _context.Tracks
+            .Include(t => t.TrackGenres)
+            .FirstOrDefaultAsync(t => t.Id == id)
+            ?? throw new KeyNotFoundException($"Track with ID {id} was not found.");
+
+        if (!string.IsNullOrWhiteSpace(dto.Title))
+            track.Title = dto.Title;
+
+        if (dto.ArtistId.HasValue)
+        {
+            var artistExists = await _context.Artists.AnyAsync(a => a.Id == dto.ArtistId.Value);
+            if (!artistExists)
+                throw new ArgumentException("Unknown artist");
+
+            track.ArtistId = dto.ArtistId.Value;
+        }
+
+        if (dto.AlbumId.HasValue)
+            track.AlbumId = dto.AlbumId.Value;
+
+        if (dto.AudioFile is { Length: > 0 })
+        {
+            track.AudioUrl = await _blobService.ReplaceFileAsync(dto.AudioFile, track.AudioUrl, BlobFolder.MusicTracks);
+        }
+
+        if (dto.GenreIds is not null)
+        {
+            _context.TrackGenres.RemoveRange(track.TrackGenres);
+            track.TrackGenres = dto.GenreIds.Distinct()
+                .Select(genreId => new TrackGenre { TrackId = track.Id, GenreId = genreId })
+                .ToList();
+        }
+
+        await _context.SaveChangesAsync();
+
+        // Перечитуємо з бази, щоб DTO віддав актуальні Artist/Album/Genre назви.
+        var reloaded = await _context.Tracks
+            .AsNoTracking()
+            .Include(t => t.Artist)
+            .Include(t => t.Album)
+            .Include(t => t.TrackGenres).ThenInclude(tg => tg.Genre)
+            .FirstAsync(t => t.Id == id);
+
+        return new TrackDto
+        {
+            Id = reloaded.Id,
+            Title = reloaded.Title,
+            ArtistId = reloaded.ArtistId,
+            ArtistName = reloaded.Artist.Name,
+            AlbumId = reloaded.AlbumId,
+            AlbumTitle = reloaded.Album?.Title,
+            ArtworkUrl = reloaded.Album?.CoverUrl,
+            DurationMs = reloaded.DurationMs,
+            Genres = reloaded.TrackGenres.Select(tg => tg.Genre.Name).ToList(),
+            PlaysCount = reloaded.PlaysCount,
+            HasStream = !string.IsNullOrWhiteSpace(reloaded.AudioUrl),
+            CreatedAt = reloaded.CreatedAt
+        };
+    }
+
+    public async Task DeleteTrackAsync(Guid id)
+    {
+        var track = await _context.Tracks.FirstOrDefaultAsync(t => t.Id == id)
+            ?? throw new KeyNotFoundException($"Track with ID {id} was not found.");
+
+        if (!string.IsNullOrWhiteSpace(track.AudioUrl))
+        {
+            await _blobService.DeleteFileAsync(track.AudioUrl, BlobFolder.MusicTracks);
+        }
+
+        _context.Tracks.Remove(track);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<AlbumDto> UpdateAlbumAsync(Guid id, UpdateAlbumDto dto)
+    {
+        // На відміну від AlbumService.UpdateAsync (для артиста-власника), тут
+        // НЕМАЄ перевірки власника — адмін може редагувати будь-який альбом.
+        var album = await _context.Albums
+            .Include(a => a.Artist)
+            .FirstOrDefaultAsync(a => a.Id == id)
+            ?? throw new KeyNotFoundException($"Album with ID {id} was not found.");
+
+        if (!string.IsNullOrWhiteSpace(dto.Title))
+            album.Title = dto.Title;
+
+        if (dto.ReleaseDate.HasValue)
+            album.ReleaseDate = dto.ReleaseDate.Value;
+
+        if (dto.CoverImage is { Length: > 0 })
+        {
+            album.CoverUrl = await _blobService.ReplaceFileAsync(dto.CoverImage, album.CoverUrl, BlobFolder.AlbumsCovers);
+        }
+
+        await _context.SaveChangesAsync();
+
+        return _mapper.Map<AlbumDto>(album);
+    }
+
+    public async Task DeleteAlbumAsync(Guid id)
+    {
+        var album = await _context.Albums.FirstOrDefaultAsync(a => a.Id == id)
+            ?? throw new KeyNotFoundException($"Album with ID {id} was not found.");
+
+        if (!string.IsNullOrWhiteSpace(album.CoverUrl))
+        {
+            await _blobService.DeleteFileAsync(album.CoverUrl, BlobFolder.AlbumsCovers);
+        }
+
+        _context.Albums.Remove(album);
+        await _context.SaveChangesAsync();
+    }
 }

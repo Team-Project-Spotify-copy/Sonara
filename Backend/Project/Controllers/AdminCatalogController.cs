@@ -1,3 +1,4 @@
+using Application.DTOs.Podcast;
 using Application.DTOs.Music;
 using Application.Interfaces;
 using Application.Interfaces.Services;
@@ -12,10 +13,14 @@ namespace WebApp.Controllers;
 public class AdminCatalogController : ControllerBase
 {
     private readonly IAdminMusicService _adminMusicService;
+    private readonly IAdminPodcastService _adminPodcastService;
 
-    public AdminCatalogController(IAdminMusicService adminMusicService)
+    public AdminCatalogController(
+        IAdminMusicService adminMusicService, 
+        IAdminPodcastService adminPodcastService)
     {
         _adminMusicService = adminMusicService;
+        _adminPodcastService = adminPodcastService;
     }
 
     [HttpPost("tracks")]
@@ -91,5 +96,110 @@ public class AdminCatalogController : ControllerBase
     {
         var count = await reminderService.SendWeeklyRemindersAsync(force: true, ct);
         return Ok(new { SentCount = count });
+    }
+
+    [HttpPut("tracks/{id:guid}")]
+    [ProducesResponseType(typeof(TrackDto), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<TrackDto>> UpdateTrack(Guid id, [FromForm] UpdateTrackDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            return Ok(await _adminMusicService.UpdateTrackAsync(id, dto));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("tracks/{id:guid}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DeleteTrack(Guid id)
+    {
+        try
+        {
+            await _adminMusicService.DeleteTrackAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPut("albums/{id:guid}")]
+    [ProducesResponseType(typeof(AlbumDto), 200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<AlbumDto>> UpdateAlbum(Guid id, [FromForm] UpdateAlbumDto dto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        try
+        {
+            return Ok(await _adminMusicService.UpdateAlbumAsync(id, dto));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpDelete("albums/{id:guid}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DeleteAlbum(Guid id)
+    {
+        try
+        {
+            await _adminMusicService.DeleteAlbumAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpPut("podcasts/{id:guid}")]
+    [ProducesResponseType(typeof(PodcastDto), 200)]
+    [ProducesResponseType(404)]
+    public async Task<ActionResult<PodcastDto>> UpdatePodcast(Guid id, [FromForm] UpdatePodcastDto dto)
+    {
+        try
+        {
+            return Ok(await _adminPodcastService.UpdatePodcastAsync(id, dto));
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpDelete("podcasts/{id:guid}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> DeletePodcast(Guid id)
+    {
+        try
+        {
+            await _adminPodcastService.DeletePodcastAsync(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }
