@@ -1,14 +1,16 @@
 using Application.Commands.Auth;
+using Application.Configurations;
 using Application.Interfaces;
 using Application.Interfaces.Services;
-using Application.Configurations;
+using Azure.Storage.Blobs;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Mvc;
+using Resend;
 using Scalar.AspNetCore;
 using Serilog;
 using System.Diagnostics;
@@ -18,11 +20,10 @@ using WebApp;
 using WebApp.Contracts;
 using WebApp.OpenApi;
 using WebApp.Services;
-using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Log.Logger = new LoggerConfiguration()
+Serilog.Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -75,7 +76,8 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<BlockchainListenerService>();
-builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddResend(builder.Configuration["Resend:ApiToken"]!);
+builder.Services.AddScoped<IEmailService, ResendEmailService>();
 builder.Services.AddScoped<ISubscriptionReminderService, SubscriptionReminderService>();
 builder.Services.AddHostedService<SubscriptionReminderBackgroundService>();
 builder.Services.AddHttpClient<IRecaptchaServices, RecaptchaServices>();

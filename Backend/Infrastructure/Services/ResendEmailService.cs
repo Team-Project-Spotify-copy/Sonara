@@ -1,45 +1,34 @@
-﻿using System.Net;
-using System.Net.Mail;
-using Application.Interfaces;
+﻿using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Resend;
 
 namespace Infrastructure.Services;
 
-public class SmtpEmailService : IEmailService
+public class ResendEmailService : IEmailService
 {
+    private readonly IResend _resend;
     private readonly IConfiguration _configuration;
 
-    public SmtpEmailService(IConfiguration configuration)
+    public ResendEmailService(IResend resend, IConfiguration configuration)
     {
+        _resend = resend;
         _configuration = configuration;
     }
 
     public async Task SendEmailAsync(string toEmail, string subject, string htmlBody, CancellationToken ct = default)
     {
-        var host = _configuration["Smtp:Host"]!;
-        var port = int.Parse(_configuration["Smtp:Port"]!);
-        var username = _configuration["Smtp:Username"];
-        var password = _configuration["Smtp:Password"];
-        var fromEmail = _configuration["Smtp:FromEmail"]!;
-        var fromName = _configuration["Smtp:FromName"] ?? "Sonara";
-        var enableSsl = bool.Parse(_configuration["Smtp:EnableSsl"] ?? "true");
+        var fromEmail = _configuration["Resend:FromEmail"] ?? "onboarding@resend.dev";
+        var fromName = _configuration["Resend:FromName"] ?? "Sonara";
 
-        using var client = new SmtpClient(host, port)
+        var message = new EmailMessage
         {
-            Credentials = new NetworkCredential(username, password),
-            EnableSsl = enableSsl
-        };
-
-        using var message = new MailMessage
-        {
-            From = new MailAddress(fromEmail, fromName),
+            From = $"{fromName} <{fromEmail}>",
             Subject = subject,
-            Body = htmlBody,
-            IsBodyHtml = true
+            HtmlBody = htmlBody
         };
         message.To.Add(toEmail);
 
-        await client.SendMailAsync(message, ct);
+        await _resend.EmailSendAsync(message);
     }
 
     public Task SendSubscriptionSuccessEmailAsync(string toEmail, string username, string planName, DateTime expiresAt, CancellationToken ct = default)
