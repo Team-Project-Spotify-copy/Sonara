@@ -18,8 +18,11 @@ import RequireAuth from "@components/auth/RequireAuth.jsx";
 import { PlayerProvider } from "@contexts/player.context.jsx";
 import "./index.css";
 
+// const clientId = import.meta.env.VITE_CLIENT_ID;
 const clientId = import.meta.env.VITE_CLIENT_ID;
-
+if (!clientId) {
+  console.error("Помилка: Не задано VITE_GOOGLE_CLIENT_ID у змінних середовища!");
+}
 function App() {
   return (
     <>
