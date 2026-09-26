@@ -6,6 +6,7 @@
 }
 
 .entity-detail-header {
+    position: relative;
     background-size: cover;
     background-position: center;
     width: 100%;
@@ -14,6 +15,7 @@
     align-items: center;
     border-radius: 8px;
     margin-bottom: 20px;
+    overflow: hidden;
 }
 
 .entity-header-cover {
@@ -78,11 +80,11 @@
     gap: 8px;
     width: 182px;
     height: 60px;
-    border: none;
+    border: 2px solid white;
     font-size: 20px;
     font-weight: 500;
     font-family: "Inter", sans-serif;
-    background-color: #504f4f;
+    background-color: transparent;
     color: white;
     margin-left: auto;
     cursor: pointer;
@@ -130,4 +132,21 @@
 
 .entity-track-item-wrapper {
     cursor: pointer;
+}
+
+.entity-header-bg {
+    position: relative;
+    width: 100%;
+    height: 364px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    padding-left: 32px;
+}
+
+.accent-pattern.entity-header__backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
 }

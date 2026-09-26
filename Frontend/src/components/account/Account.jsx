@@ -120,7 +120,6 @@ export default function Account({ onSelect, onLibraryChange }) {
       kind: "playlist",
     })) || [];
 
-  // Додано мапінг для альбомів (аналогічно до плейлистів)
   const albumItems =
     profile?.albums?.map((album) => ({
       id: album.id,

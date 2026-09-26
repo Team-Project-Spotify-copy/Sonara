@@ -128,7 +128,10 @@ function ResetPassword() {
                     <input
                       {...props}
                       disabled={submitting}
-                      style={{ backgroundColor: "#1b1b1b", border: " 2px solid white" }}
+                      style={{
+                        backgroundColor: "#1b1b1b",
+                        border: " 2px solid white",
+                      }}
                     />
                   )}
                   inputStyle="otp-field"
@@ -157,7 +160,10 @@ function ResetPassword() {
               </button>
             </form>
 
-            <p className="reset-password-footer-text">
+            <p
+              className="reset-password-footer-text"
+              style={{ marginTop: "30px" }}
+            >
               <button
                 type="button"
                 className="app-link auth-logout"

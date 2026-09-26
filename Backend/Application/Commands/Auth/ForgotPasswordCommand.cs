@@ -32,7 +32,7 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
         var code = System.Security.Cryptography.RandomNumberGenerator.GetInt32(1000, 10000).ToString();
         await _cache.SetAsync($"password-reset:code:{user.Id}", code, CodeTtl, cancellationToken);
 
-        await _emailService.SendPasswordResetEmailAsync(user.Username, user.Email, code, cancellationToken);
+        await _emailService.SendPasswordResetEmailAsync(user.Email, user.Username, code, cancellationToken);
 
         return true;
     }

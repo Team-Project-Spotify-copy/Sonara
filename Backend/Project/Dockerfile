@@ -1,32 +1,35 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-# For more information, please see https://aka.ms/containercompat
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-nanoserver-ltsc2022 AS base
+# Stage 1: Base image
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:10.0-nanoserver-ltsc2022 AS build
+# Stage 2: Build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Project/Project.csproj", "Project/"]
-RUN dotnet restore "./Project/Project.csproj"
+
+# Копіюємо файл рішення або всі проєкти з урахуванням структури папок Backend
+COPY ["Project/WebApp.csproj", "Project/"]
+COPY ["Application/Application.csproj", "Application/"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
+
+RUN dotnet restore "Project/WebApp.csproj"
+
+# Копіюємо решту файлів всього бекенду
 COPY . .
 WORKDIR "/src/Project"
-RUN dotnet build "./Project.csproj" -c %BUILD_CONFIGURATION% -o /app/build
+RUN dotnet build "WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Stage 3: Publish
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Project.csproj" -c %BUILD_CONFIGURATION% -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "WebApp.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# Stage 4: Final runtime
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Project.dll"]
+RUN apt-get update && apt-get install -y libgssapi-krb5-2 && rm -rf /var/lib/apt/lists/*
+ENTRYPOINT ["dotnet", "WebApp.dll"]

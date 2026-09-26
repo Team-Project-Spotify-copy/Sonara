@@ -6,6 +6,9 @@ import image from "@assets/images/subscription-hd-bg.png";
 import axios from "axios";
 import { usePlayer } from "@contexts/player.store";
 import AddEntityModal from "@components/common/AddEntityModal";
+import useDominantColor from "@hooks/useDominantColor";
+import AccentPattern from "@components/common/AccentPattern";
+
 import "@css/EntityDetailView.css";
 
 export default function EntityDetailView({ type, apiConfig }) {
@@ -16,6 +19,9 @@ export default function EntityDetailView({ type, apiConfig }) {
   const { setQueueAndPlay } = usePlayer();
   const api = import.meta.env.VITE_API;
   const { name } = useParams();
+
+const entitySrc = entity.coverUrl || entity.imageUrl;
+const accent = useDominantColor(entitySrc);
 
   const fetchEntityData = async () => {
     try {
@@ -85,15 +91,18 @@ export default function EntityDetailView({ type, apiConfig }) {
 
   return (
     <div className="entity-detail-container">
-      <div
-        className="entity-detail-header"
-        style={{ backgroundImage: `url(${image})` }}
-      >
+      <div className="entity-detail-header">
+        <AccentPattern
+          className="entity-header__backdrop"
+          image={image}
+          accent={accent}
+        />
         <img
           src={entity.coverUrl || entity.imageUrl}
           alt={`${type} Header`}
           className="entity-header-cover"
         />
+
         <div>
           <p className="entity-header-title">
             {entity.name || entity.title || `${type} Name`}
@@ -112,10 +121,6 @@ export default function EntityDetailView({ type, apiConfig }) {
       <div className="entity-detail-content">
         {entity.isOwner && (
           <div className="entity-action-bar">
-            <div className="entity-action-circle"></div>
-            <div className="entity-action-circle"></div>
-            <div className="entity-action-circle"></div>
-
             <button
               onClick={() => setIsModalOpen(true)}
               className="entity-add-track-btn"

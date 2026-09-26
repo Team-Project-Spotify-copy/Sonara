@@ -120,7 +120,7 @@ function ForgotPassword() {
               </button>
             </form>
 
-            <p className="reset-password-footer-text" style={{marginTop: "-70px"}}>
+            <p className="reset-password-footer-text" style={{marginTop: "20px"}}>
               Remembered it?{" "}
               <Link to="/login" className="app-link">
                 Log in

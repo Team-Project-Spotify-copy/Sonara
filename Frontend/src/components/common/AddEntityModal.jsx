@@ -60,8 +60,7 @@ export default function AddEntityModal({
     <div className="modal-backdrop">
       <div className="modal-content">
         <h2>
-          {entityType == "Podcast" ? "Add Episode to" : "Add Track to"}Add Track
-          to {entityType}
+          {entityType == "Podcast" ? "Add Episode to" : "Add Track to"} {entityType}
         </h2>
 
         {error && (

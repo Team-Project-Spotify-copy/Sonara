@@ -23,7 +23,7 @@ using WebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Log.Logger = new LoggerConfiguration()
+Serilog.Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -80,7 +80,7 @@ builder.Services.AddOpenApi(options =>
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHostedService<BlockchainListenerService>();
-builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddHttpClient<IEmailService, BrevoEmailService>(); 
 builder.Services.AddScoped<ISubscriptionReminderService, SubscriptionReminderService>();
 builder.Services.AddHostedService<SubscriptionReminderBackgroundService>();
 builder.Services.AddHttpClient<IRecaptchaServices, RecaptchaServices>();
@@ -114,11 +114,13 @@ var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("Frontend", policy => policy
-        .WithOrigins(allowedOrigins)
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials());
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("https://sonara-5a3c4.web.app", "http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
 });
 
 builder.Services.AddAuthorization();
@@ -161,7 +163,7 @@ if (app.Environment.IsDevelopment())
 // CORS runs before HTTPS redirection: the frontend talks to the plain-HTTP
 // endpoint, and a 307 to https:// would abort the OPTIONS preflight before the
 // Access-Control-Allow-* headers are ever written.
-app.UseCors("Frontend");
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

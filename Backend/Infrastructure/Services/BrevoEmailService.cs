@@ -1,45 +1,49 @@
-﻿using System.Net;
-using System.Net.Mail;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Services;
 
-public class SmtpEmailService : IEmailService
+public class BrevoEmailService : IEmailService
 {
+    private readonly HttpClient _httpClient;
     private readonly IConfiguration _configuration;
 
-    public SmtpEmailService(IConfiguration configuration)
+    public BrevoEmailService(HttpClient httpClient, IConfiguration configuration)
     {
+        _httpClient = httpClient;
         _configuration = configuration;
     }
 
     public async Task SendEmailAsync(string toEmail, string subject, string htmlBody, CancellationToken ct = default)
     {
-        var host = _configuration["Smtp:Host"]!;
-        var port = int.Parse(_configuration["Smtp:Port"]!);
-        var username = _configuration["Smtp:Username"];
-        var password = _configuration["Smtp:Password"];
-        var fromEmail = _configuration["Smtp:FromEmail"]!;
-        var fromName = _configuration["Smtp:FromName"] ?? "Sonara";
-        var enableSsl = bool.Parse(_configuration["Smtp:EnableSsl"] ?? "true");
+        var apiKey = _configuration["Brevo__ApiKey"] ?? _configuration["Brevo:ApiKey"];
+        var senderEmail = _configuration["Brevo__SenderEmail"] ?? _configuration["Brevo:SenderEmail"] ?? "sonara@app.com";
+        var senderName = _configuration["Brevo__SenderName"] ?? _configuration["Brevo:SenderName"] ?? "Sonara";
 
-        using var client = new SmtpClient(host, port)
+        var emailData = new
         {
-            Credentials = new NetworkCredential(username, password),
-            EnableSsl = enableSsl
+            sender = new { email = senderEmail, name = senderName },
+            to = new[] { new { email = toEmail } },
+            subject = subject,
+            htmlContent = htmlBody
         };
 
-        using var message = new MailMessage
-        {
-            From = new MailAddress(fromEmail, fromName),
-            Subject = subject,
-            Body = htmlBody,
-            IsBodyHtml = true
-        };
-        message.To.Add(toEmail);
+        var jsonContent = JsonSerializer.Serialize(emailData);
+        var request = new HttpRequestMessage(HttpMethod.Post, "https://api.brevo.com/v3/smtp/email");
 
-        await client.SendMailAsync(message, ct);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        request.Headers.Add("api-key", apiKey);
+        request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.SendAsync(request, ct);
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync(ct);
+            throw new Exception($"Failed to send email via Brevo API: {errorContent}");
+        }
     }
 
     public Task SendSubscriptionSuccessEmailAsync(string toEmail, string username, string planName, DateTime expiresAt, CancellationToken ct = default)

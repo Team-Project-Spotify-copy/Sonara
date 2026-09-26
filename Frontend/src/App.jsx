@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "@pages/HomePage.jsx";
 import Login from "@pages/LoginPage.jsx";
 import Register from "@pages/RegisterPage.jsx";
@@ -23,26 +24,28 @@ import AdminUsersPage from "@pages/admin/AdminUsersPage.jsx";
 import AdminWeb3Page from "@pages/admin/AdminWeb3Page.jsx";
 import "./index.css";
 
+const clientId = import.meta.env.VITE_CLIENT_ID;
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <PlayerProvider>
-          <Routes>
-            <Route element={<RootLayout />}>
-              {/* Public */}
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/create-new-password" element={<CreateNewPassword />} />
-              <Route path="/song" element={<Song />} />
-              <Route path="/song/:id" element={<Song />} />
-              <Route path="/playlist/:name" element={<Playlist />} />
-              <Route path="/podcast/:name" element={<Podcast />} />
-              <Route path="/album/:name" element={<Album />} />
+      <GoogleOAuthProvider clientId={clientId}>
+        <BrowserRouter>
+          <PlayerProvider>
+            <Routes>
+              <Route element={<RootLayout />}>
+                {/* Public */}
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/create-new-password" element={<CreateNewPassword />} />
+                <Route path="/song" element={<Song />} />
+                <Route path="/song/:id" element={<Song />} />
+                <Route path="/playlist/:name" element={<Playlist />} />
+                <Route path="/podcast/:name" element={<Podcast />} />
+                <Route path="/album/:name" element={<Album />} />
 
               {/* Admin only */}
               <Route element={<RequireAdmin />}>
@@ -62,10 +65,10 @@ function App() {
                 <Route path="/account/:username" element={<Account />} />
                 <Route path="/subscriptions" element={<Subscription />} />
               </Route>
-            </Route>
-          </Routes>
-        </PlayerProvider>
-      </BrowserRouter>
+            </Routes>
+          </PlayerProvider>
+        </BrowserRouter>
+      </GoogleOAuthProvider>
     </>
   );
 }
